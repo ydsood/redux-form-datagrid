@@ -6,14 +6,13 @@ import peerDeps from 'rollup-plugin-peer-deps-external';
 import filesize from 'rollup-plugin-filesize';
 
 
-
 export default {
   input: 'lib/index.js',
   output: {
     file: 'build/bundle.min.js',
     format: 'umd',
     sourcemap: true,
-    name: 'redux-form-datagrid'
+    name: 'redux-form-datagrid',
   },
   plugins: [
     peerDeps(),
@@ -21,12 +20,13 @@ export default {
       jsnext: true,
       main: true,
       browser: true,
+      extensions: ['.mjs', '.js', '.jsx', '.json'],
     }),
     babel({
-      exclude: 'node_modules/**'
+      exclude: 'node_modules/**',
     }),
     commonjs(),
     uglify,
-    filesize()
-  ]
+    filesize(),
+  ],
 };

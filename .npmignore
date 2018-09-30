@@ -1,3 +1,10 @@
+node_modules/
+lib/
+test/
+.vscode/
 .babelrc
-lib
+.npmignore
+.gitignore
+.flowconfig
+examples/
 CODE_OF_CONDUCT.md

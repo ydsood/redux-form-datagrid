@@ -1,0 +1,10 @@
+{
+    "editor.tabSize": 2,
+    "eslint.run": "onSave",
+    "eslint.options": {
+        "configFile": "./.eslintrc.json"
+    },
+    "eslint.autoFixOnSave": true,
+    "flow.useNPMPackagedFlow": true,
+    "javascript.validate.enable": false
+}

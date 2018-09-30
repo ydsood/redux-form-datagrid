@@ -11,7 +11,8 @@
     "lint:watch": "esw -w lib/**",
     "prepublish": "npm run build",
     "flow": "flow",
-    "rollup": "rollup"
+    "rollup": "rollup",
+    "setup": "npm install && npm link && cd examples && npm link redux-form-datagrid && npm install"
   },
   "repository": {
     "type": "git",

@@ -4,10 +4,13 @@ import { Table } from 'semantic-ui-react';
 import type { StaticDatagrid } from './datagrid';
 import ColumnModel from './columnModel';
 import type { ColumnModelType } from './columnModel';
+import { PaginationControls } from './plugins/pagination';
+import type { PaginationHandler } from './plugins/pagination';
 
 type Props = {
   getData?: Function,
   editable?: boolean,
+  pagination: PaginationHandler,
   columnModel: Array<Object>
 };
 
@@ -17,6 +20,7 @@ export default (Grid: StaticDatagrid) => class extends Component<Props> {
     super(props);
     this.colModel = new ColumnModel(props.columnModel);
     this.buildTableHeaders = this.buildTableHeaders.bind(this);
+    this.buildTableFooter = this.buildTableFooter.bind(this);
   }
 
   componentWillMount() {
@@ -41,6 +45,23 @@ export default (Grid: StaticDatagrid) => class extends Component<Props> {
             ))}
         </Table.Row>
       </Table.Header>
+    );
+  }
+
+  buildTableFooter: Function;
+
+  buildTableFooter() {
+    if (!this.props.pagination || typeof this.props.pagination !== 'object') {
+      return <div />;
+    }
+    return (
+      <Table.Footer>
+        <Table.Row>
+          <Table.HeaderCell colSpan="3" textAlign="right">
+            <PaginationControls paginationHandler={this.props.pagination} />
+          </Table.HeaderCell>
+        </Table.Row>
+      </Table.Footer>
     );
   }
 

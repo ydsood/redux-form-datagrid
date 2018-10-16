@@ -1,0 +1,10 @@
+{
+  "presets": [
+    "react",
+    "flow",
+    "react-app",
+    "env",
+    "es2015",
+    "stage-1"
+  ]
+}

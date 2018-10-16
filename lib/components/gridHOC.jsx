@@ -5,27 +5,60 @@ import type { StaticDatagrid } from './datagrid';
 import ColumnModel from './columnModel';
 import type { ColumnModelType } from './columnModel';
 import { PaginationControls } from './plugins/pagination';
-import type { PaginationHandler } from './plugins/pagination';
+import { LocalStore, RemoteStore } from './store';
+import type { LocalStore as LocalStoreType, RemoteStore as RemoteStoreType } from './store';
 
 type Props = {
+  /**
+   * @deprecated getData will be removed, not useful as parent component can pass data prop
+   * again to refresh data
+   */
   getData?: Function,
+  data: Array<Object>,
   editable?: boolean,
-  pagination: PaginationHandler,
-  columnModel: Array<Object>
+  columnModel: Array<Object>,
+  localStore?: boolean,
 };
 
+type State = {
+  data: Array<Object>,
+}
 
-export default (Grid: StaticDatagrid) => class extends Component<Props> {
+type StoreType = LocalStoreType | RemoteStore;
+type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
+
+export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.colModel = new ColumnModel(props.columnModel);
     this.buildTableHeaders = this.buildTableHeaders.bind(this);
     this.buildTableFooter = this.buildTableFooter.bind(this);
+    this.updateGridState = this.updateGridState.bind(this);
+    this.store = new LocalStore(props.data);
+    this.state = { data: this.store.getData() };
   }
 
   componentWillMount() {
     if (typeof this.props.getData === 'function') {
       this.props.getData();
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.data !== this.props.data && this.props.localStore) {
+      this.store.clear();
+      this.store = new LocalStore(this.props.data);
+    }
+  }
+
+  store: LocalStoreType | RemoteStoreType;
+
+  updateGridState: Function;
+
+  updateGridState(updateState: UpdateStateFunctionType) {
+    const data = updateState(this.store);
+    if (data && Array.isArray(data)) {
+      this.setState({ data });
     }
   }
 
@@ -51,15 +84,15 @@ export default (Grid: StaticDatagrid) => class extends Component<Props> {
   buildTableFooter: Function;
 
   buildTableFooter() {
-    if (!this.props.pagination || typeof this.props.pagination !== 'object') {
-      return <div />;
-    }
+    const data = this.store.getData();
     return (
-      <Table.Footer>
+      <Table.Footer fullWidth>
         <Table.Row>
-          <Table.HeaderCell colSpan="3" textAlign="right">
-            <PaginationControls paginationHandler={this.props.pagination} />
-          </Table.HeaderCell>
+          <PaginationControls
+            updateGridState={this.updateGridState}
+            totalRecords={data && data.length}
+            colSpan={this.colModel.get().length}
+          />
         </Table.Row>
       </Table.Footer>
     );
@@ -68,11 +101,13 @@ export default (Grid: StaticDatagrid) => class extends Component<Props> {
   colModel: ColumnModelType;
 
   render() {
-    const { columnModel: _, ...rest } = this.props;
+    const { columnModel: _, data, ...rest } = this.props;
     return (
       <Grid
         columnModel={this.colModel}
         buildTableHeaders={this.buildTableHeaders}
+        buildTableFooter={this.buildTableFooter}
+        data={this.state.data}
         {...rest}
       />
     );

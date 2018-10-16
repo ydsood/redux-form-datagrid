@@ -17,6 +17,42 @@ const data = [
     govtID: '123456678',
     homePhone: '8674561298',
     workPhone: '8674561245'
+  },
+  {
+    name: 'John Smith',
+    govtID: '12345678',
+    homePhone: '3431231234',
+    workPhone: ''
+  },
+  {
+    name: 'Darius Carreira',
+    govtID: '123456678',
+    homePhone: '8674561298',
+    workPhone: '8674561245'
+  },
+  {
+    name: 'John Smith',
+    govtID: '12345678',
+    homePhone: '3431231234',
+    workPhone: ''
+  },
+  {
+    name: 'Darius Carreira',
+    govtID: '123456678',
+    homePhone: '8674561298',
+    workPhone: '8674561245'
+  },
+  {
+    name: 'John Smith',
+    govtID: '12345678',
+    homePhone: '3431231234',
+    workPhone: ''
+  },
+  {
+    name: 'Darius Carreira',
+    govtID: '123456678',
+    homePhone: '8674561298',
+    workPhone: '8674561245'
   }
 ];
 

@@ -1,38 +1,41 @@
 import React, { Component } from 'react';
-import { Table, Icon } from 'semantic-ui-react';
-import type PaginationHandler from './PaginationHandler';
+import { Table } from 'semantic-ui-react';
+import PaginationHandler from './PaginationHandler';
+import Icon from '../../../elements/icons';
 
 
 type Props = {
-  paginationHandler: PaginationHandler
+  updateGridState: (Function) => void,
+  pageSize: number,
+  totalRecords: number,
+  colSpan: number
 }
 
 class PaginationControls extends Component<Props> {
   constructor(props: Props) {
     super(props);
-    this.paginationHandler = props.paginationHandler;
+    this.paginationHandler = new PaginationHandler(props.pageSize);
   }
+
+  componentDidMount() {
+    const { updateGridState } = this.props;
+    updateGridState(this.paginationHandler.firstPage);
+  }
+
 
   paginationHandler: PaginationHandler
 
   render() {
-    const {
-      firstPage, prev, next, lastPage, pageSize, totalRecords, currentStart,
-    }: PaginationHandler = this.props.paginationHandler;
+    const { updateGridState, totalRecords, colSpan } = this.props;
     return (
-      <Table.HeaderCell colSpan="3" textAlign="right">
-        <span>
-          <Icon link name="angle double left" onClick={() => firstPage(pageSize)} />
-          <Icon link name="angle left" onClick={() => prev(currentStart, pageSize)} />
-        </span>
-        <span>{currentStart}</span>
-        <span>{currentStart + pageSize}</span>
+      <Table.HeaderCell textAlign="right" colSpan={colSpan}>
+        <Icon link name="angle double left" onClick={() => updateGridState(this.paginationHandler.firstPage)} />
+        <Icon link name="angle left" onClick={() => updateGridState(this.paginationHandler.prev)} />
+        <span>{this.paginationHandler.getFirstRecordPosition()} - {this.paginationHandler.getLastRecordPosition()}</span>
         <span> of </span>
         <span>{totalRecords}</span>
-        <span>
-          <Icon link name="angle right" onClick={() => next(currentStart, pageSize)} />
-          <Icon link name="angle double right" onClick={() => lastPage(pageSize)} />
-        </span>
+        <Icon link name="angle right" onClick={() => updateGridState(this.paginationHandler.next)} />
+        <Icon link name="angle double right" onClick={() => updateGridState(this.paginationHandler.lastPage)} />
       </Table.HeaderCell>
     );
   }

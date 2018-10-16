@@ -7,6 +7,7 @@ type column = {
   name: string,
   editor?: ComponentType<*>,
   order: number,
+  formatter?: (val: any) => any,
   meta?: {
     required: boolean,
     label: string,
@@ -36,8 +37,9 @@ const columns: Array<column> = [
     name: 'Government ID',
     order: 2,
     sortComparator: 'default', // can be skipped and default should be used
-    // renderer should only be called if data is valid else render value as is with error
-    // renderer should only be called for non empty, non-null values
+    // formatter should only be called if data is valid else render value as is with error
+    // formatter should only be called for non empty, non-null values
+    /*not implemented yet*/
     validator: value => {
       if (value.length === 9) {
         return true;
@@ -46,14 +48,14 @@ const columns: Array<column> = [
     },
     // Can custom render cell values (might be key for redux form)
     formatter: value =>
-      `${value.substring(0, 3)}-${value.substring(3, 2)}-${value.substring(5)}`
+      `${value.substring(0, 3)}-${value.substring(3, 5)}-${value.substring(5)}`
   },
   {
     dataIndex: 'homePhone',
     name: 'Home Phone',
     order: 3
     // skipping default comparator
-    // skipping renderer, same value should be rendered
+    // skipping formatter, same value should be rendered
   },
   {
     dataIndex: 'workPhone',
@@ -62,7 +64,7 @@ const columns: Array<column> = [
     formatter: value => (
       <div>
         <Icon name="phone" />
-        {value && `(${value.substring(0, 3)})-${value.substring(3, 3)}-${value.substring(
+        {value && `(${value.substring(0, 3)})-${value.substring(3, 6)}-${value.substring(
           6
         )}`}
       </div>

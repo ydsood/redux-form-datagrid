@@ -9,11 +9,6 @@ import { LocalStore, RemoteStore } from './store';
 import type { LocalStore as LocalStoreType, RemoteStore as RemoteStoreType } from './store';
 
 type Props = {
-  /**
-   * @deprecated getData will be removed, not useful as parent component can pass data prop
-   * again to refresh data
-   */
-  getData?: Function,
   data: Array<Object>,
   editable?: boolean,
   columnModel: Array<Object>,
@@ -36,12 +31,6 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
     this.updateGridState = this.updateGridState.bind(this);
     this.store = new LocalStore(props.data);
     this.state = { data: this.store.getData() };
-  }
-
-  componentWillMount() {
-    if (typeof this.props.getData === 'function') {
-      this.props.getData();
-    }
   }
 
   componentDidUpdate(prevProps) {

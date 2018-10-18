@@ -17,7 +17,6 @@
 			}
 		],
 		"react",
-		"stage-1",
 		"flow"
 	],
 	"plugins": [

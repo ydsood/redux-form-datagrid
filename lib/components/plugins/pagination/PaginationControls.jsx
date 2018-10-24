@@ -22,6 +22,13 @@ class PaginationControls extends Component<Props> {
     updateGridState(this.paginationHandler.firstPage);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.totalRecords !== prevProps.totalRecords) {
+      const { updateGridState } = this.props;
+      updateGridState(this.paginationHandler.firstPage);
+    }
+  }
+
 
   paginationHandler: PaginationHandler
 

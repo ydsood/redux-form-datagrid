@@ -1,6 +1,7 @@
 // @flow
 import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react';
+import md5 from 'md5';
 import type { StaticDatagrid } from './datagrid';
 import ColumnModel from './columnModel';
 import type { ColumnModelType } from './columnModel';
@@ -13,14 +14,22 @@ type Props = {
   editable?: boolean,
   columnModel: Array<Object>,
   localStore?: boolean,
+  pageSize: number,
 };
 
+type StoreType = LocalStoreType | RemoteStoreType;
+
 type State = {
-  data: Array<Object>,
+  store: StoreType,
+  data: Array<Object>
 }
 
-type StoreType = LocalStoreType | RemoteStore;
 type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
+
+const generateObjectArrayHash = (arr: Array<Object>) => {
+  const dataString = arr.map(x => Object.values(x).join()).join();
+  return md5(dataString);
+};
 
 export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
   constructor(props: Props) {
@@ -29,23 +38,32 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
     this.buildTableHeaders = this.buildTableHeaders.bind(this);
     this.buildTableFooter = this.buildTableFooter.bind(this);
     this.updateGridState = this.updateGridState.bind(this);
-    this.store = new LocalStore(props.data);
-    this.state = { data: this.store.getData() };
+    this.state = { store: new LocalStore(this.props.data), data: this.props.data };
+  }
+
+  componentDidMount() {
+    this.setState({ store: new LocalStore(this.props.data) });
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.data !== this.props.data && this.props.localStore) {
-      this.store.clear();
-      this.store = new LocalStore(this.props.data);
+    if (prevProps.data !== this.props.data) {
+      if (this.props.localStore) {
+        this.state.store.clear();
+        // eslint-disable-next-line
+        this.setState({ store: new LocalStore(this.props.data) });
+      }
     }
   }
 
-  store: LocalStoreType | RemoteStoreType;
+  componentWillUnmount() {
+    this.state.store.clear();
+    this.setState({});
+  }
 
   updateGridState: Function;
 
   updateGridState(updateState: UpdateStateFunctionType) {
-    const data = updateState(this.store);
+    const data = updateState(this.state.store);
     if (data && Array.isArray(data)) {
       this.setState({ data });
     }
@@ -73,14 +91,16 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
   buildTableFooter: Function;
 
   buildTableFooter() {
-    const data = this.store.getData();
+    const data = this.state.store.getData();
     return (
       <Table.Footer fullWidth>
         <Table.Row>
           <PaginationControls
+            key={generateObjectArrayHash(data)}
             updateGridState={this.updateGridState}
             totalRecords={data && data.length}
             colSpan={this.colModel.get().length}
+            pageSize={this.props.pageSize}
           />
         </Table.Row>
       </Table.Footer>

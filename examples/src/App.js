@@ -9,6 +9,8 @@ import './App.css';
 import columnModel from './__mocks__/columnDef';
 import data from './__mocks__/columnData';
 import NoDataComponent from './NoDataComponent';
+import CellComponent from './component/CellComponent';
+
 
 type Props = any;
 
@@ -23,11 +25,16 @@ class App extends Component<Props> {
         </header>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+         </p>
         <Datagrid columnModel={columnModel} data={data} name="sample" localStore pageSize={5} title="Sample Grid with pagination" />
         <br />
         <br />
         <Datagrid columnModel={columnModel} data={[]} name="sample" localStore pageSize={5} noDataComponent={NoDataComponent} title="Grid with no data" />
+
+        <br />
+        <br />
+        <Datagrid columnModel={columnModel} data={data} name="sample" localStore pageSize={5} title="render customized cell component" cellComponent={CellComponent} />
+
       </div>
     );
   }

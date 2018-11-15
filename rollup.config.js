@@ -3,7 +3,6 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import uglify from 'rollup-plugin-uglify';
 import peerDeps from 'rollup-plugin-peer-deps-external';
-import filesize from 'rollup-plugin-filesize';
 
 
 export default {
@@ -27,6 +26,5 @@ export default {
     }),
     commonjs(),
     uglify,
-    filesize(),
   ],
 };

@@ -7,14 +7,17 @@ import ColumnModel from './columnModel';
 import type { ColumnModelType } from './columnModel';
 import { PaginationControls } from './plugins/pagination';
 import { LocalStore, RemoteStore } from './store';
-import type { LocalStore as LocalStoreType, RemoteStore as RemoteStoreType } from './store';
+import type {
+  LocalStore as LocalStoreType,
+  RemoteStore as RemoteStoreType,
+} from './store';
 
 type Props = {
   data: Array<Object>,
   editable?: boolean,
   columnModel: Array<Object>,
   localStore?: boolean,
-  pageSize: number,
+  pageSize: number
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -22,7 +25,7 @@ type StoreType = LocalStoreType | RemoteStoreType;
 type State = {
   store: StoreType,
   data: Array<Object>
-}
+};
 
 type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
 
@@ -38,7 +41,10 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
     this.buildTableHeaders = this.buildTableHeaders.bind(this);
     this.buildTableFooter = this.buildTableFooter.bind(this);
     this.updateGridState = this.updateGridState.bind(this);
-    this.state = { store: new LocalStore(this.props.data), data: this.props.data };
+    this.state = {
+      store: new LocalStore(this.props.data),
+      data: this.props.data,
+    };
   }
 
   componentDidMount() {
@@ -50,7 +56,7 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
       if (this.props.localStore) {
         this.state.store.clear();
         // eslint-disable-next-line
-        this.setState({ store: new LocalStore(this.props.data) });
+          this.setState({ store: new LocalStore(this.props.data) });
       }
     }
   }
@@ -60,65 +66,63 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
     this.setState({});
   }
 
-  updateGridState: Function;
+    updateGridState: Function;
 
-  updateGridState(updateState: UpdateStateFunctionType) {
-    const data = updateState(this.state.store);
-    if (data && Array.isArray(data)) {
-      this.setState({ data });
+    updateGridState(updateState: UpdateStateFunctionType) {
+      const data = updateState(this.state.store);
+      if (data && Array.isArray(data)) {
+        this.setState({ data });
+      }
     }
-  }
 
-  buildTableHeaders: Function;
+    buildTableHeaders: Function;
 
-  buildTableHeaders() {
-    return (
-      <Table.Header>
-        <Table.Row>
-          {this.props.editable && <Table.HeaderCell />}
-          {this.colModel
-            .get()
-            .map(item => (
+    buildTableHeaders() {
+      return (
+        <Table.Header>
+          <Table.Row>
+            {this.props.editable && <Table.HeaderCell />}
+            {this.colModel.get().map(item => (
               <Table.HeaderCell key={item.dataIndex}>
                 {item.name}
               </Table.HeaderCell>
             ))}
-        </Table.Row>
-      </Table.Header>
-    );
-  }
+          </Table.Row>
+        </Table.Header>
+      );
+    }
 
-  buildTableFooter: Function;
+    buildTableFooter: Function;
 
-  buildTableFooter() {
-    const data = this.state.store.getData();
-    return (
-      <Table.Footer fullWidth>
-        <Table.Row>
-          <PaginationControls
-            key={generateObjectArrayHash(data)}
-            updateGridState={this.updateGridState}
-            totalRecords={data && data.length}
-            colSpan={this.colModel.get().length}
-            pageSize={this.props.pageSize}
-          />
-        </Table.Row>
-      </Table.Footer>
-    );
-  }
+    buildTableFooter() {
+      const data = this.state.store.getData();
+      return (
+        <Table.Footer fullWidth>
+          <Table.Row>
+            <PaginationControls
+              key={generateObjectArrayHash(data)}
+              updateGridState={this.updateGridState}
+              totalRecords={data && data.length}
+              colSpan={this.colModel.get().length}
+              pageSize={this.props.pageSize}
+            />
+          </Table.Row>
+        </Table.Footer>
+      );
+    }
 
-  colModel: ColumnModelType;
+    colModel: ColumnModelType;
 
-  render() {
-    const { columnModel: _, data, ...rest } = this.props;
-    return (
-      <Grid
-        columnModel={this.colModel}
-        buildTableHeaders={this.buildTableHeaders}
-        buildTableFooter={this.buildTableFooter}
-        data={this.state.data}
-        {...rest}
-      />
-    );
-  }
+    render() {
+      const { columnModel: _, data, ...rest } = this.props;
+      return (
+        <Grid
+          columnModel={this.colModel}
+          buildTableHeaders={this.buildTableHeaders}
+          buildTableFooter={this.buildTableFooter}
+          data={this.state.data}
+          {...rest}
+        />
+      );
+    }
 };

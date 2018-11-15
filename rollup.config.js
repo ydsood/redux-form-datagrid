@@ -26,6 +26,5 @@ export default {
     }),
     commonjs(),
     uglify,
-
   ],
 };

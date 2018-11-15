@@ -17,7 +17,8 @@ type Props = {
   editable?: boolean,
   columnModel: Array<Object>,
   localStore?: boolean,
-  pageSize: number
+  pageSize: number,
+  cellComponent: Component<*>
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -82,11 +83,14 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
         <Table.Header>
           <Table.Row>
             {this.props.editable && <Table.HeaderCell />}
-            {this.colModel.get().map(item => (
-              <Table.HeaderCell key={item.dataIndex}>
-                {item.name}
-              </Table.HeaderCell>
-            ))}
+            {
+              this.props.cellComponent
+                ? <Table.HeaderCell />
+                : this.colModel.get().map(item => (
+                  <Table.HeaderCell key={item.dataIndex}>
+                    {item.name}
+                  </Table.HeaderCell>
+                ))}
           </Table.Row>
         </Table.Header>
       );

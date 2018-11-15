@@ -27,7 +27,24 @@ export default class TableRow extends Component<Object> {
     return cells;
   }
 
+  buildCustomizedCell() {
+    const { input, data, cellComponent: CellComponent } = this.props;
+    const renderData = input ? input.value : data;
+    return (
+      <Table.Cell>
+        <CellComponent {...renderData} />
+      </Table.Cell>
+    );
+  }
+
   render() {
-    return <Table.Row>{this.buildRowCells()}</Table.Row>;
+    const { cellComponent } = this.props;
+    return (
+      <Table.Row>
+        {!cellComponent
+          ? this.buildRowCells()
+          : this.buildCustomizedCell()}
+      </Table.Row>
+    );
   }
 }

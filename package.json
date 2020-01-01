@@ -77,7 +77,7 @@
     "rollup-plugin-commonjs": "^9.1.8",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
-    "rollup-plugin-uglify": "^6.0.0"
+    "rollup-plugin-uglify": "^6.0.4"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

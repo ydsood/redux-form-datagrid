@@ -1,8 +1,5 @@
 //@flow
 import React, { Component } from 'react';
-import { Provider } from 'react-redux';
-import promiseMiddleware from 'redux-promise';
-import { createStore, applyMiddleware } from 'redux';
 import Datagrid, { PaginationHandler } from 'redux-form-datagrid';
 import logo from './logo.svg';
 import './App.css';
@@ -10,6 +7,7 @@ import columnModel from './__mocks__/columnDef';
 import data from './__mocks__/columnData';
 import NoDataComponent from './NoDataComponent';
 import CellComponent from './component/CellComponent';
+import BeneForm from './component/BeneForm';
 
 
 type Props = any;
@@ -34,6 +32,10 @@ class App extends Component<Props> {
         <br />
         <br />
         <Datagrid columnModel={columnModel} data={data} name="sample" localStore pageSize={5} title="render customized cell component" cellComponent={CellComponent} />
+
+        <br />
+        <br />
+        <BeneForm />
 
       </div>
     );

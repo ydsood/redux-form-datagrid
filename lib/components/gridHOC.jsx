@@ -6,6 +6,7 @@ import type { StaticDatagrid } from './datagrid';
 import ColumnModel from './columnModel';
 import type { ColumnModelType } from './columnModel';
 import { PaginationControls } from './plugins/pagination';
+import { EditControls } from './plugins/edit';
 import { LocalStore, RemoteStore } from './store';
 import type {
   LocalStore as LocalStoreType,
@@ -15,10 +16,11 @@ import type {
 type Props = {
   data: Array<Object>,
   editable?: boolean,
+  startEditingContent: Function,
   columnModel: Array<Object>,
   localStore?: boolean,
   pageSize: number,
-  cellComponent: Component<*>
+  cellComponent: Component<*>,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -52,12 +54,12 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
     this.setState({ store: new LocalStore(this.props.data) });
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps:Props) {
     if (prevProps.data !== this.props.data) {
-      if (this.props.localStore) {
+      if (this.state.store && this.state.store instanceof LocalStore) {
         this.state.store.clear();
         // eslint-disable-next-line
-          this.setState({ store: new LocalStore(this.props.data) });
+        this.setState({ store: new LocalStore(this.props.data) });
       }
     }
   }
@@ -82,7 +84,6 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
       return (
         <Table.Header>
           <Table.Row>
-            {this.props.editable && <Table.HeaderCell />}
             {
               this.props.cellComponent
                 ? <Table.HeaderCell />
@@ -100,9 +101,20 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
 
     buildTableFooter() {
       const data = this.state.store.getData();
+      const {
+        editable, startEditingContent,
+      } = this.props;
       return (
         <Table.Footer fullWidth>
           <Table.Row>
+            {
+              editable
+              && (
+              <EditControls
+                startEditingContent={startEditingContent}
+              />
+              )
+            }
             <PaginationControls
               key={generateObjectArrayHash(data)}
               updateGridState={this.updateGridState}

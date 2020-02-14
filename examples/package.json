@@ -8,6 +8,7 @@
     "react-redux": "^5.0.7",
     "react-scripts": "1.1.5",
     "redux": "^4.0.1",
+    "redux-form": "^7.4.0",
     "redux-promise": "^0.6.0",
     "semantic-ui-css": "^2.4.0",
     "semantic-ui-react": "^0.82.5"
@@ -16,7 +17,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "nodemon": "nodemon start"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

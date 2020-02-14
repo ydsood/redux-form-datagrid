@@ -2,7 +2,7 @@ import React from 'react';
 import type { ComponentType } from 'react';
 import { Icon } from 'semantic-ui-react';
 
-type column = {
+export type column = {
   dataIndex: string,
   name: string,
   editor?: ComponentType<*>,

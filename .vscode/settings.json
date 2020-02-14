@@ -7,5 +7,8 @@
   "eslint.autoFixOnSave": true,
   "flow.useNPMPackagedFlow": true,
   "javascript.validate.enable": false,
-  "editor.formatOnSave": false
+  "editor.formatOnSave": false,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  }
 }

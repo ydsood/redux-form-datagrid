@@ -3,6 +3,11 @@ import React from 'react';
 import type { FormFieldProps } from 'redux-form';
 import { Input, Form, Message } from 'semantic-ui-react';
 
+export const RequiredFieldValidator = (value: *) => {
+  if (!value && (value !== 0)) return 'Required';
+  return undefined;
+};
+
 // eslint-disable-next-line react/prefer-stateless-function
 export default class SemanticReduxFormField extends React.Component<FormFieldProps> {
   render() {

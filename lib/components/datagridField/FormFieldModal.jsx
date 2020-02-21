@@ -25,21 +25,38 @@ class FormFieldModal extends React.Component<Props> {
     const fieldToRender = chunkedColumnModel.map(columns => (
       <Form.Group widths="equal">
         {
-          columns.map(item => (
-            <Field
-              name={`${fieldName}.${item.dataIndex}`}
-              component={DefaultFormField}
-              label={(item.meta && item.meta.label) || item.name}
-              validate={RequiredFieldValidator}
-            />
-          ))
+          columns.map((item) => {
+            let field = <div />;
+            const label = (item.meta && item.meta.label) || item.name;
+            let columnProps = _.cloneDeep(item);
+            const meta = Object.assign(columnProps.meta, { label });
+            columnProps = Object.assign(columnProps, { props: meta });
+            if (!item.editor) {
+              field = (
+                <Field
+                  {...columnProps}
+                  name={`${fieldName}.${item.dataIndex}`}
+                  component={DefaultFormField}
+                  validate={RequiredFieldValidator}
+                />
+              );
+            } else {
+              const FieldComponent = item.editor;
+              field = (
+                <FieldComponent
+                  {...columnProps}
+                  name={`${fieldName}.${item.dataIndex}`}
+                />
+              );
+            }
+            return field;
+          })
         }
       </Form.Group>
     ));
     const segmentColorIndex = Math.floor(Math.random() * Math.floor(colors.length));
     return (
       <Segment color={colors[segmentColorIndex]}>
-        <Header size="small">{`# ${index + 1}`}</Header>
         <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
         {fieldToRender}
       </Segment>

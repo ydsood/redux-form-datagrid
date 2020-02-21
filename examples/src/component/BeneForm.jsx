@@ -4,6 +4,7 @@ import { Form, Icon, Button } from 'semantic-ui-react';
 import { FieldArray, reduxForm } from 'redux-form';
 import type { column } from './__mocks__/columnDef';
 import NoDataComponent from '../NoDataComponent';
+import CustomSSNField from './CustomSSNField';
 
 const columnModel:Array<column> = [
   {
@@ -27,6 +28,7 @@ const columnModel:Array<column> = [
     name: 'Government ID',
     order: 2,
     sortComparator: 'default',
+    editor: CustomSSNField,
     formatter: value =>
       value && `${value.substring(0, 3)}-${value.substring(3, 5)}-${value.substring(5)}`,
     meta:{

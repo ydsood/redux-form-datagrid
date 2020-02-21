@@ -16,8 +16,6 @@ type Props = {
   removeContent: Function,
 }
 
-const colors = ['red', 'orange', 'yellow', 'olive', 'green', 'teal', 'blue', 'violet', 'purple', 'pink', 'brown', 'grey'];
-
 class FormFieldModal extends React.Component<Props> {
   buildFormFieldsModal(fieldName: string, index: number) {
     const { columnModel, removeContent } = this.props;
@@ -29,7 +27,7 @@ class FormFieldModal extends React.Component<Props> {
             let field = <div />;
             const label = (item.meta && item.meta.label) || item.name;
             let columnProps = _.cloneDeep(item);
-            const meta = Object.assign(columnProps.meta, { label });
+            const meta = Object.assign(columnProps.meta || {}, { label });
             columnProps = Object.assign(columnProps, { props: meta });
             if (!item.editor) {
               field = (
@@ -54,9 +52,8 @@ class FormFieldModal extends React.Component<Props> {
         }
       </Form.Group>
     ));
-    const segmentColorIndex = Math.floor(Math.random() * Math.floor(colors.length));
     return (
-      <Segment color={colors[segmentColorIndex]}>
+      <Segment color="black">
         <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
         {fieldToRender}
       </Segment>

@@ -34,6 +34,9 @@ type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
 
 const generateObjectArrayHash = (arr: Array<Object>) => {
   const dataString = arr.map(x => Object.values(x).join()).join();
+  console.log(`generateObjectArrayHash:data ${data}`);
+  console.log(`generateObjectArrayHash:dataString ${dataString}`);
+  console.log(`generateObjectArrayHash:hash ${md5(dataString)}`);
   return md5(dataString);
 };
 
@@ -73,6 +76,7 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
 
     updateGridState(updateState: UpdateStateFunctionType) {
       const data = updateState(this.state.store);
+      console.log(`updateGridState: ${data}`);
       if (data && Array.isArray(data)) {
         this.setState({ data });
       }

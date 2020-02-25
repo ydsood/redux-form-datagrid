@@ -32,10 +32,7 @@ type State = {
 
 type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
 
-const generateObjectArrayHash = (arr: Array<Object>) => {
-  const dataString = arr.map(x => Object.values(x).join()).join();
-  return md5(dataString);
-};
+const generateObjectArrayHash = (arr: Array<Object>) => md5(JSON.stringify(arr));
 
 export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
   constructor(props: Props) {

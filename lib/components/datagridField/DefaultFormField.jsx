@@ -1,10 +1,12 @@
 // @flow
-import React from 'react';
+import React, { Fragment } from 'react';
 import type { FormFieldProps } from 'redux-form';
 import { Input, Form, Message } from 'semantic-ui-react';
 
 export const RequiredFieldValidator = (value: *) => {
-  if (!value && (value !== 0)) return 'Required';
+  if (!value && value !== 0) {
+    return 'Required';
+  }
   return undefined;
 };
 
@@ -26,21 +28,23 @@ export default class SemanticReduxFormField extends React.Component<FormFieldPro
     const displayValue = props.hidden ? 'none' : '';
     const name = props.name ? props.name : input.name;
     return (
-      <Form.Field
-        width={props.width}
-        name={name}
-        error={touched && error}
-        required={required}
-        style={{ display: displayValue }}
-      >
-        <label>
-          {label}
+      <Fragment>
+        <Form.Field
+          width={props.width}
+          name={name}
+          error={touched && error}
+          required={required}
+          style={{ display: displayValue }}
+        >
+          <label>
+            {label}
+          </label>
           <As
             {...input}
           />
-        </label>
-        {errorBlock}
-      </Form.Field>
+          {errorBlock}
+        </Form.Field>
+      </Fragment>
     );
   }
 }

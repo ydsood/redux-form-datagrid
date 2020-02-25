@@ -2,6 +2,8 @@
 import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react';
 import md5 from 'md5';
+import _ from "lodash";
+
 import type { StaticDatagrid } from './datagrid';
 import ColumnModel from './columnModel';
 import type { ColumnModelType } from './columnModel';
@@ -58,6 +60,10 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
         // eslint-disable-next-line
         this.setState({ store: new LocalStore(this.props.data) });
       }
+    }
+
+    if (!_.isEqual(prevProps.columnModel, this.props.columnModel)) {
+      this.colModel = new ColumnModel(this.props.columnModel);
     }
   }
 

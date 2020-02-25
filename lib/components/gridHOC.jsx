@@ -32,13 +32,7 @@ type State = {
 
 type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
 
-const generateObjectArrayHash = (arr: Array<Object>) => {
-  const dataString = JSON.stringify(arr);
-  console.log(`generateObjectArrayHash:arr ${arr}`);
-  console.log(`generateObjectArrayHash:dataString ${dataString}`);
-  console.log(`generateObjectArrayHash:hash ${md5(dataString)}`);
-  return md5(dataString);
-};
+const generateObjectArrayHash = (arr: Array<Object>) => md5(JSON.stringify(arr));
 
 export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
   constructor(props: Props) {
@@ -76,7 +70,6 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
 
     updateGridState(updateState: UpdateStateFunctionType) {
       const data = updateState(this.state.store);
-      console.log(`updateGridState: ${data}`);
       if (data && Array.isArray(data)) {
         this.setState({ data });
       }

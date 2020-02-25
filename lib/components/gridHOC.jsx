@@ -34,7 +34,7 @@ type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
 
 const generateObjectArrayHash = (arr: Array<Object>) => {
   const dataString = arr.map(x => Object.values(x).join()).join();
-  console.log(`generateObjectArrayHash:data ${data}`);
+  console.log(`generateObjectArrayHash:arr ${arr}`);
   console.log(`generateObjectArrayHash:dataString ${dataString}`);
   console.log(`generateObjectArrayHash:hash ${md5(dataString)}`);
   return md5(dataString);

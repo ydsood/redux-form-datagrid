@@ -83,7 +83,7 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
           <Table.Row>
             {
               this.props.cellComponent
-                ? <Table.HeaderCell />
+                ? <Table.HeaderCell colSpan={this.colModel.get().length} />
                 : this.colModel.get().map(item => (
                   <Table.HeaderCell key={item.dataIndex}>
                     {item.name}

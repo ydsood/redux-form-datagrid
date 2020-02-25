@@ -32,7 +32,10 @@ type State = {
 
 type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
 
-const generateObjectArrayHash = (arr: Array<Object>) => md5(JSON.stringify(arr));
+const generateObjectArrayHash = (
+  arr: Array<Object>, 
+  colModel: Array<Object>,
+) => md5(`${JSON.stringify(arr)},${JSON.stringify(colModel)}`);
 
 export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
   constructor(props: Props) {
@@ -113,7 +116,7 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
               )
             }
             <PaginationControls
-              key={generateObjectArrayHash(data)}
+              key={generateObjectArrayHash(data, this.colModel)}
               updateGridState={this.updateGridState}
               totalRecords={data && data.length}
               colSpan={this.colModel.get().length}

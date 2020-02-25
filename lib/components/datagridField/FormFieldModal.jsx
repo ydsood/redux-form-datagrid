@@ -1,7 +1,7 @@
 // @flow
 import React from 'react';
 import {
-  Form, Modal, Button, Segment, Label, Header,
+  Form, Modal, Button, Segment, Label,
 } from 'semantic-ui-react';
 import { Field } from 'redux-form';
 import _ from 'lodash';
@@ -29,13 +29,19 @@ class FormFieldModal extends React.Component<Props> {
             let columnProps = _.cloneDeep(item);
             const meta = Object.assign(columnProps.meta || {}, { label });
             columnProps = Object.assign(columnProps, { props: meta });
+            delete columnProps.meta;
             if (!item.editor) {
+              const required = item.meta && item.meta.required;
+              let validate = [];
+              if (required) {
+                validate = [RequiredFieldValidator];
+              }
               field = (
                 <Field
                   {...columnProps}
                   name={`${fieldName}.${item.dataIndex}`}
                   component={DefaultFormField}
-                  validate={RequiredFieldValidator}
+                  validate={validate}
                 />
               );
             } else {

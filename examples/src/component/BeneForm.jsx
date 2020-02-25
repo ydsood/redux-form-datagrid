@@ -12,7 +12,8 @@ const columnModel:Array<column> = [
     name: 'First Name',
     order: 1,
     meta:{
-      label:"First Name"
+      label:"First Name",
+      required: true,
     }
   },
   {
@@ -20,7 +21,8 @@ const columnModel:Array<column> = [
     name: 'Last Name',
     order: 2,
     meta:{
-      label:"Last Name"
+      label:"Last Name",
+      required: true,
     }
   },
   {
@@ -55,7 +57,6 @@ const columnModel:Array<column> = [
 
 const beneForm = (props) => {
   const { handleSubmit, pristine, reset, submitting } = props;
-  console.log(DatagridField);
   return(
     <Form onSubmit={handleSubmit(data => alert(JSON.stringify(data)))}>
       <FieldArray component={DatagridField} name="beneficiaryGrid" title="Beneficiary Form" columnModel={columnModel} noDataComponent={NoDataComponent} />

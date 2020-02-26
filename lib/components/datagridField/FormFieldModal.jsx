@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import React, { Fragment } from 'react';
 import {
   Form, Modal, Button, Segment, Label,
 } from 'semantic-ui-react';
@@ -73,34 +73,39 @@ class FormFieldModal extends React.Component<Props> {
     const formFields = fields
       .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index));
     return (
-      <Modal
-        open={open}
-        closeOnEscape={false}
-        closeOnDimmerClick={false}
-        onClose={doneEditingContent}
-      >
-        <Modal.Content open={open}>
-          <Form>
-            { formFields }
-          </Form>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button
-            onClick={addContent}
-            positive
-            labelPosition="right"
-            icon="plus"
-            content="Add"
-          />
-          <Button
-            onClick={doneEditingContent}
-            positive
-            labelPosition="right"
-            icon="checkmark"
-            content="Done"
-          />
-        </Modal.Actions>
-      </Modal>
+      <Fragment>
+        <Modal
+          open={open}
+          closeOnEscape={false}
+          closeOnDimmerClick={false}
+          onClose={doneEditingContent}
+        >
+          <Modal.Content open={open}>
+            <Form>
+              { formFields }
+            </Form>
+          </Modal.Content>
+          <Modal.Actions>
+            <Button
+              onClick={addContent}
+              positive
+              labelPosition="right"
+              icon="plus"
+              content="Add"
+            />
+            <Button
+              onClick={doneEditingContent}
+              positive
+              labelPosition="right"
+              icon="checkmark"
+              content="Done"
+            />
+          </Modal.Actions>
+        </Modal>
+        <Segment hidden>
+          { formFields }
+        </Segment>
+      </Fragment>
     );
   }
 }

@@ -5,6 +5,7 @@ import {
 } from 'semantic-ui-react';
 import { Field } from 'redux-form';
 import _ from 'lodash';
+import { chunkConditional } from '../../util';
 import DefaultFormField, { RequiredFieldValidator } from './DefaultFormField';
 
 type Props = {
@@ -19,7 +20,7 @@ type Props = {
 class FormFieldModal extends React.Component<Props> {
   buildFormFieldsModal(fieldName: string, index: number) {
     const { columnModel, removeContent } = this.props;
-    const chunkedColumnModel = _.chunk(columnModel, 2);
+    const chunkedColumnModel = chunkConditional(columnModel, 2, column => !!column.singleField);
     const fieldToRender = chunkedColumnModel.map(columns => (
       <Form.Group widths="equal">
         {

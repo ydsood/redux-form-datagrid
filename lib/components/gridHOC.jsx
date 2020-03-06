@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react';
 import md5 from 'md5';
 import _ from "lodash";
+import { inspect } from "util";
 
 import type { StaticDatagrid } from './datagrid';
 import ColumnModel from './columnModel';
@@ -34,7 +35,7 @@ type State = {
 
 type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
 
-const generateObjectArrayHash = (arr: Array<Object>) => md5(JSON.stringify(arr));
+const generateObjectArrayHash = (arr: Array<Object>) => md5(inspect(arr));
 
 export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
   constructor(props: Props) {

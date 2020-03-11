@@ -10,6 +10,7 @@ import DefaultFormField, { RequiredFieldValidator } from './DefaultFormField';
 
 type Props = {
   fields: *,
+  error: *,
   columnModel: Array<Object>,
   open: boolean,
   doneEditingContent: Function,
@@ -75,7 +76,7 @@ class FormFieldModal extends React.Component<Props> {
 
   render() {
     const {
-      fields, open, doneEditingContent, addContent,
+      fields, open, doneEditingContent, addContent, error,
     } = this.props;
     const formFields = fields
       .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index, fields));
@@ -88,6 +89,7 @@ class FormFieldModal extends React.Component<Props> {
           onClose={doneEditingContent}
         >
           <Modal.Content open={open}>
+            { error }
             <Form>
               { formFields }
             </Form>

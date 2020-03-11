@@ -18,7 +18,7 @@ type Props = {
 }
 
 class FormFieldModal extends React.Component<Props> {
-  buildFormFieldsModal(fieldName: string, index: number) {
+  buildFormFieldsModal(fieldName: string, index: number, fields: *) {
     const { columnModel, removeContent } = this.props;
     const chunkedColumnModel = chunkConditional(columnModel, 2, column => !!column.singleField);
     const fieldToRender = chunkedColumnModel.map(columns => (
@@ -28,7 +28,13 @@ class FormFieldModal extends React.Component<Props> {
             let field = <div />;
             const label = (item.meta && item.meta.label) || item.name;
             let columnProps = _.cloneDeep(item);
-            const meta = Object.assign(columnProps.meta || {}, { label });
+            const { fieldMetaResolver } = columnProps;
+            let meta = columnProps.meta || {};
+            if (fieldMetaResolver && typeof fieldMetaResolver === 'function') {
+              meta = fieldMetaResolver(columnModel, fields.get(index), item.dataIndex) || meta;
+              meta = Object.assign(meta, { label });
+            }
+            meta = Object.assign(meta, { label });
             columnProps = Object.assign(columnProps, { props: meta });
             delete columnProps.meta;
             if (!item.editor) {
@@ -72,7 +78,7 @@ class FormFieldModal extends React.Component<Props> {
       fields, open, doneEditingContent, addContent,
     } = this.props;
     const formFields = fields
-      .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index));
+      .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index, fields));
     return (
       <Fragment>
         <Modal

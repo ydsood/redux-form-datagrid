@@ -5,7 +5,7 @@ import {
 } from 'semantic-ui-react';
 import { Field } from 'redux-form';
 import _ from 'lodash';
-import { chunkConditional } from '../../util';
+import { buildVariableSizeFieldSection } from '../../util';
 import DefaultFormField, { RequiredFieldValidator } from './DefaultFormField';
 
 type Props = {
@@ -21,15 +21,20 @@ type Props = {
 class FormFieldModal extends React.Component<Props> {
   buildFormFieldsModal(fieldName: string, index: number, fields: *) {
     const { columnModel, removeContent } = this.props;
-    const chunkedColumnModel = chunkConditional(columnModel, 2, column => !!column.singleField);
+    const chunkedColumnModel = buildVariableSizeFieldSection(columnModel);
+    // chunkConditional(columnModel, 2, column => !!column.singleField);
     const fieldToRender = chunkedColumnModel.map(columns => (
-      <Form.Group widths="equal">
+      <Form.Group>
         {
           columns.map((item) => {
             let field = <div />;
             const label = (item.meta && item.meta.label) || item.name;
             let columnProps = _.cloneDeep(item);
             const { fieldMetaResolver } = columnProps;
+            let width = 16;
+            if (item.meta && item.meta.width) {
+              width = item.meta.width;
+            }
             let meta = columnProps.meta || {};
             if (fieldMetaResolver && typeof fieldMetaResolver === 'function') {
               meta = fieldMetaResolver(columnModel, fields.get(index), item.dataIndex) || meta;
@@ -50,6 +55,7 @@ class FormFieldModal extends React.Component<Props> {
                   name={`${fieldName}.${item.dataIndex}`}
                   component={DefaultFormField}
                   validate={validate}
+                  width={width}
                 />
               );
             } else {

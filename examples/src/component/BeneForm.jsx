@@ -14,6 +14,7 @@ const columnModel:Array<column> = [
     meta:{
       label:"First Name",
       required: true,
+      width: 4,
     }
   },
   {
@@ -23,18 +24,20 @@ const columnModel:Array<column> = [
     meta:{
       label:"Last Name",
       required: true,
+      width: 12,
     }
   },
   {
     dataIndex: 'govtID',
     name: 'Government ID',
-    order: 2,
+    order: 4,
     sortComparator: 'default',
     editor: CustomSSNField,
     formatter: value =>
       value && `${value.substring(0, 3)}-${value.substring(3, 5)}-${value.substring(5)}`,
     meta:{
-      label:'Government ID'
+      label:'Government ID',
+      width: 4,
     }
   },
   {
@@ -50,7 +53,7 @@ const columnModel:Array<column> = [
       </div>
     ),
     meta:{
-      label:'Phone'
+      label:'Phone',
     }
   }
 ];

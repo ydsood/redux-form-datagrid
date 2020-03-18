@@ -29,12 +29,16 @@ export default class TableRow extends Component<Object> {
 
   buildCustomizedCell() {
     const {
-      input, data, cellComponent: CellComponent, columnModel,
+      input, data, cellComponent: CellComponent, columnModel, titleFormatter,
     } = this.props;
     const renderData = input ? input.value : data;
     return (
       <Table.Cell colSpan={columnModel.get().length}>
-        <CellComponent {...renderData} columnModel={columnModel.get()} />
+        <CellComponent
+          titleFormatter={titleFormatter}
+          {...renderData}
+          columnModel={columnModel.get()}
+        />
       </Table.Cell>
     );
   }

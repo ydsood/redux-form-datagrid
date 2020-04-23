@@ -30,16 +30,18 @@ class FormFieldModal extends React.Component<Props> {
             let field = <div />;
             const label = (item.meta && item.meta.label) || item.name;
             let columnProps = _.cloneDeep(item);
-            const { fieldMetaResolver } = columnProps;
+            const { fieldMetaResolver = [] } = columnProps;
             let width = 16;
             if (item.meta && item.meta.width) {
               width = item.meta.width;
             }
             let meta = columnProps.meta || {};
-            if (fieldMetaResolver && typeof fieldMetaResolver === 'function') {
-              meta = fieldMetaResolver(columnModel, fields.get(index), item.dataIndex) || meta;
-              meta = Object.assign(meta, { label });
+
+            for (let i = 0; i < fieldMetaResolver.length; i += 1) {
+              const fieldResolver = fieldMetaResolver[i];
+              if (typeof fieldResolver === 'function') meta = fieldResolver(columnModel, fields.get(index), item.dataIndex) || meta;
             }
+
             meta = Object.assign(meta, { label });
             columnProps = Object.assign(columnProps, { props: meta });
             delete columnProps.meta;

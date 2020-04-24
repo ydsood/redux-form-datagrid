@@ -62,7 +62,7 @@ const beneForm = (props) => {
   const { handleSubmit, pristine, reset, submitting } = props;
   return(
     <Form onSubmit={handleSubmit(data => alert(JSON.stringify(data)))}>
-      <FieldArray component={DatagridField} name="beneficiaryGrid" title="Beneficiary Form" columnModel={columnModel} noDataComponent={NoDataComponent} />
+      <FieldArray component={DatagridField} name="beneficiaryGrid" title="Beneficiary Form" editButtonLabel="Edit Beneficiary" columnModel={columnModel} noDataComponent={NoDataComponent} />
       <Button type="submit" />
     </Form>
   );

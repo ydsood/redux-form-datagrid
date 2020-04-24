@@ -24,7 +24,7 @@ type Props = {
   localStore?: boolean,
   pageSize: number,
   cellComponent: Component<*>,
-  editButtonLabel:string,
+  editButtonLabel?: "",
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;

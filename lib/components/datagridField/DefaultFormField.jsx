@@ -23,8 +23,8 @@ export default class SemanticReduxFormField extends React.Component<FormFieldPro
       ...props
     } = this.props;
     const errorBlock = touched
-      && ((error && <Message error content={error} />)
-        || (warning && <Message warning content={warning} />));
+      && ((error && <Message error visible content={error} />)
+        || (warning && <Message warning visible content={warning} />));
     const displayValue = props.hidden ? 'none' : '';
     const name = props.name ? props.name : input.name;
     return (

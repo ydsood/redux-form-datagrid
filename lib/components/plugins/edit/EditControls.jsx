@@ -4,6 +4,7 @@ import Icon from '../../../elements/icons';
 
 type Props = {
   startEditingContent: Function,
+  editButtonLabel: string,
 }
 
 class EditControls extends Component<Props> {
@@ -18,9 +19,16 @@ class EditControls extends Component<Props> {
   }
 
   render() {
+    const { editButtonLabel } = this.props;
     return (
       <Table.HeaderCell textAlign="left">
         <Icon link name="pencil" onClick={() => this.edit()} />
+        {
+          editButtonLabel
+          && (
+            <span>{editButtonLabel}</span>
+          )
+        }
       </Table.HeaderCell>
     );
   }

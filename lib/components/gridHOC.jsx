@@ -24,6 +24,7 @@ type Props = {
   localStore?: boolean,
   pageSize: number,
   cellComponent: Component<*>,
+  editButtonLabel:string,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -106,7 +107,7 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
     buildTableFooter() {
       const data = this.state.store.getData();
       const {
-        editable, startEditingContent,
+        editable, startEditingContent, editButtonLabel,
       } = this.props;
       return (
         <Table.Footer fullWidth>
@@ -116,6 +117,7 @@ export default (Grid: StaticDatagrid) => class extends Component<Props, State> {
               && (
               <EditControls
                 startEditingContent={startEditingContent}
+                editButtonLabel={editButtonLabel}
               />
               )
             }

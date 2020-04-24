@@ -4,7 +4,7 @@ import Icon from '../../../elements/icons';
 
 type Props = {
   startEditingContent: Function,
-  editButtonLabel: string,
+  editButtonLabel?: string,
 }
 
 class EditControls extends Component<Props> {
@@ -34,5 +34,8 @@ class EditControls extends Component<Props> {
   }
 }
 
+EditControls.defaultProps = {
+  editButtonLabel: '',
+};
 
 export default EditControls;

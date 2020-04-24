@@ -2,15 +2,15 @@
 import React, { Component } from 'react';
 import { Table } from 'semantic-ui-react';
 import md5 from 'md5';
-import _ from "lodash";
-import { inspect } from "util";
+import _ from 'lodash';
+import { inspect } from 'util';
 
 import type { StaticDatagrid } from './datagrid';
 import ColumnModel from './columnModel';
 import type { ColumnModelType } from './columnModel';
 import { PaginationControls } from './plugins/pagination';
 import { EditControls } from './plugins/edit';
-import { LocalStore, RemoteStore } from './store';
+import { LocalStore } from './store';
 import type {
   LocalStore as LocalStoreType,
   RemoteStore as RemoteStoreType,
@@ -21,7 +21,6 @@ type Props = {
   editable?: boolean,
   startEditingContent: Function,
   columnModel: Array<Object>,
-  localStore?: boolean,
   pageSize: number,
   cellComponent: Component<*>,
   editButtonLabel?: string,

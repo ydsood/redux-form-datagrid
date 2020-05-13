@@ -29,12 +29,14 @@ class FormFieldModal extends React.Component<Props> {
         const label = (item.meta && item.meta.label) || item.name;
         let columnProps = _.cloneDeep(item);
         const { fieldMetaResolver = [] } = columnProps;
+        const colModelCopy = _.cloneDeep(columnModel);
         let meta = columnProps.meta || {};
         delete columnProps.meta;
 
         for (let i = 0; i < fieldMetaResolver.length; i += 1) {
           const fieldResolver = fieldMetaResolver[i];
-          if (typeof fieldResolver === 'function') meta = fieldResolver(columnModel, fields.get(index), item.dataIndex) || meta;
+
+          if (typeof fieldResolver === 'function') meta = fieldResolver(colModelCopy, fields.get(index), item.dataIndex) || meta;
         }
 
         meta = { ...meta, label };

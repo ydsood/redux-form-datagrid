@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table } from 'semantic-ui-react';
+import { Table, Button } from 'semantic-ui-react';
 import Icon from '../../../elements/icons';
 
 type Props = {
@@ -18,17 +18,23 @@ class EditControls extends Component<Props> {
     startEditingContent();
   }
 
-  render() {
+  editButton() {
     const { editButtonLabel } = this.props;
+    if (editButtonLabel) {
+      return (
+        <Button basic icon labelPosition="left" onClick={() => this.edit()}>
+          <Icon name="pencil" />
+          {editButtonLabel}
+        </Button>
+      );
+    }
+    return <Icon link name="pencil" onClick={() => this.edit()} />;
+  }
+
+  render() {
     return (
       <Table.HeaderCell textAlign="left">
-        <Icon link name="pencil" onClick={() => this.edit()} />
-        {
-          editButtonLabel
-          && (
-            <span>{editButtonLabel}</span>
-          )
-        }
+        {this.editButton()}
       </Table.HeaderCell>
     );
   }

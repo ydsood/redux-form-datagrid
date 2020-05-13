@@ -12,8 +12,8 @@ const customSSNDisplayField = ({input, meta, ...rest}:FormFieldProps & Props) =>
   const { error:errorMessage, touched, warning:warningMessage } = meta;
   const { name } = input;
   const errorBlock = touched
-  && ((errorMessage && <p><Icon size="tiny" name="exclamation" color="red" inverted circular />{errorMessage}</p>)
-    || (warningMessage && <Message warning content={warningMessage} />));
+  && ((errorMessage && <Message error visible content={errorMessage} />)
+    || (warningMessage && <Message warning visible content={warningMessage} />));
   return (
     <Form.Field
       name={name}

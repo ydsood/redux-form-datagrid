@@ -22,7 +22,7 @@ class EditControls extends Component<Props> {
     const { editButtonLabel } = this.props;
     if (editButtonLabel) {
       return (
-        <Button basic icon labelPosition="left" onClick={() => this.edit()}>
+        <Button basic icon labelPosition="left" onClick={() => this.edit()} className="grid-edit-button">
           <Icon name="pencil" />
           {editButtonLabel}
         </Button>

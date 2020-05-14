@@ -63,6 +63,7 @@ class FormFieldModal extends React.Component<Props> {
           field = (
             <FieldComponent
               {...columnProps}
+              meta={columnProps.props}
               name={`${fieldName}.${item.dataIndex}`}
             />
           );
@@ -89,6 +90,16 @@ class FormFieldModal extends React.Component<Props> {
     } = this.props;
     const formFields = fields
       .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index, fields));
+
+    if (!open) {
+      return (
+        <Fragment>
+          <Segment hidden>
+            { formFields }
+          </Segment>
+        </Fragment>
+      );
+    }
     return (
       <Fragment>
         <Modal
@@ -120,9 +131,6 @@ class FormFieldModal extends React.Component<Props> {
             />
           </Modal.Actions>
         </Modal>
-        <Segment hidden>
-          { formFields }
-        </Segment>
       </Fragment>
     );
   }

@@ -16,11 +16,11 @@
 				"useBuiltIns": true
 			}
 		],
+		"es2015",
 		"react",
 		"flow"
 	],
 	"plugins": [
-		"external-helpers",
 		"syntax-object-rest-spread"
 	]
 }

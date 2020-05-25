@@ -16,6 +16,7 @@ type Props = {
   doneEditingContent: Function,
   addContent: Function,
   removeContent: Function,
+  language: string,
 }
 
 class FormFieldModal extends React.Component<Props> {
@@ -84,10 +85,12 @@ class FormFieldModal extends React.Component<Props> {
 
   render() {
     const {
-      fields, open, doneEditingContent, addContent, error,
+      fields, open, doneEditingContent, addContent, error, language,
     } = this.props;
     const formFields = fields
       .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index, fields));
+    const addText = language == "Spanish" ? "Añadir" : "Add";
+	  const doneText = language == "Spanish" ? "Continuar" : "Done";
     return (
       <Fragment>
         <Modal
@@ -108,14 +111,14 @@ class FormFieldModal extends React.Component<Props> {
               positive
               labelPosition="right"
               icon="plus"
-              content="Add"
+              content={addText}
             />
             <Button
               onClick={doneEditingContent}
               positive
               labelPosition="right"
               icon="checkmark"
-              content="Done"
+              content={doneText}
             />
           </Modal.Actions>
         </Modal>

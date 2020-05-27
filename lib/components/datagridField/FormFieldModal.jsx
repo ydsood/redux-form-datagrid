@@ -16,9 +16,13 @@ type Props = {
   doneEditingContent: Function,
   addContent: Function,
   removeContent: Function,
+  addButtonLabel?: string,
+  doneButtonLabel?: string,
 }
 
 class FormFieldModal extends React.Component<Props> {
+  static defaultProps: *;
+
   buildFormFieldsModal(fieldName: string, index: number, fields: *) {
     const { columnModel, removeContent } = this.props;
     const chunkedColumnModel = buildVariableSizeFieldSection(columnModel);
@@ -86,7 +90,7 @@ class FormFieldModal extends React.Component<Props> {
 
   render() {
     const {
-      fields, open, doneEditingContent, addContent, error,
+      fields, open, doneEditingContent, addContent, error, addButtonLabel, doneButtonLabel,
     } = this.props;
     const formFields = fields
       .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index, fields));
@@ -120,14 +124,14 @@ class FormFieldModal extends React.Component<Props> {
               positive
               labelPosition="right"
               icon="plus"
-              content="Add"
+              content={addButtonLabel}
             />
             <Button
               onClick={doneEditingContent}
               positive
               labelPosition="right"
               icon="checkmark"
-              content="Done"
+              content={doneButtonLabel}
             />
           </Modal.Actions>
         </Modal>
@@ -135,5 +139,10 @@ class FormFieldModal extends React.Component<Props> {
     );
   }
 }
+
+FormFieldModal.defaultProps = {
+  addButtonLabel: 'Add',
+  doneButtonLabel: 'Done',
+};
 
 export default FormFieldModal;

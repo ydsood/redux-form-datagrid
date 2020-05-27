@@ -37,6 +37,10 @@ class App extends Component<Props> {
         <br />
         <BeneForm />
 
+        <br />
+        <br />
+        <BeneForm addButtonLabel="Añadir" doneButtonLabel="Completo" editButtonLabel="Editar beneficiarios" title="Button Text Localization Test: Formulario de beneficiarios" />
+
       </div>
     );
   }

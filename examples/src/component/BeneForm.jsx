@@ -59,10 +59,19 @@ const columnModel:Array<column> = [
 ];
 
 const beneForm = (props) => {
-  const { handleSubmit, pristine, reset, submitting } = props;
+  const { handleSubmit, pristine, reset, submitting, addButtonLabel, doneButtonLabel, title, editButtonLabel } = props;
   return(
     <Form onSubmit={handleSubmit(data => alert(JSON.stringify(data)))}>
-      <FieldArray component={DatagridField} name="beneficiaryGrid" title="Beneficiary Form" editButtonLabel="Edit Beneficiary" columnModel={columnModel} noDataComponent={NoDataComponent} />
+      <FieldArray 
+        component={DatagridField}
+        name="beneficiaryGrid"
+        title={title || "Beneficiary Form"}
+        columnModel={columnModel}
+        noDataComponent={NoDataComponent}
+        addButtonLabel={addButtonLabel}
+        doneButtonLabel={doneButtonLabel}
+        editButtonLabel={editButtonLabel || "Edit Beneficiaries"}
+      />
       <Button type="submit" />
     </Form>
   );

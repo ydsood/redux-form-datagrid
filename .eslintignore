@@ -1,2 +1,11 @@
-./build/*
-./node_modules/*
+build/
+dist/
+node_modules/
+.snapshots/
+*.min.js
+*/__mocks__/*
+src/core/resources/**
+*.css
+*.snap
+*.png
+*.svg

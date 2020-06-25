@@ -1,10 +1,10 @@
 node_modules/
-lib/
+src/
 test/
 .vscode/
-.babelrc
 .npmignore
 .gitignore
 .flowconfig
+.prettierrc
 examples/
 CODE_OF_CONDUCT.md

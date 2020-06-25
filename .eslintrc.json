@@ -1,32 +1,66 @@
 {
   "parser": "babel-eslint",
-  "extends": "airbnb",
+  "extends": ["plugin:react/recommended", "airbnb"],
   "env": {
+    "node": true,
     "browser": true,
-    "jest": true
+    "es6": true,
+    "jest/globals": true
+  },
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "ecmaFeatures": {
+      "legacyDecorators": true,
+      "jsx": true
+    },
+    "sourceType": "module"
+  },
+  "settings": {
+    "react": {
+      "version": "16"
+    }
   },
   "plugins": [
     "react",
     "jsx-a11y",
-    "import"
+    "import",
+    "flowtype",
+    "jest"
   ],
   "rules": {
     "react/destructuring-assignment": 0,
-    "react/jsx-filename-extension": [
-      1,
-      {
-        "extensions": [
-          ".js",
-          ".jsx"
-        ]
-      }
-    ],
+    "react/jsx-props-no-spreading": [0, {
+      "html": "ignore",
+      "custom": "ignore",
+      "explicitSpread": "ignore"
+    }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-one-expression-per-line": [
       0,
       {
         "allow": "single-child"
       }
     ],
-    "linebreak-style": 0
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": true
+      }
+    ],
+    "import/prefer-default-export": "off",
+    "linebreak-style": 0,
+    "quotes": ["error", "double"],
+    "no-underscore-dangle": ["error", { "allow": ["_isAMomentObject"] }],
+    "flowtype/define-flow-type": 1,
+    "jsx-a11y/label-has-for": "off",
+    "react/jsx-fragments": "off",
+    "jsx-a11y/label-has-associated-control": [
+      2,
+      { "controlComponents": ["DatePicker"] }
+    ]
   }
 }

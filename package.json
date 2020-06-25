@@ -1,39 +1,33 @@
 {
   "name": "redux-form-datagrid",
-  "version": "0.2.0-alpha.1.15",
+  "version": "0.2.0-alpha.2.0",
   "description": "React data grid component that complies with redux and redux-form. Also exposes a non form version that can be exposed to just render a data grid.",
-  "main": "build/bundle.min.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf build && rollup -c",
-    "build:watch": "rimraf build && rollup -c -w",
-    "lint": "eslint lib/**; exit 0",
-    "lint:watch": "esw -w lib/**",
-    "prepublish": "npm run build",
-    "flow": "flow",
-    "rollup": "rollup",
-    "setup": "npm install && npm link && cd examples && npm link redux-form-datagrid && npm install"
-  },
+  "author": "Yadvaindera Sood <ydsood@gmail.com> (https://github.com/ydsood)",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ydsood/redux-form-datagrid.git"
   },
-  "keywords": [
-    "redux-form",
-    "datatable",
-    "redux-form",
-    "grid",
-    "redux-form",
-    "datagrid",
-    "datagrid",
-    "redux",
-    "datatable",
-    "redux",
-    "datagrid",
-    "datatable"
-  ],
-  "author": "Yadvaindera Sood <ydsood@gmail.com> (https://github.com/ydsood)",
-  "license": "ISC",
+  "main": "dist/index.js",
+  "module": "dist/index.modern.js",
+  "source": "src/index.js",
+  "engines": {
+    "node": ">=10"
+  },
+  "scripts": {
+    "build": "microbundle-crl --no-compress --format modern,cjs --css-modules false",
+    "start": "microbundle-crl watch --no-compress --format modern,cjs --css-modules false",
+    "prepublish": "run-s build",
+    "test": "run-s test:unit test:build",
+    "test:build": "run-s build",
+    "test:unit": "cross-env CI=1 react-scripts test --env=jsdom",
+    "test:watch": "react-scripts test --env=jsdom",
+    "test:cover": "cross-env CI=1 react-scripts test --env=jsdom --coverage",
+    "test:update": "cross-env CI=1 react-scripts test --env=jsdom -u",
+    "lint": "./node_modules/.bin/eslint src/**",
+    "lint-fixup": "./node_modules/.bin/eslint src/** --fix",
+    "link": "npm link && npm prune --production"
+  },
   "bugs": {
     "url": "https://github.com/ydsood/redux-form-datagrid/issues"
   },
@@ -51,40 +45,41 @@
     "babel-polyfill": "^6.x"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-object-rest-spread": "^7.0.0",
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^9.0.0",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-flow": "^6.23.0",
-    "babel-preset-react": "^6.24.1",
-    "cross-env": "^5.2.0",
-    "eslint": "^5.6.0",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-plugin-import": "^2.14.0",
-    "eslint-plugin-jsx-a11y": "^6.1.1",
-    "eslint-plugin-react": "^7.11.1",
-    "eslint-watch": "^4.0.2",
-    "flow-bin": "^0.81.0",
-    "jest": "^23.6.0",
-    "polished": "^2.1.1",
-    "react": "^16.5.2",
-    "react-dom": "^16.5.2",
-    "rimraf": "^2.6.2",
-    "rollup": "^0.66.2",
-    "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-commonjs": "^9.1.8",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-peer-deps-external": "^2.2.0",
-    "rollup-plugin-uglify": "^6.0.4"
+    "babel-eslint": "^10.0.3",
+    "cross-env": "^7.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-config-standard-react": "^9.2.0",
+    "eslint-plugin-flowtype": "^4.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^23.8.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.1",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-react": "^7.17.0",
+    "eslint-plugin-react-hooks": "^2.5.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "microbundle-crl": "^0.13.8",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.4",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "redux-form": "^8.3.5",
+    "semantic-ui-react": "^0.88.2"
   },
   "dependencies": {
-    "babel-polyfill": "^6.26.0",
     "lodash": "^4.17.15",
     "md5": "^2.2.1",
-    "redux-form": "^7.4.2",
-    "semantic-ui-react": "^0.82.5",
-    "styled-components": "^3.4.9"
-  }
+    "styled-components": "^3.4.9",
+    "util": "^0.12.3"
+  },
+  "eslintConfig": {
+    "extends": "airbnb"
+  },
+  "files": [
+    "dist"
+  ]
 }

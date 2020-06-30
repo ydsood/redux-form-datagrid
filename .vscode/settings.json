@@ -1,8 +1,16 @@
 {
+  "jest.pathToJest": "node_modules/.bin/jest",
+  "jest.rootPath": ".",
+  "eslint.enable": true,
+  "eslint.packageManager": "npm",
+  "eslint.format.enable": true,
+  "[javascript]": { "editor.defaultFormatter": "dbaeumer.vscode-eslint" },
+  "eslint.nodePath": "./node_modules",
   "editor.tabSize": 2,
   "eslint.run": "onSave",
   "eslint.options": {
-    "configFile": "./.eslintrc.json"
+    "configFile": "./.eslintrc.json",
+    "resolvePluginsRelativeTo":"node_modules"
   },
   "flow.useNPMPackagedFlow": true,
   "javascript.validate.enable": false,

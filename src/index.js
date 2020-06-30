@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import type { ComponentType } from "react";
 import StaticDatagrid from "./components/datagrid";
-import "babel-polyfill";
 
 export { default as DatagridField } from "./components/datagridField";
 

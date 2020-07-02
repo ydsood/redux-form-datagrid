@@ -21,27 +21,40 @@ type Props = {
 }
 
 class FormFieldModal extends React.Component<Props> {
+  // eslint-disable-next-line class-methods-use-this
+  applyFieldResolvers(columnModel, rowData) {
+    return columnModel.map((column) => {
+      const colModelCopy = _.cloneDeep(columnModel);
+      const { fieldMetaResolver = [] } = column;
+      let meta = column.meta || {};
+
+      for (let i = 0; i < fieldMetaResolver.length; i += 1) {
+        const fieldResolver = fieldMetaResolver[i];
+
+        if (typeof fieldResolver === "function") {
+          meta = fieldResolver(colModelCopy, rowData, column.dataIndex) || meta;
+        }
+      }
+
+      return {
+        ...column,
+        meta,
+      };
+    });
+  }
+
   buildFormFieldsModal(fieldName: string, index: number, fields: *) {
     const { columnModel, removeContent } = this.props;
-    const chunkedColumnModel = buildVariableSizeFieldSection(columnModel);
+    const resolvedColumnModel = this.applyFieldResolvers(columnModel, fields.get(index));
+    const chunkedColumnModel = buildVariableSizeFieldSection(resolvedColumnModel);
+
     const fieldToRender = chunkedColumnModel.map((columns) => {
       const mappedFields = columns.map((item) => {
         let field = <div />;
         const label = (item.meta && item.meta.label) || item.name;
         let columnProps = _.cloneDeep(item);
-        const { fieldMetaResolver = [] } = columnProps;
-        const colModelCopy = _.cloneDeep(columnModel);
         let meta = columnProps.meta || {};
         delete columnProps.meta;
-
-        for (let i = 0; i < fieldMetaResolver.length; i += 1) {
-          const fieldResolver = fieldMetaResolver[i];
-
-          if (typeof fieldResolver === "function") {
-            meta = fieldResolver(colModelCopy, fields.get(index), item.dataIndex) || meta;
-          }
-        }
-
         meta = { ...meta, label };
         columnProps = { ...columnProps, props: meta };
 

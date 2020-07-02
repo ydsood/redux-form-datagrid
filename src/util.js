@@ -31,10 +31,11 @@ export function chunkConditional(array, size, predicate) {
 }
 
 export function buildVariableSizeFieldSection(fields) {
+  const sortedFields = [...fields].sort();
   const groupedItems = [];
   let currentRowWidth = 0;
 
-  fields.forEach((field) => {
+  sortedFields.forEach((field) => {
     if (field.meta?.hidden) {
       return;
     }

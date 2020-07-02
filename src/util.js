@@ -35,6 +35,10 @@ export function buildVariableSizeFieldSection(fields) {
   let currentRowWidth = 0;
 
   fields.forEach((field) => {
+    if (field.meta?.hidden) {
+      return;
+    }
+
     const fieldWidth = field.meta && field.meta.width ? field.meta.width : 16;
 
     if (currentRowWidth === 0 || currentRowWidth + fieldWidth > 16) {

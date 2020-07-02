@@ -24,7 +24,6 @@ class FormFieldModal extends React.Component<Props> {
   buildFormFieldsModal(fieldName: string, index: number, fields: *) {
     const { columnModel, removeContent } = this.props;
     const chunkedColumnModel = buildVariableSizeFieldSection(columnModel);
-    // chunkConditional(columnModel, 2, column => !!column.singleField);
     const fieldToRender = chunkedColumnModel.map((columns) => {
       const mappedFields = columns.map((item) => {
         let field = <div />;
@@ -38,7 +37,9 @@ class FormFieldModal extends React.Component<Props> {
         for (let i = 0; i < fieldMetaResolver.length; i += 1) {
           const fieldResolver = fieldMetaResolver[i];
 
-          if (typeof fieldResolver === "function") meta = fieldResolver(colModelCopy, fields.get(index), item.dataIndex) || meta;
+          if (typeof fieldResolver === "function") {
+            meta = fieldResolver(colModelCopy, fields.get(index), item.dataIndex) || meta;
+          }
         }
 
         meta = { ...meta, label };
@@ -55,6 +56,7 @@ class FormFieldModal extends React.Component<Props> {
             <Field
               {...columnProps}
               name={`${fieldName}.${item.dataIndex}`}
+              key={item.dataIndex}
               component={DefaultFormField}
               validate={validate}
               width={width}
@@ -67,19 +69,23 @@ class FormFieldModal extends React.Component<Props> {
               {...columnProps}
               meta={columnProps.props}
               name={`${fieldName}.${item.dataIndex}`}
+              key={item.dataIndex}
             />
           );
         }
         return field;
       });
+
+      const rowKey = columns.map((c) => c.dataIndex).join(",");
       return (
-        <Form.Group>
+        <Form.Group key={rowKey}>
           { mappedFields }
         </Form.Group>
       );
     });
+
     return (
-      <Segment color="black">
+      <Segment key={fieldName} color="black">
         <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
         {fieldToRender}
       </Segment>

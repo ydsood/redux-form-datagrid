@@ -1,4 +1,5 @@
 import _ from "lodash";
+import { sortingFunction as sortColumns } from "./components/columnModel";
 
 // eslint-disable-next-line
 export function chunkConditional(array, size, predicate) {
@@ -31,10 +32,15 @@ export function chunkConditional(array, size, predicate) {
 }
 
 export function buildVariableSizeFieldSection(fields) {
+  const sortedFields = [...fields].sort(sortColumns);
   const groupedItems = [];
   let currentRowWidth = 0;
 
-  fields.forEach((field) => {
+  sortedFields.forEach((field) => {
+    if (field.meta?.hidden) {
+      return;
+    }
+
     const fieldWidth = field.meta && field.meta.width ? field.meta.width : 16;
 
     if (currentRowWidth === 0 || currentRowWidth + fieldWidth > 16) {

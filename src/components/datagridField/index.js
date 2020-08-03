@@ -11,6 +11,7 @@ type DatagridProps = {
   disabled?: boolean,
   addButtonLabel?: string,
   doneButtonLabel?: string,
+  onChange?: Function,
 }
 
 class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> {
@@ -29,6 +30,14 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
     this.startEditingContent = this.startEditingContent.bind(this);
     this.addContent = this.addContent.bind(this);
     this.removeContent = this.removeContent.bind(this);
+  }
+
+  componentDidUpdate(prevProps: FieldArrayProps & DatagridProps) {
+    const { onChange, fields } = this.props;
+
+    if (fields !== prevProps.fields) {
+      onChange(fields.getAll());
+    }
   }
 
   buildDataFromFields() {
@@ -116,6 +125,7 @@ DatagridField.defaultProps = {
   disabled: false,
   addButtonLabel: undefined,
   doneButtonLabel: undefined,
+  onChange: () => {},
 };
 
 export default DatagridField;

@@ -9,6 +9,8 @@ export type column = {
   singleField?: boolean,
   order: number,
   formatter?: (val: any) => any,
+  sortable: boolean,
+  sortingType: String,
   meta?: {
     required: boolean,
     label: string,

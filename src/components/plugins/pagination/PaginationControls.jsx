@@ -36,20 +36,22 @@ class PaginationControls extends Component<Props> {
     const { updateGridState, totalRecords, colSpan } = this.props;
     return (
       <Table.HeaderCell textAlign="right" colSpan={colSpan}>
-        {this.paginationHandler.getFirstRecordPosition() >= pageSize ? (
+        {this.paginationHandler.getFirstRecordPosition()
+        >= this.paginationHandler.state.pageSize ? (
           <Icon
             link
             name="angle double left"
             onClick={() => updateGridState(this.paginationHandler.firstPage)}
           />
-        ) : ''}
-        {this.paginationHandler.getFirstRecordPosition() >= pageSize ? (
+          ) : ''}
+        {this.paginationHandler.getFirstRecordPosition()
+        >= this.paginationHandler.state.pageSize ? (
           <Icon
             link
             name="angle left"
             onClick={() => updateGridState(this.paginationHandler.prev)}
           />
-        ) : ''}
+          ) : ''}
         <span>
           {this.paginationHandler.getFirstRecordPosition()}
         - {this.paginationHandler.getLastRecordPosition()}

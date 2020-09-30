@@ -26,6 +26,8 @@ const columns: Array<column> = [
     dataIndex: 'name',
     name: 'Name',
     order: 1,
+    sortable: true,
+    sortingType: 'string',
     sortComparator: (first, second) => {
       if (first < second) {
         return true;
@@ -37,6 +39,8 @@ const columns: Array<column> = [
     dataIndex: 'govtID',
     name: 'Government ID',
     order: 2,
+    sortable: true,
+    sortingType: 'number',
     sortComparator: 'default', // can be skipped and default should be used
     // formatter should only be called if data is valid else render value as is with error
     // formatter should only be called for non empty, non-null values
@@ -54,9 +58,18 @@ const columns: Array<column> = [
   {
     dataIndex: 'homePhone',
     name: 'Home Phone',
-    order: 3
+    order: 3,
+    sortable: true,
+    sortingType: 'number',
     // skipping default comparator
     // skipping formatter, same value should be rendered
+  },
+  {
+    dataIndex: 'insuredDate',
+    name: 'Insured Date',
+    order: 4,
+    sortable: true,
+    sortingType: 'date',
   },
   {
     dataIndex: 'workPhone',

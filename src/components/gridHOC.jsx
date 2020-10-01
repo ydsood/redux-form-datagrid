@@ -92,30 +92,28 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
     }
   }
 
-  updateGridColumnState(columnName: any, isAscending: any, format: string) {
+  updateGridColumnState(columnName: any, isAscending: any, format: string, getValue: any) {
     const data = this.state.store.getData();
+    const property = columnName;
     if (format === 'number') {
-      const property = columnName;
-      if (isAscending) {
-        // eslint-disable-next-line radix
-        data.sort((a, b) => parseInt(a[property]) - parseInt(b[property]));
-      } else {
-        // eslint-disable-next-line radix
-        data.sort((a, b) => parseInt(b[property]) - parseInt(a[property]));
-      }
+      data.sort((a, b) => {
+        const first = parseFloat(getValue ? getValue(a[property] || 0) : a[property] || 0);
+        const second = parseFloat(getValue ? getValue(b[property] || 0) : b[property] || 0);
+        return isAscending ? first - second : second - first;
+      });
     }
 
     if (format === 'string') {
-      const property = columnName;
-      if (isAscending) {
-        data.sort((a, b) => (b[property].toLowerCase() > a[property].toLowerCase() ? -1 : 1));
-      } else {
-        data.sort((a, b) => (a[property].toLowerCase() > b[property].toLowerCase() ? -1 : 1));
-      }
+      data.sort((a, b) => {
+        const first = getValue ? getValue(b[property]).toLowerCase() : b[property].toLowerCase();
+        const second = getValue ? getValue(a[property]).toLowerCase() : a[property].toLowerCase();
+        const ascending = first > second ? -1 : 1;
+        const descending = second > first ? -1 : 1;
+        return isAscending ? ascending : descending;
+      });
     }
 
     if (format === 'date') {
-      const property = columnName;
       data.sort((a, b) => {
         const da = new Date(a[property]);
         const db = new Date(b[property]);
@@ -142,7 +140,7 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
                     if (item.sortable !== undefined) {
                       item.sortable = !item.sortable;
                       this.setState({ activeColumn: item.dataIndex });
-                      this.updateGridColumnState(item.dataIndex, item.sortable, item.sortingType);
+                      this.updateGridColumnState(item.dataIndex, item.sortable, item.sortingType, item.getValue,);
                     }
                   }}
                   className={item.sortable !== undefined ? 'tableHeader' : ''}

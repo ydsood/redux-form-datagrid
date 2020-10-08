@@ -9,6 +9,7 @@ import type { StaticDatagrid } from "./datagrid";
 import ColumnModel from "./columnModel";
 import type { ColumnModelType } from "./columnModel";
 import { PaginationControls } from "./plugins/pagination";
+import { SortingControls } from './plugins/sorting';
 import { EditControls } from "./plugins/edit";
 import { LocalStore } from "./store";
 import type {
@@ -31,10 +32,11 @@ type StoreType = LocalStoreType | RemoteStoreType;
 type State = {
   store: StoreType,
   data: Array<Object>,
-  activeColumn: any
+  activeColumn: String
 };
 
 type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
+type SortStateFunctionTypes = (...store: StoreType) => Array<Object>;
 
 const generateObjectArrayHash = (arr: Array<Object>) => md5(inspect(arr));
 
@@ -55,10 +57,11 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
     this.buildTableHeaders = this.buildTableHeaders.bind(this);
     this.buildTableFooter = this.buildTableFooter.bind(this);
     this.updateGridState = this.updateGridState.bind(this);
+    this.updateGridColumnState = this.updateGridColumnState.bind(this);
     this.state = {
       store: new LocalStore(this.props.data),
       data: this.props.data,
-      activeColumn: null,
+      activeColumn: '',
     };
   }
 
@@ -92,39 +95,15 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
     }
   }
 
-  updateGridColumnState(columnName: any, isAscending: any, format: string, getValue: any) {
-    const data = this.state.store.getData();
-    const property = columnName;
-    if (format === 'number') {
-      data.sort((a, b) => {
-        const first = parseFloat(getValue ? getValue(a[property] || 0) : a[property] || 0);
-        const second = parseFloat(getValue ? getValue(b[property] || 0) : b[property] || 0);
-        return isAscending ? first - second : second - first;
-      });
-    }
+  updateGridColumnState: Function;
 
-    if (format === 'string') {
-      data.sort((a, b) => {
-        const first = getValue ? getValue(b[property]).toLowerCase() : b[property].toLowerCase();
-        const second = getValue ? getValue(a[property]).toLowerCase() : a[property].toLowerCase();
-        const ascending = first > second ? -1 : 1;
-        const descending = second > first ? -1 : 1;
-        return isAscending ? ascending : descending;
-      });
-    }
-
-    if (format === 'date') {
-      data.sort((a, b) => {
-        const da = new Date(a[property]);
-        const db = new Date(b[property]);
-        return isAscending ? da - db : db - da;
-      });
-    }
-
+  updateGridColumnState(columnName: any, isAscending: any, format: string, getValue: any, sortData: SortStateFunctionTypes) {
+    const data = sortData(this.state.store, columnName, isAscending, format, getValue);
     if (data && Array.isArray(data)) {
       this.setState({ data });
     }
   }
+
 
   buildTableHeaders() {
     return (
@@ -134,26 +113,21 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
             this.props.cellComponent
               ? <Table.HeaderCell colSpan={this.colModel.get().length} />
               : this.colModel.get().map((item) => (
-                <Table.HeaderCell
-                  key={item.dataIndex}
-                  onClick={() => {
+                <SortingControls
+                  updateGridColumnState={(dataIndex, sortable, sortingType, getValue, sortData) => {
                     if (item.sortable !== undefined) {
                       item.sortable = !item.sortable;
-                      this.setState({ activeColumn: item.dataIndex });
-                      this.updateGridColumnState(item.dataIndex, item.sortable, item.sortingType, item.getValue,);
                     }
+                    this.setState({ activeColumn: dataIndex });
+                    this.updateGridColumnState(dataIndex, sortable, sortingType, getValue, sortData);
                   }}
-                  className={item.sortable !== undefined ? 'tableHeader' : ''}
-                >
-                  {item.name}
-                  {item.dataIndex === this.state.activeColumn
-                    ? (
-                      <Icon
-                        link
-                        name={item.sortable ? 'caret up' : 'caret down'}
-                      />
-                    ) : ''}
-                </Table.HeaderCell>
+                  dataIndex={item.dataIndex}
+                  sortable={item.sortable}
+                  sortingType={item.sortingType}
+                  activeColumn={this.state.activeColumn}
+                  getValue={item.getValue}
+                  name={item.name}
+                />
               ))
           }
         </Table.Row>

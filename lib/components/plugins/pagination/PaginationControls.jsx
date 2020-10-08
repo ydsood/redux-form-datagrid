@@ -36,13 +36,42 @@ class PaginationControls extends Component<Props> {
     const { updateGridState, totalRecords, colSpan } = this.props;
     return (
       <Table.HeaderCell textAlign="right" colSpan={colSpan}>
-        <Icon link name="angle double left" onClick={() => updateGridState(this.paginationHandler.firstPage)} />
-        <Icon link name="angle left" onClick={() => updateGridState(this.paginationHandler.prev)} />
-        <span>{this.paginationHandler.getFirstRecordPosition()} - {this.paginationHandler.getLastRecordPosition()}</span>
+        {this.paginationHandler.getFirstRecordPosition()
+          >= this.paginationHandler.state.pageSize ? (
+            <Icon
+              link
+              name="angle double left"
+              onClick={() => updateGridState(this.paginationHandler.firstPage)}
+            />
+          ) : ''}
+        {this.paginationHandler.getFirstRecordPosition()
+          >= this.paginationHandler.state.pageSize ? (
+            <Icon
+              link
+              name="angle left"
+              onClick={() => updateGridState(this.paginationHandler.prev)}
+            />
+          ) : ''}
+        <span>
+          {this.paginationHandler.getFirstRecordPosition()}
+        - {this.paginationHandler.getLastRecordPosition()}
+        </span>
         <span> of </span>
         <span>{totalRecords}</span>
-        <Icon link name="angle right" onClick={() => updateGridState(this.paginationHandler.next)} />
-        <Icon link name="angle double right" onClick={() => updateGridState(this.paginationHandler.lastPage)} />
+        {this.paginationHandler.state.pageEnd < this.props.totalRecords ? (
+          <Icon
+            link
+            name="angle right"
+            onClick={() => updateGridState(this.paginationHandler.next)}
+          />
+        ) : ''}
+        {this.paginationHandler.state.pageEnd < this.props.totalRecords ? (
+          <Icon
+            link
+            name="angle double right"
+            onClick={() => updateGridState(this.paginationHandler.lastPage)}
+          />
+        ) : ''}
       </Table.HeaderCell>
     );
   }

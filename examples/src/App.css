@@ -26,3 +26,8 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.tableHeader:hover{
+  cursor: pointer !important;
+  background: rgba(0,0,0,.05) !important;
+}

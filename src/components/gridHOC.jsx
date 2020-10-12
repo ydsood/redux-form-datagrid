@@ -25,7 +25,6 @@ type Props = {
   editable: boolean,
   title: String,
   searchable: boolean,
-  searchMatchCount: Number,
   searchPlaceholder: String,
   startEditingContent: Function,
   columnModel: Array<Object>,
@@ -157,7 +156,7 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
 
   buildTitleBar() {
     const {
-      title, searchable, searchPlaceholder, searchMatchCount, columnModel,
+      title, searchable, searchPlaceholder, columnModel,
     } = this.props;
     const data = this.state.store.getData();
 
@@ -174,7 +173,6 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
               gridData={data}
               columnModel={columnModel}
               columns={searchByTagColumns}
-              matchCount={searchMatchCount}
               placeholder={searchPlaceholder}
               filter={this.filterBySearch}
             />

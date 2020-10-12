@@ -1,15 +1,15 @@
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import _ from "lodash";
 
+import { Dropdown, Label } from "semantic-ui-react";
 import SearchHandler from "./SearchHandler";
 
 export type SearchBarProps = {
   columnModel: Array<Object>,
   columns: Array<Object>,
   gridData: Array,
-  matchCount?: Number,
   filter: Function,
-  placeholder: String,
+  placeholder?: String,
   classes: Object,
 }
 
@@ -20,10 +20,8 @@ class Search extends Component<SearchBarProps> {
     this.SearchHandler = new SearchHandler(props.columnModel);
 
     this.state = {
-      filterOptions: [],
       inputValue: "",
       tagsList: [],
-      showFilterOptions: false,
     };
   }
 
@@ -49,138 +47,109 @@ class Search extends Component<SearchBarProps> {
     this.setState({
       tagsList: tags,
       inputValue: "",
-      filterOptions: [],
-      showFilterOptions: false,
     });
     this.props.filter(this.SearchHandler.filterData, tags);
   };
 
-  removeTag = (tag) => {
+  removeTag = (event, data) => {
     const { tagsList, inputValue } = this.state;
-    const tags = _.filter(tagsList, (obj) => obj.text !== tag.text);
+
+    const [dataIndex] = data.value.split("_");
+
+    const tags = _.filter(tagsList, (obj) => obj.dataIndex !== dataIndex);
     this.setState({ tagsList: tags });
     this.props.filter(this.SearchHandler.filterData, tags, inputValue);
   }
 
-  onInputClearTag = (event) => {
-    const keyCode = event.which || event.keyCode;
-    const { tagsList, inputValue } = this.state;
-    if (keyCode === 8 && inputValue.length === 0 && tagsList.length > 0) {
-      const tags = _.cloneDeep(tagsList);
-      tags.pop();
-      this.setState({ tagsList: tags });
-      this.props.filter(this.SearchHandler.filterData, tags);
-    }
-  }
-
-  prepareFilteredData = (input) => {
-    const { columns, gridData, matchCount } = this.props;
+  prepareFilterTagOptions = () => {
+    const { columns, gridData, classes } = this.props;
     const { tagsList } = this.state;
-    const filteredOptionsData = [];
-    let showFilterOptions = false;
-    const keys = _.differenceBy(columns, tagsList, "dataIndex");
-    keys.forEach((key) => {
+    const filteredOptionsData = columns.map((key) => {
       const columnData = {};
       const obj = columns.filter((object) => object.dataIndex === key.dataIndex);
       columnData.label = obj[0].name;
       columnData.value = obj[0].dataIndex;
       columnData.key = key.dataIndex;
       columnData.formatter = key.formatter;
-      const columnValues = [];
-      const count = matchCount || 10;
-
-      gridData.map((record) => {
-        const recordTextValue = record[key.dataIndex] && (
+      const columnValues = gridData.map((record) => {
+        const recordTextValue = (record[key.dataIndex] !== null) && (
           (key.formatter && key.formatter(record[key.dataIndex]))
           || record[key.dataIndex]
         );
 
-        if (
-          columnValues.length < count
-          && recordTextValue
-          && recordTextValue.trim().toLowerCase().startsWith(input.toLowerCase())
-        ) {
-          columnValues.push(recordTextValue);
-        }
-        return columnValues;
-      });
+        return recordTextValue;
+      }).filter((columnValue) => columnValue);
+
       columnData.resultValues = _.uniq(columnValues);
 
-      showFilterOptions = showFilterOptions || !!columnData.resultValues.length;
-
-      filteredOptionsData.push(columnData);
+      return columnData;
     });
-    this.setState({ filterOptions: filteredOptionsData, showFilterOptions });
+
+    return filteredOptionsData
+      .map((item) => item.resultValues && item.resultValues.map((resultValue) => ({
+        key: `${item.value}_${resultValue}`,
+        text: `${item.label}: ${resultValue}`,
+        value: `${item.value}_${resultValue}`,
+        className: tagsList.map((tag) => tag.dataIndex).includes(item.value)
+          ? classes.hiddenOption
+          : undefined,
+        content: (
+          <Fragment>
+            <Label content={item.label} />
+            {resultValue}
+          </Fragment>
+        ),
+        onClick: () => this.selectedListOption(resultValue, item.label, item.value, item.formatter),
+      })))
+      .reduce((prev, curr) => prev.concat(curr), []);
   }
 
   onInputChange = (event) => {
     const { value } = event.target;
-    const { columns } = this.props;
     const { tagsList } = this.state;
     if (value) {
       this.setState({ inputValue: value });
-
-      if (!columns || columns.length !== tagsList.length) {
-        this.prepareFilteredData(value);
-      }
-
       this.props.filter(this.SearchHandler.filterData, tagsList, value);
     } else {
-      this.setState({ filterOptions: [], inputValue: "", showFilterOptions: false });
+      this.setState({ inputValue: "" });
       this.props.filter(this.SearchHandler.filterData, tagsList, "");
     }
   };
 
-  createRightColum = ({
-    resultValues, label, value, formatter,
-  }) => {
-    const view = resultValues.map((item) => (
-      <span
-        role="presentation"
-        key={item}
-        className={this.props.classes.columnList}
-        onClick={() => this.selectedListOption(item, label, value, formatter)}
-      >
-        {item}
-      </span>
-    ));
-    return view;
-  }
-
   render() {
     const {
-      filterOptions, inputValue, tagsList, showFilterOptions,
+      inputValue, tagsList,
     } = this.state;
     const { placeholder, classes } = this.props;
 
-    const listItems = filterOptions.map((item) => {
-      if (item.resultValues && item.resultValues.length) {
-        return (
-          <div key={item.value} className={classes.leftRightColumn}>
-            <div className={classes.leftColumn}>{item.label}</div>
-            <div className={classes.rightColumn}>
-              {this.createRightColum(item)}
-            </div>
-          </div>
-        );
-      }
-      return "";
-    });
+    const listItems = this.prepareFilterTagOptions();
 
-    const tagItems = tagsList.length ? tagsList.map((item) => (
-      <span className={classes.tag} key={item.text}>
-        {item.colLabel}:{item.text}
-        <span
-          className={classes.close}
-          role="presentation"
-          onClick={() => this.removeTag(item)}
-        >
-          X
-        </span>
-      </span>
-    )) : "";
+    const tagItems = tagsList.map((item) => `${item.dataIndex}_${item.text}`);
 
     return (
+      <Dropdown
+        icon={{
+          name: "search",
+          className: classes.searchIcon,
+        }}
+        placeholder={placeholder}
+        fluid
+        multiple
+        search
+        selection
+        scrolling
+        onSearchChange={this.onInputChange}
+        onFocus={this.onInputChange}
+        searchQuery={inputValue}
+        noResultsMessage={null}
+        options={listItems}
+        value={tagItems}
+        renderLabel={(item) => ({
+          content: item.text,
+          onRemove: this.removeTag,
+        })}
+      />
+      /*
       <div className={classes.searchContainer}>
         <div className={classes.inputContainer}>
           {tagItems}
@@ -203,12 +172,13 @@ class Search extends Component<SearchBarProps> {
           {listItems}
         </div>
       </div>
+      */
     );
   }
 }
 
 Search.defaultProps = {
-  matchCount: 5,
+  placeholder: "Search",
 };
 
 export default Search;

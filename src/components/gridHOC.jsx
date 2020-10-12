@@ -1,6 +1,8 @@
 // @flow
 import React, { Component } from "react";
-import { Header, Table } from "semantic-ui-react";
+import {
+  Header, Table, Grid as SemanticGrid,
+} from "semantic-ui-react";
 import md5 from "md5";
 import _ from "lodash";
 import { inspect } from "util";
@@ -161,23 +163,25 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
 
     const searchByTagColumns = columnModel.filter((column) => column.searchByTag);
 
-    const headerTitle = title && <Header as="h4" floated="left">{`${title}`}</Header>;
-
-    return searchable ? (
-      <div>
-        {headerTitle}
-        <div style={{ float: "right" }}>
-          <SearchBar
-            gridData={data}
-            columnModel={columnModel}
-            columns={searchByTagColumns}
-            matchCount={searchMatchCount}
-            placeholder={searchPlaceholder}
-            filter={this.filterBySearch}
-          />
-        </div>
-      </div>
-    ) : headerTitle;
+    return (
+      <SemanticGrid columns="equal">
+        <SemanticGrid.Column verticalAlign="middle">
+          {title && <Header as="h4" floated="left">{`${title}`}</Header>}
+        </SemanticGrid.Column>
+        {searchable && (
+          <SemanticGrid.Column verticalAlign="middle">
+            <SearchBar
+              gridData={data}
+              columnModel={columnModel}
+              columns={searchByTagColumns}
+              matchCount={searchMatchCount}
+              placeholder={searchPlaceholder}
+              filter={this.filterBySearch}
+            />
+          </SemanticGrid.Column>
+        )}
+      </SemanticGrid>
+    );
   }
 
   buildTableHeaders() {

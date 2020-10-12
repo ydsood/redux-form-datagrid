@@ -26,7 +26,7 @@ export default class PaginationHandler {
     if (columnFilters && columnFilters.length) {
       columnFilters.forEach((element) => {
         gridData = gridData.filter((item) => {
-          const recordTextValue = item[element.dataIndex] && (
+          const recordTextValue = (item[element.dataIndex] !== null) && (
             (element.formatter && element.formatter(item[element.dataIndex]))
             || item[element.dataIndex]
           );
@@ -44,7 +44,7 @@ export default class PaginationHandler {
         for (let i = 0; i < searchByTextColumns.length; i += 1) {
           const column = searchByTextColumns[i];
 
-          const recordTextValue = item[column.dataIndex] && (
+          const recordTextValue = (item[column.dataIndex] !== null) && (
             (column.formatter && column.formatter(item[column.dataIndex]))
             || item[column.dataIndex]
           );

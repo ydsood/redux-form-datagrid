@@ -12,7 +12,7 @@ const SearchBar = (props: SearchBarProps) => (
 );
 
 SearchBar.defaultProps = {
-  matchCount: 5,
+  placeholder: "Search",
 };
 
 export {

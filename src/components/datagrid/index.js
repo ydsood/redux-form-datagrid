@@ -1,13 +1,13 @@
 import React, { Component } from "react";
-import { Table, Segment, Header } from "semantic-ui-react";
+import { Table, Segment } from "semantic-ui-react";
 import buildGrid from "../gridHOC";
 import TableRow from "../tableRow";
 
 type StaticDatagridProps = {
   data: Array<Object>,
   error: *,
-  title: string,
   columnModel: Function,
+  buildTitleBar: Function,
   buildTableHeaders: Function,
   buildTableFooter: Function,
   titleFormatter: Function,
@@ -62,7 +62,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
     const renderComponent = (
       <Segment basic>
         <div className="grid" style={style}>
-          { this.props.title && <Header as="h4">{`${this.props.title}`}</Header> }
+          {this.props.buildTitleBar()}
           { error }
           <Table>
             {this.props.buildTableHeaders()}

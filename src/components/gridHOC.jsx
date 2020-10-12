@@ -1,6 +1,6 @@
 // @flow
 import React, { Component } from "react";
-import { Table, Icon } from "semantic-ui-react";
+import { Header, Table } from "semantic-ui-react";
 import md5 from "md5";
 import _ from "lodash";
 import { inspect } from "util";
@@ -9,17 +9,22 @@ import type { StaticDatagrid } from "./datagrid";
 import ColumnModel from "./columnModel";
 import type { ColumnModelType } from "./columnModel";
 import { PaginationControls } from "./plugins/pagination";
-import { SortingControls } from './plugins/sorting';
+import { SortingControls } from "./plugins/sorting";
 import { EditControls } from "./plugins/edit";
 import { LocalStore } from "./store";
 import type {
   LocalStore as LocalStoreType,
   RemoteStore as RemoteStoreType,
 } from "./store";
+import { SearchBar } from "./plugins/search";
 
 type Props = {
   data: Array<Object>,
   editable: boolean,
+  title: String,
+  searchable: boolean,
+  searchMatchCount: Number,
+  searchPlaceholder: String,
   startEditingContent: Function,
   columnModel: Array<Object>,
   pageSize: number,
@@ -31,12 +36,15 @@ type StoreType = LocalStoreType | RemoteStoreType;
 
 type State = {
   store: StoreType,
-  data: Array<Object>,
-  activeColumn: String
+  filteredData: Array<Object>,
+  sortedData: Array<Object>,
+  renderedData: Array<Object>,
+  activeColumn: String,
 };
 
-type UpdateStateFunctionType = (store: StoreType) => Array<Object>;
-type SortStateFunctionTypes = (...store: StoreType) => Array<Object>;
+type UpdateStateFunctionType = (data: Array<Object>) => Array<Object>;
+type SortStateFunctionTypes = (...data: Array<Object>) => Array<Object>;
+type FilterStateFunctionTypes = (...data: Array<Object>) => Array<Object>;
 
 const generateObjectArrayHash = (arr: Array<Object>) => md5(inspect(arr));
 
@@ -44,6 +52,10 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   updateGridState: Function;
 
   updateGridColumnState: Function;
+
+  filterBySearch: Function;
+
+  buildTitleBar: Function;
 
   buildTableHeaders: Function;
 
@@ -54,14 +66,18 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   constructor(props: Props) {
     super(props);
     this.colModel = new ColumnModel(props.columnModel);
+    this.buildTitleBar = this.buildTitleBar.bind(this);
     this.buildTableHeaders = this.buildTableHeaders.bind(this);
     this.buildTableFooter = this.buildTableFooter.bind(this);
     this.updateGridState = this.updateGridState.bind(this);
+    this.filterBySearch = this.filterBySearch.bind(this);
     this.updateGridColumnState = this.updateGridColumnState.bind(this);
     this.state = {
       store: new LocalStore(this.props.data),
-      data: this.props.data,
-      activeColumn: '',
+      filteredData: this.props.data,
+      sortedData: this.props.data,
+      renderedData: this.props.data,
+      activeColumn: "",
     };
   }
 
@@ -89,46 +105,106 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   }
 
   updateGridState(updateState: UpdateStateFunctionType) {
-    const data = updateState(this.state.store);
-    if (data && Array.isArray(data)) {
-      this.setState({ data });
+    let data = this.state.store.getData();
+    if (this.state.activeColumn) {
+      data = this.state.sortedData;
+    } else if (this.props.searchable) {
+      data = this.state.filteredData;
+    }
+
+    const renderedData = updateState(data);
+    if (renderedData && Array.isArray(renderedData)) {
+      this.setState({ renderedData });
     }
   }
 
-  updateGridColumnState: Function;
+  updateGridColumnState(
+    sortData: SortStateFunctionTypes,
+    isAscending: any,
+  ) {
+    let data = this.state.store.getData();
+    if (this.props.searchable) {
+      data = this.state.filteredData;
+    }
 
-  updateGridColumnState(columnName: any, isAscending: any, format: string, getValue: any, sortData: SortStateFunctionTypes) {
-    const data = sortData(this.state.store, columnName, isAscending, format, getValue);
+    if (this.state.activeColumn) {
+      data = sortData(data, isAscending);
+    }
+
     if (data && Array.isArray(data)) {
-      this.setState({ data });
+      this.setState({ sortedData: data });
     }
   }
 
+  filterBySearch(
+    filterData: FilterStateFunctionTypes,
+    columnFilters: Array<Object>,
+    inputValue: String,
+  ) {
+    const { searchable } = this.props;
+
+    let data = this.state.store.getData();
+    if (searchable) {
+      data = filterData(data, columnFilters, inputValue);
+    }
+
+    if (data && Array.isArray(data)) {
+      this.setState({ filteredData: data });
+    }
+  }
+
+  buildTitleBar() {
+    const {
+      title, searchable, searchPlaceholder, searchMatchCount, columnModel,
+    } = this.props;
+    const data = this.state.store.getData();
+
+    const searchByTagColumns = columnModel.filter((column) => column.searchByTag);
+
+    const headerTitle = title && <Header as="h4" floated="left">{`${title}`}</Header>;
+
+    return searchable ? (
+      <div>
+        {headerTitle}
+        <div style={{ float: "right" }}>
+          <SearchBar
+            gridData={data}
+            columnModel={columnModel}
+            columns={searchByTagColumns}
+            matchCount={searchMatchCount}
+            placeholder={searchPlaceholder}
+            filter={this.filterBySearch}
+          />
+        </div>
+      </div>
+    ) : headerTitle;
+  }
 
   buildTableHeaders() {
-    return (
+    let data = this.state.store.getData();
+    if (this.props.searchable) {
+      data = this.state.filteredData;
+    }
+
+    return !this.props.cellComponent && (
       <Table.Header>
         <Table.Row>
           {
-            this.props.cellComponent
-              ? <Table.HeaderCell colSpan={this.colModel.get().length} />
-              : this.colModel.get().map((item) => (
-                <SortingControls
-                  updateGridColumnState={(dataIndex, sortable, sortingType, getValue, sortData) => {
-                    if (item.sortable !== undefined) {
-                      item.sortable = !item.sortable;
-                    }
-                    this.setState({ activeColumn: dataIndex });
-                    this.updateGridColumnState(dataIndex, sortable, sortingType, getValue, sortData);
-                  }}
-                  dataIndex={item.dataIndex}
-                  sortable={item.sortable}
-                  sortingType={item.sortingType}
-                  activeColumn={this.state.activeColumn}
-                  getValue={item.getValue}
-                  name={item.name}
-                />
-              ))
+            this.colModel.get().map((item) => (
+              <SortingControls
+                dataHash={generateObjectArrayHash(data)}
+                updateGridColumnState={(sortData, dataIndex, isAscending) => {
+                  this.setState({ activeColumn: dataIndex });
+                  this.updateGridColumnState(sortData, isAscending);
+                }}
+                dataIndex={item.dataIndex}
+                sortable={item.sortable}
+                sortingType={item.sortingType}
+                activeColumn={this.state.activeColumn}
+                getValue={item.getValue}
+                name={item.name}
+              />
+            ))
           }
         </Table.Row>
       </Table.Header>
@@ -136,10 +212,17 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   }
 
   buildTableFooter() {
-    const data = this.state.store.getData();
     const {
-      editable, startEditingContent, editButtonLabel,
+      editable, startEditingContent, editButtonLabel, searchable,
     } = this.props;
+
+    let data = this.state.store.getData();
+    if (this.state.activeColumn) {
+      data = this.state.sortedData;
+    } else if (searchable) {
+      data = this.state.filteredData;
+    }
+
     return (
       <Table.Footer fullWidth>
         <Table.Row>
@@ -153,9 +236,9 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
             )
           }
           <PaginationControls
-            key={generateObjectArrayHash(data)}
+            dataHash={generateObjectArrayHash(data)}
             updateGridState={this.updateGridState}
-            totalRecords={data && data.length}
+            totalRecords={data.length}
             colSpan={this.colModel.get().length}
             pageSize={this.props.pageSize}
           />
@@ -165,14 +248,14 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   }
 
   render() {
-    const { columnModel, data, ...rest } = this.props;
     return (
       <Grid
+        {...this.props}
         columnModel={this.colModel}
+        buildTitleBar={this.buildTitleBar}
         buildTableHeaders={this.buildTableHeaders}
         buildTableFooter={this.buildTableFooter}
-        data={this.state.data}
-        {...rest}
+        data={this.state.renderedData}
       />
     );
   }

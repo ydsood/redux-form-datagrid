@@ -17,6 +17,9 @@ export type column = {
   }
 };
 
+export { SearchBar } from "./components/plugins/search";
+export type { SearchBarProps } from "./components/plugins/search";
+
 type metaData = {
   hidden?: boolean,
   disabled?: boolean,

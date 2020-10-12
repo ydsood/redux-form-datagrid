@@ -120,8 +120,8 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   }
 
   updateGridColumnState(
-    sortData: SortStateFunctionTypes,
     isAscending: any,
+    sortData: SortStateFunctionTypes,
   ) {
     let data = this.state.store.getData();
     if (this.props.searchable) {
@@ -138,9 +138,9 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   }
 
   filterBySearch(
-    filterData: FilterStateFunctionTypes,
     columnFilters: Array<Object>,
     inputValue: String,
+    filterData: FilterStateFunctionTypes,
   ) {
     const { searchable } = this.props;
 
@@ -195,9 +195,9 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
             this.colModel.get().map((item) => (
               <SortingControls
                 dataHash={generateObjectArrayHash(data)}
-                updateGridColumnState={(sortData, dataIndex, isAscending) => {
+                updateGridColumnState={(dataIndex, isAscending, sortData) => {
                   this.setState({ activeColumn: dataIndex });
-                  this.updateGridColumnState(sortData, isAscending);
+                  this.updateGridColumnState(isAscending, sortData);
                 }}
                 dataIndex={item.dataIndex}
                 sortable={item.sortable}

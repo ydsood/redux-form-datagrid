@@ -37,7 +37,7 @@ class SortingControls extends Component<Props, State> {
     } = this.props;
 
     if ((dataHash !== prevProps.dataHash) && (activeColumn === dataIndex)) {
-      updateGridColumnState(this.SortingHandler.sortData, dataIndex, this.state.isAscending);
+      updateGridColumnState(dataIndex, this.state.isAscending, this.SortingHandler.sortData);
     }
   }
 
@@ -50,7 +50,7 @@ class SortingControls extends Component<Props, State> {
         key={dataIndex}
         onClick={sortable && (() => {
           this.setState((prevState) => ({ isAscending: !prevState.isAscending }));
-          updateGridColumnState(this.SortingHandler.sortData, dataIndex, !this.state.isAscending);
+          updateGridColumnState(dataIndex, !this.state.isAscending, this.SortingHandler.sortData);
         })}
         className={sortable ? "tableHeader" : ""}
       >

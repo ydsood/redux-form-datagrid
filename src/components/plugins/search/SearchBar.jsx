@@ -28,7 +28,7 @@ class Search extends Component<SearchBarProps> {
   componentDidUpdate(prevProps) {
     if (this.props.gridData !== prevProps.gridData) {
       const { tagsList, inputValue } = this.state;
-      this.props.filter(this.SearchHandler.filterData, tagsList, inputValue);
+      this.props.filter(tagsList, inputValue, this.SearchHandler.filterData);
     }
   }
 
@@ -48,7 +48,7 @@ class Search extends Component<SearchBarProps> {
       tagsList: tags,
       inputValue: "",
     });
-    this.props.filter(this.SearchHandler.filterData, tags);
+    this.props.filter(tags, "", this.SearchHandler.filterData);
   };
 
   removeTag = (event, data) => {
@@ -58,7 +58,7 @@ class Search extends Component<SearchBarProps> {
 
     const tags = _.filter(tagsList, (obj) => obj.dataIndex !== dataIndex);
     this.setState({ tagsList: tags });
-    this.props.filter(this.SearchHandler.filterData, tags, inputValue);
+    this.props.filter(tags, inputValue, this.SearchHandler.filterData);
   }
 
   prepareFilterTagOptions = () => {
@@ -109,10 +109,10 @@ class Search extends Component<SearchBarProps> {
     const { tagsList } = this.state;
     if (value) {
       this.setState({ inputValue: value });
-      this.props.filter(this.SearchHandler.filterData, tagsList, value);
+      this.props.filter(tagsList, value, this.SearchHandler.filterData);
     } else {
       this.setState({ inputValue: "" });
-      this.props.filter(this.SearchHandler.filterData, tagsList, "");
+      this.props.filter(tagsList, "", this.SearchHandler.filterData);
     }
   };
 
@@ -149,30 +149,6 @@ class Search extends Component<SearchBarProps> {
           onRemove: this.removeTag,
         })}
       />
-      /*
-      <div className={classes.searchContainer}>
-        <div className={classes.inputContainer}>
-          {tagItems}
-          <input
-            placeholder={placeholder || "Search"}
-            onChange={this.onInputChange}
-            onFocus={this.onInputChange}
-            onBlur={() => this.setState({ showFilterOptions: false })}
-            onKeyDown={this.onInputClearTag}
-            className={classes.inputField}
-            value={inputValue}
-          />
-        </div>
-        <div
-          className={classes.dropDownContainer}
-          role="presentation"
-          style={{ display: showFilterOptions ? "" : "none" }}
-          onMouseDown={(event) => event.preventDefault()}
-        >
-          {listItems}
-        </div>
-      </div>
-      */
     );
   }
 }

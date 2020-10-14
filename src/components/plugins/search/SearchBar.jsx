@@ -71,14 +71,13 @@ class Search extends Component<SearchBarProps> {
       columnData.value = obj[0].dataIndex;
       columnData.key = key.dataIndex;
       columnData.formatter = key.formatter;
-      const columnValues = gridData.map((record) => {
-        const recordTextValue = (record[key.dataIndex] !== null) && (
-          (key.formatter && key.formatter(record[key.dataIndex]))
-          || record[key.dataIndex]
-        );
 
-        return recordTextValue;
-      }).filter((columnValue) => columnValue);
+      const columnValues = gridData.map((record) => ((
+        record[key.dataIndex] !== null
+        && record[key.dataIndex] !== undefined
+        && key.formatter
+      ) ? key.formatter(record[key.dataIndex]) : record[key.dataIndex]))
+        .filter((columnValue) => columnValue);
 
       columnData.resultValues = _.uniq(columnValues);
 

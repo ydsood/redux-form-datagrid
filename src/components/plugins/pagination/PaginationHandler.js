@@ -54,18 +54,13 @@ export default class PaginationHandler {
   currentPage(data: Array<Object>): Array<Object> {
     const { cursor, pageSize } = this.state;
 
-    let currentCursor = cursor;
-    while (currentCursor >= data.length) {
-      currentCursor -= pageSize;
-      if (currentCursor < 0) {
-        currentCursor = 0;
-        break;
-      }
+    if (cursor >= data.length) {
+      return this.lastPage(data);
     }
 
-    const returnValue = data.slice(currentCursor, currentCursor + pageSize);
+    const returnValue = data.slice(cursor, cursor + pageSize);
 
-    this.setState({ cursor: currentCursor, pageEnd: currentCursor + returnValue.length });
+    this.setState({ cursor, pageEnd: cursor + returnValue.length });
 
     return returnValue;
   }

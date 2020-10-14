@@ -27,9 +27,8 @@ type Props = {
   cellComponent: Component<*>,
   editButtonLabel: string,
   exportable: boolean,
-  exportData: Array<Object>,
   exportButtonLabel: String,
-  fileName:string,
+  exportFileName: string,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -143,13 +142,12 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   buildTableFooter() {
     const data = this.state.store.getData();
     const {
-      editable, 
-      startEditingContent, 
-      editButtonLabel, 
-      exportable, 
-      exportButtonLabel, 
-      exportData,
-      fileName,
+      editable,
+      startEditingContent,
+      editButtonLabel,
+      exportable,
+      exportButtonLabel,
+      exportFileName,
       columnModel
     } = this.props;
     return (
@@ -168,8 +166,8 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
             exportable
             && (
               <ExportControls
-                exportData={exportData}
-                fileName={fileName}
+                data={data}
+                exportFileName={exportFileName}
                 exportButtonLabel={exportButtonLabel}
                 columnModel={columnModel}
               />

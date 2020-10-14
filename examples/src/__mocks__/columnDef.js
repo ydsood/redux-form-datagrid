@@ -34,6 +34,9 @@ const columns: Array<column> = [
       }
       return false;
     }
+    // To get the value of a custom cell component depending upon the level of component where the value we can get from.
+    // getExportValue: component => component.props.value || '',
+    // getValue: component => component.props.value || '',
   },
   {
     dataIndex: 'govtID',

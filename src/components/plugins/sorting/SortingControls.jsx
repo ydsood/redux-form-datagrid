@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
-import { Table } from 'semantic-ui-react';
-import SortingHandler from './SortingHandler';
-import Icon from '../../../elements/icons';
-
+import React, { Component } from "react";
+import { Table } from "semantic-ui-react";
+import SortingHandler from "./SortingHandler";
+import Icon from "../../../elements/icons";
 
 type Props = {
+  dataHash: String,
   updateGridColumnState: (Function) => void,
   dataIndex: String,
   sortable: Boolean,
@@ -14,41 +14,57 @@ type Props = {
   activeColumn: String
 }
 
-class SortingControls extends Component<Props> {
+type State = {
+  isAscending: Boolean,
+}
+
+class SortingControls extends Component<Props, State> {
+  SortingHandler: SortingHandler
+
   constructor(props: Props) {
     super(props);
-    this.SortingHandler = new SortingHandler();
+
+    this.SortingHandler = new SortingHandler(props.dataIndex, props.sortingType, props.getValue);
+
+    this.state = {
+      isAscending: false,
+    };
   }
 
-  SortingHandler: SortingHandler
+  componentDidUpdate(prevProps) {
+    const {
+      updateGridColumnState, dataHash, dataIndex, activeColumn,
+    } = this.props;
+
+    if ((dataHash !== prevProps.dataHash) && (activeColumn === dataIndex)) {
+      updateGridColumnState(dataIndex, this.state.isAscending, this.SortingHandler.sortData);
+    }
+  }
 
   render() {
     const {
-      updateGridColumnState, dataIndex, sortable, sortingType, getValue, name, activeColumn,
+      updateGridColumnState, dataIndex, sortable, name, activeColumn,
     } = this.props;
     return (
       <Table.HeaderCell
         key={dataIndex}
-        onClick={() => {
-          if (sortable !== undefined) {
-            updateGridColumnState(dataIndex, sortable, sortingType,
-              getValue, this.SortingHandler.sortData);
-          }
-        }}
-        className={sortable !== undefined ? 'tableHeader' : ''}
+        onClick={sortable && (() => {
+          this.setState((prevState) => ({ isAscending: !prevState.isAscending }));
+          updateGridColumnState(dataIndex, !this.state.isAscending, this.SortingHandler.sortData);
+        })}
+        className={sortable ? "tableHeader" : ""}
       >
         {name}
         {dataIndex === activeColumn
           ? (
             <Icon
               link
-              name={sortable ? 'caret up' : 'caret down'}
+              name={this.state.isAscending ? "caret up" : "caret down"}
             />
-          ) : ''}
+          ) : ""}
       </Table.HeaderCell>
     );
   }
 }
-
 
 export default SortingControls;

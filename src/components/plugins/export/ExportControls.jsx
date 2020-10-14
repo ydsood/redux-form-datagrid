@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Table, Button, Icon } from 'semantic-ui-react';
+import React, { Component } from "react";
+import { Table, Button, Icon } from "semantic-ui-react";
 
 type Props = {
-  data: Array<Object>,
+  data?: Array<Object>,
   columnModel: Array<Object>,
   exportButtonLabel?: string,
   exportFileName?: string,
@@ -16,8 +16,8 @@ class ExportControls extends Component<Props> {
 
   exportData() {
     const { exportFileName, data, columnModel } = this.props;
-    let CSV = '';
-    let header = '';
+    let CSV = "";
+    let header = "";
 
     columnModel.forEach((element) => {
       header += `${element.name},`;
@@ -27,7 +27,7 @@ class ExportControls extends Component<Props> {
     CSV += `${header}\r\n`;
 
     for (let i = 0; i < data.length; i += 1) {
-      let rowData = '';
+      let rowData = "";
       for (let j = 0; j < columnModel.length; j += 1) {
         const value = columnModel[j].formatter
           ? columnModel[j].formatter(data[i][columnModel[j].dataIndex])
@@ -38,13 +38,13 @@ class ExportControls extends Component<Props> {
       CSV += `${rowData}\r\n`;
     }
 
-    if (CSV === '') {
+    if (CSV === "") {
       return;
     }
     const uri = `data:text/csv;charset=utf-8,${escape(CSV)}`;
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = uri;
-    link.style = 'visibility: hidden';
+    link.style = "visibility: hidden";
     link.download = `${exportFileName}.csv`;
     document.body.appendChild(link);
     link.click();
@@ -61,7 +61,7 @@ class ExportControls extends Component<Props> {
         </Button>
       );
     }
-    return '';
+    return "";
   }
 
   render() {
@@ -74,8 +74,8 @@ class ExportControls extends Component<Props> {
 }
 
 ExportControls.defaultProps = {
-  exportButtonLabel: 'Export',
-  exportFileName: 'GridData',
+  exportButtonLabel: "Export",
+  exportFileName: "GridData",
   data: [],
 };
 

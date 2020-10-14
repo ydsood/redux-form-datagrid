@@ -29,8 +29,8 @@ class ExportControls extends Component<Props> {
     for (let i = 0; i < data.length; i += 1) {
       let rowData = '';
       for (let j = 0; j < columnModel.length; j += 1) {
-        const value = columnModel[j].getExportValue
-          ? columnModel[j].getExportValue(data[i][columnModel[j].dataIndex])
+        const value = columnModel[j].formatter
+          ? columnModel[j].formatter(data[i][columnModel[j].dataIndex])
           : data[i][columnModel[j].dataIndex];
         rowData += `${value},`;
       }

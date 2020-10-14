@@ -11,6 +11,7 @@ import type { ColumnModelType } from "./columnModel";
 import { PaginationControls } from "./plugins/pagination";
 import { SortingControls } from './plugins/sorting';
 import { EditControls } from "./plugins/edit";
+import { ExportControls } from "./plugins/export";
 import { LocalStore } from "./store";
 import type {
   LocalStore as LocalStoreType,
@@ -25,6 +26,9 @@ type Props = {
   pageSize: number,
   cellComponent: Component<*>,
   editButtonLabel: string,
+  exportable: boolean,
+  exportButtonLabel: String,
+  exportFileName: string,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -138,7 +142,13 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   buildTableFooter() {
     const data = this.state.store.getData();
     const {
-      editable, startEditingContent, editButtonLabel,
+      editable,
+      startEditingContent,
+      editButtonLabel,
+      exportable,
+      exportButtonLabel,
+      exportFileName,
+      columnModel
     } = this.props;
     return (
       <Table.Footer fullWidth>
@@ -149,6 +159,17 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
               <EditControls
                 startEditingContent={startEditingContent}
                 editButtonLabel={editButtonLabel}
+              />
+            )
+          }
+          {
+            exportable
+            && (
+              <ExportControls
+                data={data}
+                exportFileName={exportFileName}
+                exportButtonLabel={exportButtonLabel}
+                columnModel={columnModel}
               />
             )
           }

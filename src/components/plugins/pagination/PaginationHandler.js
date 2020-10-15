@@ -79,14 +79,15 @@ export default class PaginationHandler {
     const { pageSize } = this.state;
     const totalPages = parseInt(data.length / pageSize, 10)
       + (data.length % pageSize === 0 ? 0 : 1);
-    const start = pageSize * (totalPages - 1);
-    if (start >= 0 && start < data.length) {
-      const end = start + pageSize;
-      const returnValue = data.slice(start, end);
-      this.setState({ cursor: start, pageEnd: start + returnValue.length });
-      return returnValue;
+    let start = pageSize * (totalPages - 1);
+    if (start < 0 || start >= data.length) {
+      start = 0;
     }
-    return null;
+
+    const end = start + pageSize;
+    const returnValue = data.slice(start, end);
+    this.setState({ cursor: start, pageEnd: start + returnValue.length });
+    return returnValue;
   }
 
   getFirstRecordPosition(): number {

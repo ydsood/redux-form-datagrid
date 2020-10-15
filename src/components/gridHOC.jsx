@@ -204,6 +204,9 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
     return !this.props.cellComponent && (
       <Table.Header>
         <Table.Row>
+          {this.props.editIndividualRows && (
+            <Table.HeaderCell />
+          )}
           {
             this.colModel.get().map((item) => (
               <SortingControls
@@ -251,10 +254,7 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
     return (
       <Table.Footer fullWidth>
         <Table.Row>
-          {editIndividualRows && (
-            <Table.HeaderCell />
-          )}
-          <Table.HeaderCell colSpan={this.colModel.get().length}>
+          <Table.HeaderCell colSpan={this.colModel.get().length + (editIndividualRows ? 1 : 0)}>
             {
               editable
               && (

@@ -10,7 +10,6 @@ import DefaultFormField, { RequiredFieldValidator } from "./DefaultFormField";
 
 type Props = {
   fields: *,
-  error: *,
   columnModel: Array<Object>,
   open: boolean,
   doneEditingContent: Function,
@@ -18,6 +17,8 @@ type Props = {
   removeContent: Function,
   addButtonLabel?: string,
   doneButtonLabel?: string,
+  currentFieldIndex: number,
+  editIndividualRows: boolean,
 }
 
 class FormFieldModal extends React.Component<Props> {
@@ -43,12 +44,12 @@ class FormFieldModal extends React.Component<Props> {
     });
   }
 
-  buildFormFieldsModal(fieldName: string, index: number, fields: *) {
-    const { columnModel, removeContent } = this.props;
+  buildFormFields(fieldName: string, index: number, fields: *) {
+    const { columnModel } = this.props;
     const resolvedColumnModel = this.applyFieldResolvers(columnModel, fields.get(index));
     const chunkedColumnModel = buildVariableSizeFieldSection(resolvedColumnModel);
 
-    const fieldToRender = chunkedColumnModel.map((columns) => {
+    return chunkedColumnModel.map((columns) => {
       const mappedFields = columns.map((item) => {
         let field = <div />;
         const label = (item.meta && item.meta.label) || item.name;
@@ -96,53 +97,59 @@ class FormFieldModal extends React.Component<Props> {
         </Form.Group>
       );
     });
-
-    return (
-      <Segment key={fieldName} color="black">
-        <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
-        {fieldToRender}
-      </Segment>
-    );
   }
 
   render() {
     const {
-      fields, open, doneEditingContent, addContent, error, addButtonLabel, doneButtonLabel,
+      fields,
+      open,
+      doneEditingContent,
+      addContent,
+      addButtonLabel,
+      doneButtonLabel,
+      editIndividualRows,
+      currentFieldIndex,
+      removeContent,
     } = this.props;
-    const formFields = fields
-      .map((fieldName, index) => this.buildFormFieldsModal(fieldName, index, fields));
 
-    if (!open) {
-      return (
-        <Fragment>
-          <Segment hidden>
-            { formFields }
-          </Segment>
-        </Fragment>
-      );
-    }
+    const formFields = editIndividualRows && (currentFieldIndex > -1) ? (
+      this.buildFormFields(
+        fields.map((field) => field)[currentFieldIndex],
+        currentFieldIndex,
+        fields,
+      )
+    ) : (
+      fields.map((fieldName, index) => (
+        <Segment key={fieldName} color="black">
+          <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
+          {this.buildFormFields(fieldName, index, fields)}
+        </Segment>
+      ))
+    );
+
     return (
       <Fragment>
         <Modal
           open={open}
-          closeOnEscape={false}
-          closeOnDimmerClick={false}
+          closeOnEscape
+          closeOnDimmerClick
           onClose={doneEditingContent}
         >
           <Modal.Content open={open}>
-            { error }
             <Form>
               { formFields }
             </Form>
           </Modal.Content>
           <Modal.Actions>
-            <Button
-              onClick={addContent}
-              positive
-              labelPosition="right"
-              icon="plus"
-              content={addButtonLabel}
-            />
+            {!editIndividualRows && (
+              <Button
+                onClick={addContent}
+                positive
+                labelPosition="right"
+                icon="plus"
+                content={addButtonLabel}
+              />
+            )}
             <Button
               onClick={doneEditingContent}
               positive

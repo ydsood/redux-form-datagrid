@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { Table } from "semantic-ui-react";
+import { createUseStyles } from "react-jss";
+import { Icon, Table } from "semantic-ui-react";
+
 import TableCell from "./tableCell";
 
-export default class TableRow extends Component<Object> {
+class TableRow extends Component<Object> {
   buildRowCells() {
     const {
       input, editable, data, name,
@@ -44,9 +46,24 @@ export default class TableRow extends Component<Object> {
   }
 
   render() {
-    const { cellComponent } = this.props;
+    const {
+      data,
+      cellComponent,
+      editIndividualRows,
+      startEditingContent,
+      removeContent,
+      classes,
+    } = this.props;
     return (
       <Table.Row>
+        {editIndividualRows && (
+          <Table.Cell collapsing verticalAlign="top">
+            <div className={classes.buttonWrapper}>
+              <Icon className={classes.button} link name="pencil" onClick={() => startEditingContent(data.reduxFormIndex)} />
+              <Icon className={classes.button} link name="trash" onClick={() => removeContent(data.reduxFormIndex)} />
+            </div>
+          </Table.Cell>
+        )}
         {!cellComponent
           ? this.buildRowCells()
           : this.buildCustomizedCell()}
@@ -54,3 +71,16 @@ export default class TableRow extends Component<Object> {
     );
   }
 }
+
+const styles = {
+  buttonWrapper: {
+    padding: "0.5em 0 !important",
+  },
+  button: {
+    margin: "0 0.25em !important",
+  },
+};
+
+export default (props) => (
+  <TableRow {...props} classes={createUseStyles(styles)()} />
+);

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, Button, Icon } from "semantic-ui-react";
+import { Button, Icon } from "semantic-ui-react";
 
 type Props = {
   data?: Array<Object>,
@@ -66,9 +66,9 @@ class ExportControls extends Component<Props> {
 
   render() {
     return (
-      <Table.HeaderCell textAlign="left">
+      <div style={{ float: "left" }}>
         {this.exportButton()}
-      </Table.HeaderCell>
+      </div>
     );
   }
 }

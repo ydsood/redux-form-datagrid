@@ -24,14 +24,18 @@ import { SearchBar } from "./plugins/search";
 type Props = {
   data: Array<Object>,
   editable: boolean,
+  editIndividualRows: boolean,
   title: String,
   searchable: boolean,
   searchPlaceholder: String,
   startEditingContent: Function,
+  addContent: Function,
+  removeContent: Function,
   columnModel: Array<Object>,
   pageSize: number,
   cellComponent: Component<*>,
   editButtonLabel: string,
+  addButtonLabel: string,
   exportable: boolean,
   exportButtonLabel: String,
   exportFileName: string,
@@ -52,6 +56,11 @@ type SortStateFunctionTypes = (...data: Array<Object>) => Array<Object>;
 type FilterStateFunctionTypes = (...data: Array<Object>) => Array<Object>;
 
 const generateObjectArrayHash = (arr: Array<Object>) => md5(inspect(arr));
+
+const includeReduxFormIndex = (arr: Array<Object>) => arr.map((item, index) => ({
+  ...item,
+  reduxFormIndex: index,
+}));
 
 export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, State> {
   updateGridState: Function;
@@ -78,7 +87,7 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
     this.filterBySearch = this.filterBySearch.bind(this);
     this.updateGridColumnState = this.updateGridColumnState.bind(this);
     this.state = {
-      store: new LocalStore(this.props.data),
+      store: new LocalStore(includeReduxFormIndex(this.props.data)),
       filteredData: this.props.data,
       sortedData: this.props.data,
       renderedData: this.props.data,
@@ -87,7 +96,7 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   }
 
   componentDidMount() {
-    this.setState({ store: new LocalStore(this.props.data) });
+    this.setState({ store: new LocalStore(includeReduxFormIndex(this.props.data)) });
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -95,7 +104,7 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
       if (this.state.store && this.state.store instanceof LocalStore) {
         this.state.store.clear();
         // eslint-disable-next-line
-        this.setState({ store: new LocalStore(this.props.data) });
+        this.setState({ store: new LocalStore(includeReduxFormIndex(this.props.data)) });
       }
     }
 
@@ -220,8 +229,11 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
   buildTableFooter() {
     const {
       editable,
+      editIndividualRows,
       startEditingContent,
+      addContent,
       editButtonLabel,
+      addButtonLabel,
       searchable,
       exportable,
       exportButtonLabel,
@@ -239,33 +251,40 @@ export default (Grid: StaticDatagrid) => class GridHOC extends Component<Props, 
     return (
       <Table.Footer fullWidth>
         <Table.Row>
-          {
-            editable
-            && (
-              <EditControls
-                startEditingContent={startEditingContent}
-                editButtonLabel={editButtonLabel}
-              />
-            )
-          }
-          {
-            exportable
-            && (
-              <ExportControls
-                data={data}
-                exportFileName={exportFileName}
-                exportButtonLabel={exportButtonLabel}
-                columnModel={columnModel}
-              />
-            )
-          }
-          <PaginationControls
-            dataHash={generateObjectArrayHash(data)}
-            updateGridState={this.updateGridState}
-            totalRecords={data.length}
-            colSpan={this.colModel.get().length}
-            pageSize={this.props.pageSize}
-          />
+          {editIndividualRows && (
+            <Table.HeaderCell />
+          )}
+          <Table.HeaderCell colSpan={this.colModel.get().length}>
+            {
+              editable
+              && (
+                <EditControls
+                  editIndividualRows={editIndividualRows}
+                  startEditingContent={startEditingContent}
+                  editButtonLabel={editButtonLabel}
+                  addContent={addContent}
+                  addButtonLabel={addButtonLabel}
+                />
+              )
+            }
+            {
+              exportable
+              && (
+                <ExportControls
+                  data={data}
+                  exportFileName={exportFileName}
+                  exportButtonLabel={exportButtonLabel}
+                  columnModel={columnModel}
+                />
+              )
+            }
+            <PaginationControls
+              dataHash={generateObjectArrayHash(data)}
+              updateGridState={this.updateGridState}
+              totalRecords={data.length}
+              pageSize={this.props.pageSize}
+            />
+          </Table.HeaderCell>
         </Table.Row>
       </Table.Footer>
     );

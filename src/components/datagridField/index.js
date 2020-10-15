@@ -8,6 +8,7 @@ import FormFieldModal from "./FormFieldModal";
 
 type DatagridProps = {
   columnModel: Array<column>,
+  editIndividualRows?: boolean,
   disabled?: boolean,
   addButtonLabel?: string,
   doneButtonLabel?: string,
@@ -25,7 +26,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
 
   constructor(props: FieldArrayProps & DatagridProps) {
     super(props);
-    this.state = { addingContent: false };
+    this.state = { addingContent: false, currentFieldIndex: -1 };
     this.doneEditingContent = this.doneEditingContent.bind(this);
     this.startEditingContent = this.startEditingContent.bind(this);
     this.addContent = this.addContent.bind(this);
@@ -56,16 +57,18 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
         this.removeContent(0);
       }
     }
-    this.setState({ addingContent: false });
+    this.setState({ addingContent: false, currentFieldIndex: -1 });
   }
 
-  startEditingContent() {
+  startEditingContent(index: number) {
     const { fields } = this.props;
     const data = fields.getAll();
+    let currentFieldIndex = index;
     if (!data || data.length < 1) {
       this.addContent();
+      currentFieldIndex = 0;
     }
-    this.setState({ addingContent: true });
+    this.setState({ addingContent: true, currentFieldIndex });
   }
 
   addContent() {
@@ -90,9 +93,15 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
 
   render() {
     const data = this.buildDataFromFields();
-    const { addingContent } = this.state;
+    const { addingContent, currentFieldIndex } = this.state;
     const {
-      fields, columnModel, disabled, meta: { error, warning }, addButtonLabel, doneButtonLabel,
+      fields,
+      columnModel,
+      disabled,
+      editIndividualRows,
+      meta: { error, warning },
+      addButtonLabel,
+      doneButtonLabel,
     } = this.props;
     const errorBlock = ((error && <Message error content={error} />)
       || (warning && <Message warning content={warning} />));
@@ -101,8 +110,12 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
         <DataGrid
           {...this.props}
           editable={!disabled}
+          editIndividualRows={editIndividualRows}
           data={data}
           startEditingContent={this.startEditingContent}
+          addContent={this.addContent}
+          removeContent={this.removeContent}
+          addButtonLabel={addButtonLabel}
           error={errorBlock}
         />
         <FormFieldModal
@@ -110,12 +123,14 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
           doneButtonLabel={doneButtonLabel}
           columnModel={columnModel}
           fields={fields}
+          editIndividualRows={editIndividualRows}
           open={addingContent}
+          currentFieldIndex={currentFieldIndex}
           doneEditingContent={this.doneEditingContent}
           addContent={this.addContent}
           removeContent={this.removeContent}
-          error={errorBlock}
         />
+        {errorBlock}
       </Fragment>
     );
   }
@@ -123,6 +138,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
 
 DatagridField.defaultProps = {
   disabled: false,
+  editIndividualRows: false,
   addButtonLabel: undefined,
   doneButtonLabel: undefined,
   onChange: () => {},

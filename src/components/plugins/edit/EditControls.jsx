@@ -1,46 +1,57 @@
 import React, { Component } from "react";
-import { Table, Button, Icon } from "semantic-ui-react";
+import { Button, Icon } from "semantic-ui-react";
 
 type Props = {
+  editIndividualRows: boolean,
   startEditingContent: Function,
   editButtonLabel?: string,
+  addContent: Function,
+  addButtonLabel?: string,
 }
 
 class EditControls extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    this.edit = this.edit.bind(this);
-  }
-
-  edit(): Array<Object> {
-    const { startEditingContent } = this.props;
-    startEditingContent();
-  }
-
   editButton() {
     const { editButtonLabel } = this.props;
     if (editButtonLabel) {
       return (
-        <Button basic icon labelPosition="left" onClick={() => this.edit()} className="grid-edit-button">
+        <Button basic icon labelPosition="left" onClick={() => this.props.startEditingContent()} className="grid-edit-button">
           <Icon name="pencil" />
           {editButtonLabel}
         </Button>
       );
     }
-    return <Icon link name="pencil" onClick={() => this.edit()} />;
+    return <Icon link name="pencil" onClick={() => this.props.startEditingContent()} />;
+  }
+
+  addButton() {
+    const { addButtonLabel } = this.props;
+    if (addButtonLabel) {
+      return (
+        <Button basic icon labelPosition="left" onClick={() => this.props.addContent()} className="grid-edit-button">
+          <Icon name="add" />
+          {addButtonLabel}
+        </Button>
+      );
+    }
+    return <Icon link name="add" onClick={() => this.props.addContent()} />;
   }
 
   render() {
     return (
-      <Table.HeaderCell textAlign="left">
-        {this.editButton()}
-      </Table.HeaderCell>
+      <div style={{ float: "left" }}>
+        {this.props.editIndividualRows ? (
+          this.addButton()
+        ) : (
+          this.editButton()
+        )}
+      </div>
     );
   }
 }
 
 EditControls.defaultProps = {
   editButtonLabel: "",
+  addButtonLabel: "",
 };
 
 export default EditControls;

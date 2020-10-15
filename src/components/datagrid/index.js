@@ -7,6 +7,8 @@ type StaticDatagridProps = {
   data: Array<Object>,
   error: *,
   columnModel: Function,
+  editable: boolean,
+  editIndividualRows: boolean,
   buildTitleBar: Function,
   buildTableHeaders: Function,
   buildTableFooter: Function,
@@ -15,6 +17,8 @@ type StaticDatagridProps = {
   cellComponent?: Component<*>,
   name: string,
   hidden?: boolean,
+  startEditingContent: Function,
+  removeContent: Function,
 };
 
 class StaticDatagrid extends Component<StaticDatagridProps> {
@@ -24,6 +28,9 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       columnModel,
       cellComponent,
       titleFormatter,
+      editIndividualRows,
+      startEditingContent,
+      removeContent,
     } = this.props;
     let rowNumber = 0;
     return data.map((item) => {
@@ -34,16 +41,23 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
           key={name}
           data={item}
           columnModel={columnModel}
+          editIndividualRows={editIndividualRows}
           titleFormatter={titleFormatter}
           name={name}
           cellComponent={cellComponent}
+          startEditingContent={startEditingContent}
+          removeContent={removeContent}
         />
       );
     });
   }
 
   buildTableBody() {
-    const { data, columnModel, noDataComponent: NoDataComponent } = this.props;
+    const {
+      data,
+      columnModel,
+      noDataComponent: NoDataComponent,
+    } = this.props;
 
     const emptyBody = (
       <Table.Row>
@@ -57,14 +71,19 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
   }
 
   render() {
-    const { hidden, error } = this.props;
+    const {
+      hidden,
+      error,
+      editable,
+      editIndividualRows,
+    } = this.props;
     const style = hidden ? { display: "none" } : {};
     const renderComponent = (
       <Segment basic>
         <div className="grid" style={style}>
           {this.props.buildTitleBar()}
           { error }
-          <Table>
+          <Table celled definition={editable && editIndividualRows}>
             {this.props.buildTableHeaders()}
             {this.buildTableBody()}
             {this.props.buildTableFooter()}

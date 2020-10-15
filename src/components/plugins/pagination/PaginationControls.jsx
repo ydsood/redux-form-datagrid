@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from "react";
-import { Table } from "semantic-ui-react";
 import PaginationHandler from "./PaginationHandler";
 import Icon from "../../../elements/icons";
 
@@ -8,7 +7,6 @@ type Props = {
   updateGridState: (Function) => void,
   pageSize: number,
   totalRecords: number,
-  colSpan: number
 }
 
 class PaginationControls extends Component<Props> {
@@ -32,9 +30,9 @@ class PaginationControls extends Component<Props> {
   }
 
   render() {
-    const { updateGridState, totalRecords, colSpan } = this.props;
+    const { updateGridState, totalRecords } = this.props;
     return (
-      <Table.HeaderCell textAlign="right" colSpan={colSpan}>
+      <div style={{ float: "right" }}>
         {totalRecords ? (
           <Fragment>
             {this.paginationHandler.getFirstRecordPosition()
@@ -75,7 +73,7 @@ class PaginationControls extends Component<Props> {
             ) : ""}
           </Fragment>
         ) : null}
-      </Table.HeaderCell>
+      </div>
     );
   }
 }

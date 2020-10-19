@@ -11,7 +11,7 @@ type Props = {
 const PaginationControls = ({
   paginationHandler,
   updateGridState,
-}: Props) => (paginationHandler.data.length && (
+}: Props) => ((paginationHandler.data.length > 0) && (
   <Fragment>
     {!paginationHandler.isOnFirstPage() && (
       <Icon

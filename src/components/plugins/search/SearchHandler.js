@@ -1,30 +1,76 @@
 // @flow
-export type SearchHandlerProps = {
-  columnModel: Array<Object>,
-}
 
-type State = {
-  columnModel: Array<Object>,
-};
+export default class SearchHandler {
+  inputValue: String;
 
-export default class PaginationHandler {
-  state: State;
+  tagsList: Array<Object>;
 
-  constructor(columnModel: Array<Object>) {
-    this.state = { columnModel };
+  enabled: Boolean;
+
+  columnModel: Array<Object>;
+
+  selectedListOption: Function;
+
+  removeTag: Function;
+
+  updateInputValue: Function;
+
+  filterData: Function;
+
+  constructor(enabled: Boolean, columnModel: Array<Object>) {
+    this.inputValue = "";
+    this.tagsList = [];
+
+    this.enabled = enabled;
+    this.columnModel = columnModel;
+
+    this.selectedListOption = this.selectedListOption.bind(this);
+    this.removeTag = this.removeTag.bind(this);
+    this.updateInputValue = this.updateInputValue.bind(this);
     this.filterData = this.filterData.bind(this);
   }
 
-  filterData(
-    data: Array<Object>,
-    columnFilters: Array<Object>,
-    inputValue: String,
-  ): Array<Object> {
-    const { columnModel } = this.state;
+  selectedListOption = (value, label, item, formatter) => {
+    const { tagsList } = this;
+
+    tagsList.push({
+      text: value,
+      dataIndex: item,
+      colLabel: label,
+      formatter,
+    });
+
+    this.inputValue = "";
+  };
+
+  removeTag = (tagOption) => {
+    const { tagsList } = this;
+
+    const [dataIndex] = tagOption.value.split("_");
+
+    this.tagsList = tagsList.filter((obj) => obj.dataIndex !== dataIndex);
+  }
+
+  updateInputValue = (value) => {
+    if (value) {
+      this.inputValue = value;
+    } else {
+      this.inputValue = "";
+    }
+  };
+
+  filterData(data: Array<Object>): Array<Object> {
+    const {
+      columnModel, inputValue, tagsList, enabled,
+    } = this;
+
+    if (!enabled) {
+      return data;
+    }
 
     let gridData = data;
-    if (columnFilters && columnFilters.length) {
-      columnFilters.forEach((element) => {
+    if (tagsList && tagsList.length) {
+      tagsList.forEach((element) => {
         gridData = gridData.filter((item) => {
           const recordTextValue = (
             item[element.dataIndex] !== null

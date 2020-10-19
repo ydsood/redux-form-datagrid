@@ -51,7 +51,7 @@ class ExportControls extends Component<Props> {
     document.body.removeChild(link);
   }
 
-  exportButton() {
+  render() {
     const { exportButtonLabel, data } = this.props;
     if (data.length) {
       return (
@@ -62,14 +62,6 @@ class ExportControls extends Component<Props> {
       );
     }
     return "";
-  }
-
-  render() {
-    return (
-      <div style={{ float: "left" }}>
-        {this.exportButton()}
-      </div>
-    );
   }
 }
 

@@ -1,104 +1,116 @@
 // @flow
-export type PaginationProps = {
-  pageSize: number,
-  cursor?: number,
-}
-
-type State = {
-  cursor: number,
-  pageEnd: number,
-  pageSize: number
-}
 
 export default class PaginationHandler {
-  constructor(pageSize: number, cursor?: number) {
-    this.state = { cursor: cursor || 0, pageSize: pageSize || 5 };
-    this.next = this.next.bind(this);
-    this.prev = this.prev.bind(this);
-    this.currentPage = this.currentPage.bind(this);
-    this.firstPage = this.firstPage.bind(this);
-    this.lastPage = this.lastPage.bind(this);
+  cursor: Number;
+
+  data: Array<Object>;
+
+  pageSize: Number;
+
+  moveToNextPage: Function;
+
+  moveToPreviousPage: Function;
+
+  moveToFirstPage: Function;
+
+  moveToLastPage: Function;
+
+  getFirstRecordPosition: Function;
+
+  getLastRecordPosition: Function;
+
+  isOnFirstPage: Function;
+
+  isOnLastPage: Function;
+
+  getCurrentPage: Function;
+
+  constructor(pageSize: number) {
+    this.cursor = 0;
+    this.data = [];
+
+    this.pageSize = pageSize;
+
+    this.moveToNextPage = this.moveToNextPage.bind(this);
+    this.moveToPreviousPage = this.moveToPreviousPage.bind(this);
+    this.moveToFirstPage = this.moveToFirstPage.bind(this);
+    this.moveToLastPage = this.moveToLastPage.bind(this);
+    this.getFirstRecordPosition = this.getFirstRecordPosition.bind(this);
+    this.getLastRecordPosition = this.getLastRecordPosition.bind(this);
+    this.isOnFirstPage = this.isOnFirstPage.bind(this);
+    this.isOnLastPage = this.isOnLastPage.bind(this);
+    this.getCurrentPage = this.getCurrentPage.bind(this);
   }
 
-  state: State
+  moveToNextPage() {
+    const { cursor, pageSize, data } = this;
 
-  setState(newState) {
-    Object.assign(this.state, newState);
-  }
-
-  next(data: Array<Object>): Array<Object> {
-    const { cursor, pageSize } = this.state;
     const start = cursor + pageSize;
     if (start >= 0 && start < data.length) {
-      const end = start + pageSize;
-      const returnValue = data.slice(start, end);
-      this.setState({ cursor: start, pageEnd: start + returnValue.length });
-      return returnValue;
+      this.cursor = start;
     }
-    return null;
   }
 
-  prev(data: Array<Object>): Array<Object> {
-    const { cursor, pageSize } = this.state;
-    let start = cursor - pageSize;
-    start = start < 0 ? 0 : start;
+  moveToPreviousPage() {
+    const { cursor, pageSize, data } = this;
+
+    const start = cursor - pageSize;
     if (start >= 0 && start < data.length) {
-      const end = start + pageSize;
-      const returnValue = data.slice(start, end);
-      this.setState({ cursor: start, pageEnd: start + returnValue.length });
-      return returnValue;
+      this.cursor = start;
+    } else if (start < 0) {
+      this.cursor = 0;
     }
-    return null;
   }
 
-  currentPage(data: Array<Object>): Array<Object> {
-    const { cursor, pageSize } = this.state;
-
-    if (cursor >= data.length) {
-      return this.lastPage(data);
-    }
-
-    const returnValue = data.slice(cursor, cursor + pageSize);
-
-    this.setState({ cursor, pageEnd: cursor + returnValue.length });
-
-    return returnValue;
+  moveToFirstPage() {
+    this.cursor = 0;
   }
 
-  firstPage(data: Array<Object>): Array<Object> {
-    const { pageSize } = this.state;
-    const start = 0;
-    const end = start + pageSize;
-    this.setState({ cursor: start, pageEnd: end });
-    const returnValue = data.slice(start, end);
-    this.setState({ cursor: start, pageEnd: start + returnValue.length });
-    return returnValue;
-  }
-
-  lastPage(data: Array<Object>): Array<Object> {
-    const { pageSize } = this.state;
+  moveToLastPage() {
+    const { pageSize, data } = this;
     const totalPages = parseInt(data.length / pageSize, 10)
       + (data.length % pageSize === 0 ? 0 : 1);
-    let start = pageSize * (totalPages - 1);
-    if (start < 0 || start >= data.length) {
-      start = 0;
+    const start = pageSize * (totalPages - 1);
+    if (start >= 0 && start < data.length) {
+      this.cursor = start;
+    } else {
+      this.cursor = 0;
     }
-
-    const end = start + pageSize;
-    const returnValue = data.slice(start, end);
-    this.setState({ cursor: start, pageEnd: start + returnValue.length });
-    return returnValue;
   }
 
   getFirstRecordPosition(): number {
-    return this.state.cursor + 1;
+    return this.cursor + 1;
   }
 
   getLastRecordPosition(): number {
-    return this.state.pageEnd;
+    const { cursor, pageSize, data } = this;
+
+    const currentPage = data ? data.slice(cursor, cursor + pageSize) : [];
+
+    return cursor + currentPage.length;
   }
 
-  getPageSize(): number {
-    return this.state.pageSize;
+  isOnFirstPage(): boolean {
+    const { pageSize } = this;
+
+    return this.getFirstRecordPosition() < pageSize;
+  }
+
+  isOnLastPage(): number {
+    const { data } = this;
+
+    return this.getLastRecordPosition() >= data.length;
+  }
+
+  getCurrentPage(data: Array<Object>): Array<Object> {
+    const { cursor, pageSize } = this;
+
+    this.data = data;
+
+    if (cursor >= data.length) {
+      return this.moveToLastPage(data);
+    }
+
+    return data.slice(this.cursor, this.cursor + pageSize);
   }
 }

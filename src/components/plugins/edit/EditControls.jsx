@@ -37,14 +37,10 @@ class EditControls extends Component<Props> {
   }
 
   render() {
-    return (
-      <div style={{ float: "left" }}>
-        {this.props.editIndividualRows ? (
-          this.addButton()
-        ) : (
-          this.editButton()
-        )}
-      </div>
+    return this.props.editIndividualRows ? (
+      this.addButton()
+    ) : (
+      this.editButton()
     );
   }
 }

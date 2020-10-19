@@ -83,7 +83,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
         <div className="grid" style={style}>
           {this.props.buildTitleBar()}
           { error }
-          <Table celled definition={editable && editIndividualRows}>
+          <Table sortable celled definition={editable && editIndividualRows}>
             {this.props.buildTableHeaders()}
             {this.buildTableBody()}
             {this.props.buildTableFooter()}

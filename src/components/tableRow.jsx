@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { createUseStyles } from "react-jss";
-import { Icon, Table } from "semantic-ui-react";
+import { Checkbox, Icon, Table } from "semantic-ui-react";
 
 import TableCell from "./tableCell";
 
@@ -50,12 +50,33 @@ class TableRow extends Component<Object> {
       data,
       cellComponent,
       editIndividualRows,
+      bulkEdit,
       startEditingContent,
       removeContent,
       classes,
+      updateGridState,
+      toggleSelect,
+      selectedRecords,
     } = this.props;
     return (
       <Table.Row>
+        {bulkEdit && (
+          <Table.Cell collapsing verticalAlign="top">
+            <div className={classes.buttonWrapper}>
+              <Checkbox
+                className={classes.checkbox}
+                checked={selectedRecords.includes(data.reduxFormIndex)}
+                onChange={() => {
+                  toggleSelect(data.reduxFormIndex);
+                  updateGridState();
+                }}
+              />
+            </div>
+          </Table.Cell>
+        )}
+        {!cellComponent
+          ? this.buildRowCells()
+          : this.buildCustomizedCell()}
         {editIndividualRows && (
           <Table.Cell collapsing verticalAlign="top">
             <div className={classes.buttonWrapper}>
@@ -64,9 +85,6 @@ class TableRow extends Component<Object> {
             </div>
           </Table.Cell>
         )}
-        {!cellComponent
-          ? this.buildRowCells()
-          : this.buildCustomizedCell()}
       </Table.Row>
     );
   }
@@ -78,6 +96,9 @@ const styles = {
   },
   button: {
     margin: "0 0.25em !important",
+  },
+  checkbox: {
+    verticalAlign: "middle !important",
   },
 };
 

@@ -9,6 +9,7 @@ type StaticDatagridProps = {
   columnModel: Function,
   editable: boolean,
   editIndividualRows: boolean,
+  bulkEdit: boolean,
   buildTitleBar: Function,
   buildTableHeaders: Function,
   buildTableFooter: Function,
@@ -19,6 +20,9 @@ type StaticDatagridProps = {
   hidden?: boolean,
   startEditingContent: Function,
   removeContent: Function,
+  toggleSelect: Function,
+  selectedRecords: Array<Number>,
+  updateGridState: Function,
 };
 
 class StaticDatagrid extends Component<StaticDatagridProps> {
@@ -29,8 +33,12 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       cellComponent,
       titleFormatter,
       editIndividualRows,
+      bulkEdit,
       startEditingContent,
       removeContent,
+      toggleSelect,
+      selectedRecords,
+      updateGridState,
     } = this.props;
     let rowNumber = 0;
     return data.map((item) => {
@@ -42,11 +50,15 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
           data={item}
           columnModel={columnModel}
           editIndividualRows={editIndividualRows}
+          bulkEdit={bulkEdit}
           titleFormatter={titleFormatter}
           name={name}
           cellComponent={cellComponent}
           startEditingContent={startEditingContent}
           removeContent={removeContent}
+          toggleSelect={toggleSelect}
+          selectedRecords={selectedRecords}
+          updateGridState={updateGridState}
         />
       );
     });
@@ -56,12 +68,22 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
     const {
       data,
       columnModel,
+      editIndividualRows,
+      bulkEdit,
       noDataComponent: NoDataComponent,
     } = this.props;
 
+    let columnSpan = columnModel.get().length;
+    if (editIndividualRows) {
+      columnSpan += 1;
+    }
+    if (bulkEdit) {
+      columnSpan += 1;
+    }
+
     const emptyBody = (
       <Table.Row>
-        <Table.Cell colSpan={columnModel.get().length} textAlign="center">
+        <Table.Cell colSpan={columnSpan} textAlign="center">
           <NoDataComponent />
         </Table.Cell>
       </Table.Row>
@@ -75,7 +97,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       hidden,
       error,
       editable,
-      editIndividualRows,
+      bulkEdit,
     } = this.props;
     const style = hidden ? { display: "none" } : {};
     const renderComponent = (
@@ -83,7 +105,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
         <div className="grid" style={style}>
           {this.props.buildTitleBar()}
           { error }
-          <Table sortable celled definition={editable && editIndividualRows}>
+          <Table sortable celled definition={editable && bulkEdit}>
             {this.props.buildTableHeaders()}
             {this.buildTableBody()}
             {this.props.buildTableFooter()}

@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Button, Icon } from "semantic-ui-react";
+import { Button } from "semantic-ui-react";
 
 type Props = {
   data?: Array<Object>,
@@ -55,10 +55,9 @@ class ExportControls extends Component<Props> {
     const { exportButtonLabel, data } = this.props;
     if (data.length) {
       return (
-        <Button basic icon labelPosition="left" onClick={() => this.exportData()} className="grid-edit-button">
-          <Icon name="file excel" />
-          {exportButtonLabel}
-        </Button>
+        <Button.Group basic compact>
+          <Button icon="file excel" content={exportButtonLabel} onClick={() => this.exportData()} />
+        </Button.Group>
       );
     }
     return "";

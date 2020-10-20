@@ -43,10 +43,10 @@ export default class SearchHandler {
     this.inputValue = "";
   };
 
-  removeTag = (tagOption) => {
+  removeTag = (tagValue) => {
     const { tagsList } = this;
 
-    const [dataIndex] = tagOption.value.split("_");
+    const [dataIndex] = tagValue.split("_");
 
     this.tagsList = tagsList.filter((obj) => obj.dataIndex !== dataIndex);
   }

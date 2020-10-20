@@ -75,6 +75,14 @@ const SearchBar = ({
 
   const tagItems = tagsList.map((item) => `${item.dataIndex}_${item.text}`);
 
+  const staleTags = tagItems.filter(
+    (tagItem) => !listItems.find((listItem) => listItem.value === tagItem),
+  );
+  if (staleTags.length > 0) {
+    staleTags.forEach((staleTag) => searchHandler.removeTag(staleTag));
+    updateGridState();
+  }
+
   return (
     <Dropdown
       icon={{
@@ -102,7 +110,7 @@ const SearchBar = ({
       renderLabel={(item) => ({
         content: item.text,
         onRemove: (event, tagData) => {
-          searchHandler.removeTag(tagData);
+          searchHandler.removeTag(tagData.value);
           updateGridState();
         },
       })}

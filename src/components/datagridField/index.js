@@ -9,6 +9,7 @@ import FormFieldModal from "./FormFieldModal";
 type DatagridProps = {
   columnModel: Array<column>,
   editIndividualRows?: boolean,
+  bulkEdit?: boolean,
   disabled?: boolean,
   addButtonLabel?: string,
   doneButtonLabel?: string,
@@ -24,6 +25,8 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
 
   removeContent: Function;
 
+  removeMultiple: Function;
+
   constructor(props: FieldArrayProps & DatagridProps) {
     super(props);
     this.state = { addingContent: false, currentFieldIndex: -1 };
@@ -31,6 +34,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
     this.startEditingContent = this.startEditingContent.bind(this);
     this.addContent = this.addContent.bind(this);
     this.removeContent = this.removeContent.bind(this);
+    this.removeMultiple = this.removeMultiple.bind(this);
   }
 
   componentDidUpdate(prevProps: FieldArrayProps & DatagridProps) {
@@ -91,6 +95,18 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
     fields.remove(index);
   }
 
+  removeMultiple(...indices) {
+    const { fields } = this.props;
+
+    const keptFields = fields.getAll().filter((field, i) => !indices.includes(i));
+
+    // Known redux-form bug that fields.splice doesn't work properly,
+    // so have to do this in two operations.
+    // https://github.com/redux-form/redux-form/issues/1758
+    fields.removeAll();
+    keptFields.forEach((field, i) => fields.insert(i, field));
+  }
+
   render() {
     const data = this.buildDataFromFields();
     const { addingContent, currentFieldIndex } = this.state;
@@ -99,24 +115,29 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
       columnModel,
       disabled,
       editIndividualRows,
+      bulkEdit,
       meta: { error, warning },
       addButtonLabel,
       doneButtonLabel,
     } = this.props;
     const errorBlock = ((error && <Message error content={error} />)
       || (warning && <Message warning content={warning} />));
+
     return (
       <Fragment>
         <DataGrid
           {...this.props}
           editable={!disabled}
           editIndividualRows={editIndividualRows}
+          bulkEdit={bulkEdit}
           data={data}
           startEditingContent={this.startEditingContent}
           addContent={this.addContent}
           removeContent={this.removeContent}
+          removeMultiple={this.removeMultiple}
           addButtonLabel={addButtonLabel}
           error={errorBlock}
+          fieldName={fields.name}
         />
         <FormFieldModal
           addButtonLabel={addButtonLabel}
@@ -139,6 +160,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
 DatagridField.defaultProps = {
   disabled: false,
   editIndividualRows: false,
+  bulkEdit: false,
   addButtonLabel: undefined,
   doneButtonLabel: undefined,
   onChange: () => {},

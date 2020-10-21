@@ -35,7 +35,7 @@ const BulkEditModal = ({
   const finalFieldName = (fieldNameParts.length > 0) ? fieldNameParts[fieldNameParts.length - 1] : "";
 
   return (
-    <Modal open={open} size="tiny">
+    <Modal open={open} size="tiny" onClose={onClose}>
       <Modal.Content>
         <Form>
           <Dropdown

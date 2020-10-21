@@ -32,6 +32,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       columnModel,
       cellComponent,
       titleFormatter,
+      editable,
       editIndividualRows,
       bulkEdit,
       startEditingContent,
@@ -47,6 +48,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
           key={name}
           data={item}
           columnModel={columnModel}
+          editable={editable}
           editIndividualRows={editIndividualRows}
           bulkEdit={bulkEdit}
           titleFormatter={titleFormatter}
@@ -66,16 +68,17 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
     const {
       data,
       columnModel,
+      editable,
       editIndividualRows,
       bulkEdit,
       noDataComponent: NoDataComponent,
     } = this.props;
 
     let columnSpan = columnModel.get().length;
-    if (editIndividualRows) {
+    if (editable && editIndividualRows) {
       columnSpan += 1;
     }
-    if (bulkEdit) {
+    if (editable && bulkEdit) {
       columnSpan += 1;
     }
 

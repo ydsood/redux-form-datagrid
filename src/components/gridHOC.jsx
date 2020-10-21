@@ -180,7 +180,7 @@ export default (Grid: StaticDatagrid) => {
       return !this.props.cellComponent && (
         <Table.Header>
           <Table.Row>
-            {this.props.bulkEdit && (
+            {this.props.editable && this.props.bulkEdit && (
               <Table.HeaderCell />
             )}
             {this.colModel.get().map((column) => (column.sortable ? (
@@ -195,7 +195,7 @@ export default (Grid: StaticDatagrid) => {
                 {column.name}
               </Table.HeaderCell>
             )))}
-            {this.props.editIndividualRows && (
+            {this.props.editable && this.props.editIndividualRows && (
               <Table.HeaderCell />
             )}
           </Table.Row>
@@ -230,10 +230,10 @@ export default (Grid: StaticDatagrid) => {
       const data = this.state.store.getData();
 
       let columnSpan = this.colModel.get().length;
-      if (editIndividualRows) {
+      if (editable && editIndividualRows) {
         columnSpan += 1;
       }
-      if (bulkEdit) {
+      if (editable && bulkEdit) {
         columnSpan += 1;
       }
 

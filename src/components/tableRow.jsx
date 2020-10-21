@@ -49,6 +49,7 @@ class TableRow extends Component<Object> {
     const {
       data,
       cellComponent,
+      editable,
       editIndividualRows,
       bulkEdit,
       startEditingContent,
@@ -60,7 +61,7 @@ class TableRow extends Component<Object> {
     } = this.props;
     return (
       <Table.Row>
-        {bulkEdit && (
+        {editable && bulkEdit && (
           <Table.Cell collapsing verticalAlign="top">
             <div className={classes.buttonWrapper}>
               <Checkbox
@@ -77,7 +78,7 @@ class TableRow extends Component<Object> {
         {!cellComponent
           ? this.buildRowCells()
           : this.buildCustomizedCell()}
-        {editIndividualRows && (
+        {editable && editIndividualRows && (
           <Table.Cell collapsing verticalAlign="top">
             <div className={classes.buttonWrapper}>
               <Icon className={classes.button} link name="pencil" onClick={() => startEditingContent(data.reduxFormIndex)} />

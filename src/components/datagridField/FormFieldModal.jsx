@@ -112,20 +112,21 @@ class FormFieldModal extends React.Component<Props> {
       removeContent,
     } = this.props;
 
-    const formFields = editIndividualRows && (currentFieldIndex > -1) ? (
-      this.buildFormFields(
-        fields.map((field) => field)[currentFieldIndex],
-        currentFieldIndex,
-        fields,
-      )
-    ) : (
-      fields.map((fieldName, index) => (
+    let formFields = null;
+    if (!editIndividualRows) {
+      formFields = fields.map((fieldName, index) => (
         <Segment key={fieldName} color="black">
           <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
           {this.buildFormFields(fieldName, index, fields)}
         </Segment>
-      ))
-    );
+      ));
+    } else if (currentFieldIndex > -1) {
+      formFields = this.buildFormFields(
+        fields.map((field) => field)[currentFieldIndex],
+        currentFieldIndex,
+        fields,
+      );
+    }
 
     return (
       <Fragment>

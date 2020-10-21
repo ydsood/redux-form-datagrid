@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   Button, Divider, Dropdown, Form, Modal,
 } from "semantic-ui-react";
-import { change, getFormValues } from "redux-form";
+import { change, formValueSelector } from "redux-form";
 import _ from "lodash";
 
 import { connect } from "react-redux";
@@ -16,7 +16,7 @@ type Props = {
   formName: String,
   fieldName: String,
   change: Function,
-  formValues: Object,
+  values: Object,
 };
 
 const BulkEditModal = ({
@@ -27,7 +27,7 @@ const BulkEditModal = ({
   formName,
   fieldName,
   change: changeFormValue,
-  formValues,
+  values,
 }: Props) => {
   const [fields, setFields] = useState([]);
 
@@ -61,9 +61,9 @@ const BulkEditModal = ({
           />
           {(fields.length > 0) && <Divider />}
           {fields.map((field) => {
-            let fieldEditor = <div />;
-
             const column = columnModel.find((c) => c.dataIndex === field.value);
+
+            let fieldEditor = <div key={`${finalFieldName}_BULKEDIT.${column.dataIndex}`} />;
 
             const label = (column.meta && column.meta.label) || column.name;
             let columnProps = _.cloneDeep(column);
@@ -78,6 +78,7 @@ const BulkEditModal = ({
                   {...columnProps}
                   name={`${finalFieldName}_BULKEDIT.${column.dataIndex}`}
                   width={16}
+                  key={`${finalFieldName}_BULKEDIT.${column.dataIndex}`}
                 />
               );
             } else {
@@ -91,6 +92,7 @@ const BulkEditModal = ({
                   }}
                   name={`${finalFieldName}_BULKEDIT.${column.dataIndex}`}
                   width={16}
+                  key={`${finalFieldName}_BULKEDIT.${column.dataIndex}`}
                 />
               );
             }
@@ -115,7 +117,7 @@ const BulkEditModal = ({
                 (field) => changeFormValue(
                   formName,
                   `${fieldName}[${i}].${field.value}`,
-                  _.get(formValues, `${fieldName}_BULKEDIT.${field.value}`),
+                  values[field.value],
                 ),
               ),
             );
@@ -133,7 +135,7 @@ const BulkEditModal = ({
 };
 
 const mapStateToProps = (state, ownProps) => ({
-  formValues: getFormValues(ownProps.formName)(state),
+  values: formValueSelector(ownProps.formName)(state, `${ownProps.fieldName}_BULKEDIT`),
 });
 
 export default connect(

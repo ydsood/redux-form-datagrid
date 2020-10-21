@@ -40,10 +40,8 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       selectedRecords,
       updateGridState,
     } = this.props;
-    let rowNumber = 0;
     return data.map((item) => {
-      rowNumber += 1;
-      const name = `${this.props.name}[${rowNumber}]`;
+      const name = `${this.props.name}[${item.reduxFormIndex}]`;
       return (
         <TableRow
           key={name}

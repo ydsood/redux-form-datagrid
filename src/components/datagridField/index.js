@@ -151,7 +151,6 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
           addContent={this.addContent}
           removeContent={this.removeContent}
         />
-        {errorBlock}
       </Fragment>
     );
   }

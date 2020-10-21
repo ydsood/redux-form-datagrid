@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { createUseStyles } from "react-jss";
 import { Checkbox, Icon, Table } from "semantic-ui-react";
+import { RequiredFieldValidator } from "./datagridField/DefaultFormField";
 
 import TableCell from "./tableCell";
 
@@ -15,8 +16,23 @@ class TableRow extends Component<Object> {
       const { dataIndex } = column;
       const value = renderData[dataIndex];
       const key = `${cellNamePrefix}.${column.dataIndex}`;
+
+      let isError = false;
+      if (column.meta) {
+        const currentValidators = column.meta.validators || [];
+        if (column.meta.required) {
+          currentValidators.push(RequiredFieldValidator);
+        }
+
+        currentValidators.forEach((validate) => {
+          if (validate(data[dataIndex])) {
+            isError = true;
+          }
+        });
+      }
+
       return (
-        <Table.Cell key={key}>
+        <Table.Cell key={key} negative={isError}>
           <TableCell
             name={cellNamePrefix}
             column={column}
@@ -34,12 +50,15 @@ class TableRow extends Component<Object> {
       input, data, cellComponent: CellComponent, columnModel, titleFormatter,
     } = this.props;
     const renderData = input ? input.value : data;
+
+    const colModel = columnModel.get();
+
     return (
-      <Table.Cell colSpan={columnModel.get().length}>
+      <Table.Cell colSpan={colModel.length}>
         <CellComponent
           titleFormatter={titleFormatter}
           {...renderData}
-          columnModel={columnModel.get()}
+          columnModel={colModel}
         />
       </Table.Cell>
     );
@@ -58,9 +77,29 @@ class TableRow extends Component<Object> {
       updateGridState,
       toggleSelect,
       selectedRecords,
+      columnModel,
     } = this.props;
+
+    let isError = false;
+    if (cellComponent) {
+      columnModel.get().forEach((column) => {
+        if (column.meta) {
+          const currentValidators = column.meta.validators || [];
+          if (column.meta.required) {
+            currentValidators.push(RequiredFieldValidator);
+          }
+
+          currentValidators.forEach((validate) => {
+            if (validate(data[column.dataIndex])) {
+              isError = true;
+            }
+          });
+        }
+      });
+    }
+
     return (
-      <Table.Row>
+      <Table.Row negative={isError}>
         {editable && bulkEdit && (
           <Table.Cell collapsing verticalAlign="top">
             <div className={classes.buttonWrapper}>

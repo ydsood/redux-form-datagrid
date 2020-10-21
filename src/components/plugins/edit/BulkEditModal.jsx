@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
   Button, Divider, Dropdown, Form, Modal,
 } from "semantic-ui-react";
-import { change, formValueSelector } from "redux-form";
+import { change, clearFields, formValueSelector } from "redux-form";
 import _ from "lodash";
 
 import { connect } from "react-redux";
@@ -16,6 +16,7 @@ type Props = {
   formName: String,
   fieldName: String,
   change: Function,
+  clearFields: Function,
   values: Object,
 };
 
@@ -27,6 +28,7 @@ const BulkEditModal = ({
   formName,
   fieldName,
   change: changeFormValue,
+  clearFields: clearFieldValues,
   values,
 }: Props) => {
   const [fields, setFields] = useState([]);
@@ -105,6 +107,7 @@ const BulkEditModal = ({
         <Button
           onClick={() => {
             setFields([]);
+            clearFieldValues(formName, false, false, `${fieldName}_BULKEDIT`);
             onClose();
           }}
           content="Cancel"
@@ -123,6 +126,7 @@ const BulkEditModal = ({
             );
 
             setFields([]);
+            clearFieldValues(formName, false, false, `${fieldName}_BULKEDIT`);
             onClose();
           }}
           content={`Update ${selectedRecords.length} Records`}
@@ -142,5 +146,6 @@ export default connect(
   mapStateToProps,
   {
     change,
+    clearFields,
   },
 )(BulkEditModal);

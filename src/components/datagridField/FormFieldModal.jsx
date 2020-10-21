@@ -59,13 +59,15 @@ class FormFieldModal extends React.Component<Props> {
         meta = { ...meta, label };
         columnProps = { ...columnProps, props: meta };
 
+        const required = item.meta && item.meta.required;
+        const validate = (item.meta && item.meta.validators) || [];
+        if (required) {
+          validate.push(RequiredFieldValidator);
+        }
+
         if (!item.editor) {
-          const required = item.meta && item.meta.required;
           const width = (item.meta && item.meta.width) || 16;
-          let validate = [];
-          if (required) {
-            validate = [RequiredFieldValidator];
-          }
+
           field = (
             <Field
               {...columnProps}
@@ -83,6 +85,7 @@ class FormFieldModal extends React.Component<Props> {
               {...columnProps}
               meta={columnProps.props}
               name={`${fieldName}.${item.dataIndex}`}
+              validators={validate}
               key={item.dataIndex}
             />
           );

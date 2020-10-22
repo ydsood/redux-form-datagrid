@@ -3,14 +3,14 @@ import React, { Fragment } from "react";
 import {
   Form, Modal, Button, Segment, Label,
 } from "semantic-ui-react";
-import { Field } from "redux-form";
 import _ from "lodash";
-import { buildVariableSizeFieldSection } from "../../util";
-import DefaultFormField, { RequiredFieldValidator } from "./DefaultFormField";
+import { createUseStyles } from "react-jss";
+import { renderFieldsAndSubsections } from "./util";
 
 type Props = {
   fields: *,
   columnModel: Array<Object>,
+  subsections: Array<Object>,
   open: boolean,
   doneEditingContent: Function,
   addContent: Function,
@@ -19,6 +19,7 @@ type Props = {
   doneButtonLabel?: string,
   currentFieldIndex: number,
   editIndividualRows: boolean,
+  classes: Object,
 }
 
 class FormFieldModal extends React.Component<Props> {
@@ -45,61 +46,30 @@ class FormFieldModal extends React.Component<Props> {
   }
 
   buildFormFields(fieldName: string, index: number, fields: *) {
-    const { columnModel } = this.props;
+    const {
+      columnModel,
+      subsections = [],
+    } = this.props;
+
     const resolvedColumnModel = this.applyFieldResolvers(columnModel, fields.get(index));
-    const chunkedColumnModel = buildVariableSizeFieldSection(resolvedColumnModel);
 
-    return chunkedColumnModel.map((columns) => {
-      const mappedFields = columns.map((item) => {
-        let field = <div />;
-        const label = (item.meta && item.meta.label) || item.name;
-        let columnProps = _.cloneDeep(item);
-        let meta = columnProps.meta || {};
-        delete columnProps.meta;
-        meta = { ...meta, label };
-        columnProps = { ...columnProps, props: meta };
+    const subsectionGroupedFields = _.groupBy(resolvedColumnModel, (field) => field.subsection || "none");
 
-        const required = item.meta && item.meta.required;
-        const validate = (item.meta && item.meta.validators) || [];
-        if (required) {
-          validate.push(RequiredFieldValidator);
-        }
+    let fieldsAndSubsections = subsections.map((subsection) => ({
+      ...subsection,
+      fields: subsectionGroupedFields[subsection.name] || [],
+    }));
 
-        if (!item.editor) {
-          const width = (item.meta && item.meta.width) || 16;
+    if (subsectionGroupedFields.none) {
+      fieldsAndSubsections = [...fieldsAndSubsections, ...subsectionGroupedFields.none];
+    }
 
-          field = (
-            <Field
-              {...columnProps}
-              name={`${fieldName}.${item.dataIndex}`}
-              key={item.dataIndex}
-              component={DefaultFormField}
-              validate={validate}
-              width={width}
-            />
-          );
-        } else {
-          const FieldComponent = item.editor;
-          field = (
-            <FieldComponent
-              {...columnProps}
-              meta={columnProps.props}
-              name={`${fieldName}.${item.dataIndex}`}
-              validators={validate}
-              key={item.dataIndex}
-            />
-          );
-        }
-        return field;
-      });
+    const groupedItems = renderFieldsAndSubsections(
+      fieldsAndSubsections.sort((a, b) => a.order - b.order),
+      fieldName,
+    );
 
-      const rowKey = columns.map((c) => c.dataIndex).join(",");
-      return (
-        <Form.Group key={rowKey}>
-          { mappedFields }
-        </Form.Group>
-      );
-    });
+    return groupedItems;
   }
 
   render() {
@@ -113,6 +83,7 @@ class FormFieldModal extends React.Component<Props> {
       editIndividualRows,
       currentFieldIndex,
       removeContent,
+      classes,
     } = this.props;
 
     let formFields = null;
@@ -138,6 +109,7 @@ class FormFieldModal extends React.Component<Props> {
           closeOnEscape
           closeOnDimmerClick
           onClose={doneEditingContent}
+          className={classes.editModal}
         >
           <Modal.Content open={open}>
             <Form>
@@ -173,4 +145,14 @@ FormFieldModal.defaultProps = {
   doneButtonLabel: "Done",
 };
 
-export default FormFieldModal;
+const styles = {
+  editModal: {
+    "& .ui.accordion": {
+      margin: "0 0 1em 0 !important",
+    },
+  },
+};
+
+export default (props) => (
+  <FormFieldModal {...props} classes={createUseStyles(styles)()} />
+);

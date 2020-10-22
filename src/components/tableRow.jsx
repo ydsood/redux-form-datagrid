@@ -47,7 +47,7 @@ class TableRow extends Component<Object> {
 
   buildCustomizedCell() {
     const {
-      input, data, cellComponent: CellComponent, columnModel, titleFormatter,
+      input, data, cellComponent: CellComponent, columnModel, subsections, titleFormatter,
     } = this.props;
     const renderData = input ? input.value : data;
 
@@ -59,6 +59,7 @@ class TableRow extends Component<Object> {
           titleFormatter={titleFormatter}
           {...renderData}
           columnModel={colModel}
+          subsections={subsections}
         />
       </Table.Cell>
     );

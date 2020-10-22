@@ -7,6 +7,7 @@ type StaticDatagridProps = {
   data: Array<Object>,
   error: *,
   columnModel: Function,
+  subsections: Array<Object>,
   editable: boolean,
   editIndividualRows: boolean,
   bulkEdit: boolean,
@@ -30,6 +31,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
     const {
       data,
       columnModel,
+      subsections,
       cellComponent,
       titleFormatter,
       editable,
@@ -48,6 +50,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
           key={name}
           data={item}
           columnModel={columnModel}
+          subsections={subsections}
           editable={editable}
           editIndividualRows={editIndividualRows}
           bulkEdit={bulkEdit}
@@ -106,7 +109,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
         <div className="grid" style={style}>
           {this.props.buildTitleBar()}
           { error }
-          <Table sortable definition={editable && bulkEdit}>
+          <Table celled sortable definition={editable && bulkEdit}>
             {this.props.buildTableHeaders()}
             {this.buildTableBody()}
             {this.props.buildTableFooter()}

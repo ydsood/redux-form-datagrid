@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { createUseStyles } from "react-jss";
-import { Checkbox, Icon, Table } from "semantic-ui-react";
+import { Button, Checkbox, Table } from "semantic-ui-react";
 import { RequiredFieldValidator } from "./datagridField/DefaultFormField";
 
 import TableCell from "./tableCell";
@@ -102,7 +102,7 @@ class TableRow extends Component<Object> {
       <Table.Row negative={isError}>
         {editable && bulkEdit && (
           <Table.Cell collapsing verticalAlign="top">
-            <div className={classes.buttonWrapper}>
+            <div className={classes.checkboxWrapper}>
               <Checkbox
                 className={classes.checkbox}
                 checked={selectedRecords.includes(data.reduxFormIndex)}
@@ -119,10 +119,8 @@ class TableRow extends Component<Object> {
           : this.buildCustomizedCell()}
         {editable && editIndividualRows && (
           <Table.Cell collapsing verticalAlign="top">
-            <div className={classes.buttonWrapper}>
-              <Icon className={classes.button} link name="pencil" onClick={() => startEditingContent(data.reduxFormIndex)} />
-              <Icon className={classes.button} link name="trash" onClick={() => removeContent(data.reduxFormIndex)} />
-            </div>
+            <Button basic circular icon="pencil" onClick={() => startEditingContent(data.reduxFormIndex)} />
+            <Button basic circular icon="trash" onClick={() => removeContent(data.reduxFormIndex)} />
           </Table.Cell>
         )}
       </Table.Row>
@@ -131,11 +129,8 @@ class TableRow extends Component<Object> {
 }
 
 const styles = {
-  buttonWrapper: {
+  checkboxWrapper: {
     padding: "0.5em 0 !important",
-  },
-  button: {
-    margin: "0 0.25em !important",
   },
   checkbox: {
     verticalAlign: "middle !important",

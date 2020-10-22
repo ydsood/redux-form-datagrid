@@ -1,81 +1,64 @@
-import React, { Component, Fragment } from "react";
+import React, { Fragment } from "react";
+import { Icon } from "semantic-ui-react";
+
 import PaginationHandler from "./PaginationHandler";
-import Icon from "../../../elements/icons";
 
 type Props = {
-  dataHash: String,
+  paginationHandler: PaginationHandler,
   updateGridState: (Function) => void,
-  pageSize: number,
-  totalRecords: number,
-}
+};
 
-class PaginationControls extends Component<Props> {
-  paginationHandler: PaginationHandler
-
-  constructor(props: Props) {
-    super(props);
-    this.paginationHandler = new PaginationHandler(props.pageSize);
-  }
-
-  componentDidMount() {
-    const { updateGridState } = this.props;
-    updateGridState(this.paginationHandler.firstPage);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.dataHash !== prevProps.dataHash) {
-      const { updateGridState } = this.props;
-      updateGridState(this.paginationHandler.currentPage);
-    }
-  }
-
-  render() {
-    const { updateGridState, totalRecords } = this.props;
-    return (
-      <div style={{ float: "right" }}>
-        {totalRecords ? (
-          <Fragment>
-            {this.paginationHandler.getFirstRecordPosition()
-              >= this.paginationHandler.state.pageSize ? (
-                <Icon
-                  link
-                  name="angle double left"
-                  onClick={() => updateGridState(this.paginationHandler.firstPage)}
-                />
-              ) : ""}
-            {this.paginationHandler.getFirstRecordPosition()
-              >= this.paginationHandler.state.pageSize ? (
-                <Icon
-                  link
-                  name="angle left"
-                  onClick={() => updateGridState(this.paginationHandler.prev)}
-                />
-              ) : ""}
-            <span>
-              {this.paginationHandler.getFirstRecordPosition()}
-              - {this.paginationHandler.getLastRecordPosition()}
-            </span>
-            <span> of </span>
-            <span>{totalRecords}</span>
-            {this.paginationHandler.state.pageEnd < this.props.totalRecords ? (
-              <Icon
-                link
-                name="angle right"
-                onClick={() => updateGridState(this.paginationHandler.next)}
-              />
-            ) : ""}
-            {this.paginationHandler.state.pageEnd < this.props.totalRecords ? (
-              <Icon
-                link
-                name="angle double right"
-                onClick={() => updateGridState(this.paginationHandler.lastPage)}
-              />
-            ) : ""}
-          </Fragment>
-        ) : null}
-      </div>
-    );
-  }
-}
+const PaginationControls = ({
+  paginationHandler,
+  updateGridState,
+}: Props) => ((paginationHandler.data.length > 0) && (
+  <Fragment>
+    {!paginationHandler.isOnFirstPage() && (
+      <Icon
+        link
+        name="angle double left"
+        onClick={() => {
+          paginationHandler.moveToFirstPage();
+          updateGridState();
+        }}
+      />
+    )}
+    {!paginationHandler.isOnFirstPage() && (
+      <Icon
+        link
+        name="angle left"
+        onClick={() => {
+          paginationHandler.moveToPreviousPage();
+          updateGridState();
+        }}
+      />
+    )}
+    <span>
+      {`${paginationHandler.getFirstRecordPosition()} - ${paginationHandler.getLastRecordPosition()}`}
+    </span>
+    <span> of </span>
+    <span>{paginationHandler.data.length}</span>
+    {!paginationHandler.isOnLastPage() && (
+      <Icon
+        link
+        name="angle right"
+        onClick={() => {
+          paginationHandler.moveToNextPage();
+          updateGridState();
+        }}
+      />
+    )}
+    {!paginationHandler.isOnLastPage() && (
+      <Icon
+        link
+        name="angle double right"
+        onClick={() => {
+          paginationHandler.moveToLastPage();
+          updateGridState();
+        }}
+      />
+    )}
+  </Fragment>
+));
 
 export default PaginationControls;

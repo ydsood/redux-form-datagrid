@@ -1,9 +1,8 @@
 // @flow
-
-import SortingControls from "./SortingControls";
+import SortingControlHeader from "./SortingControlHeader";
 import SortingHandler from "./SortingHandler";
 
 export {
-  SortingControls,
+  SortingControlHeader,
   SortingHandler,
 };

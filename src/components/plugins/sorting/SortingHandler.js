@@ -1,56 +1,67 @@
 // @flow
-type State = {
-  columnName: String,
-  format: String,
-  getValue: Function,
-};
 
 export default class SortingHandler {
-  state: State;
+  activeColumn: String;
 
-  constructor(columnName: String, format: String, getValue: Function) {
+  isAscending: Boolean;
+
+  columnModel: Array<Object>;
+
+  sortData: Function;
+
+  updateActiveColumn: Function;
+
+  constructor(columnModel: Array<Object>) {
+    this.activeColumn = "";
+    this.isAscending = false;
+
+    this.columnModel = columnModel || [];
+
     this.sortData = this.sortData.bind(this);
-
-    this.state = {
-      columnName,
-      format,
-      getValue,
-    };
+    this.updateActiveColumn = this.updateActiveColumn.bind(this);
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  sortData(data: Array<Object>, isAscending: Boolean): Array<Object> {
-    const { columnName, format, getValue } = this.state;
+  updateActiveColumn(activeColumn: String) {
+    if (activeColumn !== this.activeColumn) {
+      this.activeColumn = activeColumn;
+      this.isAscending = true;
+    } else if (this.isAscending) {
+      this.isAscending = false;
+    } else {
+      this.activeColumn = "";
+    }
+  }
 
-    const property = columnName;
-    if (format === "number") {
-      data.sort((a, b) => {
-        const first = parseFloat(getValue ? getValue(a[property] || 0) : a[property] || 0);
-        const second = parseFloat(getValue ? getValue(b[property] || 0) : b[property] || 0);
+  sortData(data: Array<Object>): Array<Object> {
+    const { activeColumn, isAscending, columnModel } = this;
+
+    if (!activeColumn) {
+      return data;
+    }
+
+    const currentColumn = columnModel.find((column) => column.dataIndex === activeColumn);
+    const { dataIndex, sortingType, getValue } = currentColumn;
+
+    if (sortingType === "number") {
+      return data.sort((a, b) => {
+        const first = parseFloat(getValue ? getValue(a[dataIndex] || 0) : a[dataIndex] || 0);
+        const second = parseFloat(getValue ? getValue(b[dataIndex] || 0) : b[dataIndex] || 0);
         return !isAscending ? first - second : second - first;
       });
-    }
-
-    if (format === "string") {
-      data.sort((a, b) => {
-        const first = getValue ? getValue(b[property]).toLowerCase() : b[property].toLowerCase();
-        const second = getValue ? getValue(a[property]).toLowerCase() : a[property].toLowerCase();
-        const ascending = first > second ? -1 : 1;
-        const descending = second > first ? -1 : 1;
-        return !isAscending ? ascending : descending;
-      });
-    }
-
-    if (format === "date") {
-      data.sort((a, b) => {
-        const da = new Date(a[property]);
-        const db = new Date(b[property]);
+    } if (sortingType === "date") {
+      return data.sort((a, b) => {
+        const da = new Date(getValue ? getValue(a[dataIndex]) : a[dataIndex]);
+        const db = new Date(getValue ? getValue(b[dataIndex]) : b[dataIndex]);
         return !isAscending ? da - db : db - da;
       });
     }
-    if (data && Array.isArray(data)) {
-      return data;
-    }
-    return data;
+
+    return data.sort((a, b) => {
+      const first = getValue ? getValue(a[dataIndex]).toLowerCase() : a[dataIndex].toLowerCase();
+      const second = getValue ? getValue(b[dataIndex]).toLowerCase() : b[dataIndex].toLowerCase();
+      const ascending = first > second ? -1 : 1;
+      const descending = second > first ? -1 : 1;
+      return !isAscending ? ascending : descending;
+    });
   }
 }

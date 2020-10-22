@@ -1,159 +1,117 @@
-import React, { Component, Fragment } from "react";
+import React from "react";
+import { createUseStyles } from "react-jss";
+import { Dropdown } from "semantic-ui-react";
 import _ from "lodash";
 
-import { Dropdown, Label } from "semantic-ui-react";
 import SearchHandler from "./SearchHandler";
+import SearchTagOption from "./SearchTagOption";
 
-export type SearchBarProps = {
-  columnModel: Array<Object>,
-  columns: Array<Object>,
-  gridData: Array,
-  filter: Function,
+type Props = {
+  data: Array<Object>,
   placeholder?: String,
-  classes: Object,
-}
+  searchHandler: SearchHandler,
+  updateGridState: Function,
+};
 
-class Search extends Component<SearchBarProps> {
-  constructor(props) {
-    super(props);
+const useStyles = createUseStyles({
+  hiddenOption: {
+    display: "none !important",
+  },
+  searchIcon: {
+    paddingTop: "0.65em !important",
+  },
+});
 
-    this.SearchHandler = new SearchHandler(props.columnModel);
+const SearchBar = ({
+  data,
+  placeholder,
+  searchHandler,
+  updateGridState,
+}: Props) => {
+  const { inputValue, tagsList, columnModel } = searchHandler;
+  const classes = useStyles();
 
-    this.state = {
-      inputValue: "",
-      tagsList: [],
-    };
-  }
+  const columns = columnModel.filter((column) => column.searchByTag);
 
-  componentDidUpdate(prevProps) {
-    if (this.props.gridData !== prevProps.gridData) {
-      const { tagsList, inputValue } = this.state;
-      this.props.filter(tagsList, inputValue, this.SearchHandler.filterData);
-    }
-  }
+  const filteredOptionsData = columns.map((key) => {
+    const columnData = {};
+    const obj = columns.filter((object) => object.dataIndex === key.dataIndex);
+    columnData.label = obj[0].name;
+    columnData.value = obj[0].dataIndex;
+    columnData.key = key.dataIndex;
+    columnData.formatter = key.formatter;
 
-  selectedListOption = (value, label, item, formatter) => {
-    const { tagsList } = this.state;
+    const columnValues = data.map((record) => ((
+      record[key.dataIndex] !== null
+      && record[key.dataIndex] !== undefined
+      && key.formatter
+    ) ? key.formatter(record[key.dataIndex]) : record[key.dataIndex]))
+      .filter((columnValue) => columnValue);
 
-    const tag = {
-      text: value,
-      dataIndex: item,
-      colLabel: label,
-      formatter,
-    };
+    columnData.resultValues = _.uniq(columnValues);
 
-    const tags = _.cloneDeep(tagsList);
-    tags.push(tag);
-    this.setState({
-      tagsList: tags,
-      inputValue: "",
-    });
-    this.props.filter(tags, "", this.SearchHandler.filterData);
-  };
+    return columnData;
+  });
 
-  removeTag = (event, data) => {
-    const { tagsList, inputValue } = this.state;
+  const listItems = filteredOptionsData
+    .map((item) => item.resultValues && item.resultValues.map((resultValue) => ({
+      key: `${item.value}_${resultValue}`,
+      text: `${item.label}: ${resultValue}`,
+      value: `${item.value}_${resultValue}`,
+      className: tagsList.map((tag) => tag.dataIndex).includes(item.value)
+        ? classes.hiddenOption
+        : undefined,
+      content: (
+        <SearchTagOption label={item.label} value={resultValue} />
+      ),
+      onClick: () => {
+        searchHandler.selectedListOption(
+          resultValue, item.label, item.value, item.formatter,
+        );
+        updateGridState();
+      },
+    })))
+    .reduce((prev, curr) => prev.concat(curr), []);
 
-    const [dataIndex] = data.value.split("_");
+  const tagItems = tagsList.map((item) => `${item.dataIndex}_${item.text}`);
 
-    const tags = _.filter(tagsList, (obj) => obj.dataIndex !== dataIndex);
-    this.setState({ tagsList: tags });
-    this.props.filter(tags, inputValue, this.SearchHandler.filterData);
-  }
+  return (
+    <Dropdown
+      icon={{
+        name: "search",
+        className: classes.searchIcon,
+      }}
+      placeholder={placeholder}
+      fluid
+      multiple
+      search
+      selection
+      scrolling
+      onSearchChange={(event) => {
+        searchHandler.updateInputValue(event.target?.value);
+        updateGridState();
+      }}
+      onFocus={(event) => {
+        searchHandler.updateInputValue(event.target?.value);
+        updateGridState();
+      }}
+      searchQuery={inputValue}
+      noResultsMessage={null}
+      options={listItems}
+      value={tagItems}
+      renderLabel={(item) => ({
+        content: item.text,
+        onRemove: (event, tagData) => {
+          searchHandler.removeTag(tagData);
+          updateGridState();
+        },
+      })}
+    />
+  );
+};
 
-  prepareFilterTagOptions = () => {
-    const { columns, gridData, classes } = this.props;
-    const { tagsList } = this.state;
-    const filteredOptionsData = columns.map((key) => {
-      const columnData = {};
-      const obj = columns.filter((object) => object.dataIndex === key.dataIndex);
-      columnData.label = obj[0].name;
-      columnData.value = obj[0].dataIndex;
-      columnData.key = key.dataIndex;
-      columnData.formatter = key.formatter;
-
-      const columnValues = gridData.map((record) => ((
-        record[key.dataIndex] !== null
-        && record[key.dataIndex] !== undefined
-        && key.formatter
-      ) ? key.formatter(record[key.dataIndex]) : record[key.dataIndex]))
-        .filter((columnValue) => columnValue);
-
-      columnData.resultValues = _.uniq(columnValues);
-
-      return columnData;
-    });
-
-    return filteredOptionsData
-      .map((item) => item.resultValues && item.resultValues.map((resultValue) => ({
-        key: `${item.value}_${resultValue}`,
-        text: `${item.label}: ${resultValue}`,
-        value: `${item.value}_${resultValue}`,
-        className: tagsList.map((tag) => tag.dataIndex).includes(item.value)
-          ? classes.hiddenOption
-          : undefined,
-        content: (
-          <Fragment>
-            <Label content={item.label} />
-            {resultValue}
-          </Fragment>
-        ),
-        onClick: () => this.selectedListOption(resultValue, item.label, item.value, item.formatter),
-      })))
-      .reduce((prev, curr) => prev.concat(curr), []);
-  }
-
-  onInputChange = (event) => {
-    const { value } = event.target;
-    const { tagsList } = this.state;
-    if (value) {
-      this.setState({ inputValue: value });
-      this.props.filter(tagsList, value, this.SearchHandler.filterData);
-    } else {
-      this.setState({ inputValue: "" });
-      this.props.filter(tagsList, "", this.SearchHandler.filterData);
-    }
-  };
-
-  render() {
-    const {
-      inputValue, tagsList,
-    } = this.state;
-    const { placeholder, classes } = this.props;
-
-    const listItems = this.prepareFilterTagOptions();
-
-    const tagItems = tagsList.map((item) => `${item.dataIndex}_${item.text}`);
-
-    return (
-      <Dropdown
-        icon={{
-          name: "search",
-          className: classes.searchIcon,
-        }}
-        placeholder={placeholder}
-        fluid
-        multiple
-        search
-        selection
-        scrolling
-        onSearchChange={this.onInputChange}
-        onFocus={this.onInputChange}
-        searchQuery={inputValue}
-        noResultsMessage={null}
-        options={listItems}
-        value={tagItems}
-        renderLabel={(item) => ({
-          content: item.text,
-          onRemove: this.removeTag,
-        })}
-      />
-    );
-  }
-}
-
-Search.defaultProps = {
+SearchBar.defaultProps = {
   placeholder: "Search",
 };
 
-export default Search;
+export default SearchBar;

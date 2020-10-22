@@ -123,7 +123,7 @@ class FormFieldModal extends React.Component<Props> {
           {this.buildFormFields(fieldName, index, fields)}
         </Segment>
       ));
-    } else if (currentFieldIndex > -1) {
+    } else if (currentFieldIndex > -1 && currentFieldIndex < fields.length) {
       formFields = this.buildFormFields(
         fields.map((field) => field)[currentFieldIndex],
         currentFieldIndex,

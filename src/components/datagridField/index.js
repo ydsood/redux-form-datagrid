@@ -87,6 +87,8 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
           return acc;
         }, {});
       fields.push(newItem);
+
+      this.startEditingContent(fields.length);
     }
   }
 

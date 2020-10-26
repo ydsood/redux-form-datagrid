@@ -1,6 +1,5 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment } from "react";
 import { Button } from "semantic-ui-react";
-import _ from "lodash";
 
 import EditHandler from "./EditHandler";
 import BulkEditModal from "./BulkEditModal";
@@ -27,92 +26,107 @@ type Props = {
   fieldName: String,
 }
 
-const EditControls = (props: Props) => {
-  const {
-    editIndividualRows,
-    bulkEdit,
-    addButtonLabel,
-    bulkEditButtonLabel,
-    bulkDeleteButtonLabel,
-    selectAllButtonLabel,
-    selectAllFilteredButtonLabel,
-    unselectAllButtonLabel,
-    editButtonLabel,
-    addContent,
-    removeMultiple,
-    startEditingContent,
-    editHandler,
-    selectableData,
-    isFiltered,
-    updateGridState,
-    columnModel,
-    formName,
-    fieldName,
-  } = props;
-  const [modalOpen, setModalOpen] = useState(false);
+type State = {
+  modalOpen: Boolean,
+};
 
-  return editIndividualRows ? (
-    <Fragment>
-      <Button.Group basic compact>
-        {bulkEdit && (
-          <Fragment>
-            {!_.isEqual(
-              _.sortBy(editHandler.selectedRecords),
-              _.sortBy(selectableData.map((record) => record.reduxFormIndex)),
-            ) && (
-              <Button
-                icon="check square outline"
-                content={isFiltered ? selectAllFilteredButtonLabel : selectAllButtonLabel}
-                onClick={() => {
-                  editHandler.select(...selectableData.map((record) => record.reduxFormIndex));
-                  updateGridState();
-                }}
-              />
-            )}
-            {(editHandler.selectedRecords.length > 0) && (
-              <Fragment>
+class EditControls extends React.Component<Props, State> {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      modalOpen: false,
+    };
+  }
+
+  render() {
+    const {
+      editIndividualRows,
+      bulkEdit,
+      addButtonLabel,
+      bulkEditButtonLabel,
+      bulkDeleteButtonLabel,
+      selectAllButtonLabel,
+      selectAllFilteredButtonLabel,
+      unselectAllButtonLabel,
+      editButtonLabel,
+      addContent,
+      removeMultiple,
+      startEditingContent,
+      editHandler,
+      selectableData,
+      isFiltered,
+      updateGridState,
+      columnModel,
+      formName,
+      fieldName,
+    } = this.props;
+    const { modalOpen } = this.state;
+
+    const selectedIndices = selectableData
+      .filter((record) => record.reduxFormIsSelected)
+      .map((record) => record.reduxFormIndex);
+
+    return editIndividualRows ? (
+      <Fragment>
+        <Button.Group basic compact>
+          {bulkEdit && (
+            <Fragment>
+              {(selectedIndices.length !== selectableData.length) && (
                 <Button
-                  icon="square outline"
-                  content={unselectAllButtonLabel}
+                  icon="check square outline"
+                  content={isFiltered ? selectAllFilteredButtonLabel : selectAllButtonLabel}
                   onClick={() => {
-                    editHandler.clearAllSelected();
+                    editHandler.select(...selectableData.map((record) => record.reduxFormIndex));
                     updateGridState();
                   }}
                 />
-                <Button
-                  icon="edit"
-                  content={`${bulkEditButtonLabel} (${editHandler.selectedRecords.length})`}
-                  onClick={() => setModalOpen(true)}
-                />
-                <Button
-                  icon="trash"
-                  content={`${bulkDeleteButtonLabel} (${editHandler.selectedRecords.length})`}
-                  onClick={() => removeMultiple(...editHandler.selectedRecords)}
-                />
-              </Fragment>
-            )}
-            <BulkEditModal
-              open={modalOpen}
-              onClose={() => setModalOpen(false)}
-              columnModel={columnModel}
-              selectedRecords={editHandler.selectedRecords}
-              formName={formName}
-              fieldName={fieldName}
-            />
-          </Fragment>
-        )}
+              )}
+              {(selectedIndices.length > 0) && (
+                <Fragment>
+                  <Button
+                    icon="square outline"
+                    content={unselectAllButtonLabel}
+                    onClick={() => {
+                      editHandler.clearAllSelected();
+                      updateGridState();
+                    }}
+                  />
+                  <Button
+                    icon="edit"
+                    content={`${bulkEditButtonLabel} (${selectedIndices.length})`}
+                    onClick={() => this.setState({ modalOpen: true })}
+                  />
+                  <Button
+                    icon="trash"
+                    content={`${bulkDeleteButtonLabel} (${selectedIndices.length})`}
+                    onClick={() => removeMultiple(...selectedIndices)}
+                  />
+                </Fragment>
+              )}
+              <BulkEditModal
+                open={modalOpen}
+                onClose={() => this.setState({ modalOpen: false })}
+                columnModel={columnModel}
+                selectedRecords={selectedIndices}
+                formName={formName}
+                fieldName={fieldName}
+              />
+            </Fragment>
+          )}
 
-        <Button
-          icon="add"
-          content={addButtonLabel}
-          onClick={() => addContent()}
-        />
-      </Button.Group>
-    </Fragment>
-  ) : (
-    <Button basic icon="pencil" content={editButtonLabel} onClick={() => startEditingContent()} />
-  );
-};
+          <Button
+            icon="add"
+            content={addButtonLabel}
+            onClick={() => addContent()}
+          />
+        </Button.Group>
+      </Fragment>
+    ) : (
+      <Button basic icon="pencil" content={editButtonLabel} onClick={() => startEditingContent()} />
+    );
+  }
+}
 
 EditControls.defaultProps = {
   editButtonLabel: undefined,

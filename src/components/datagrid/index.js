@@ -22,7 +22,6 @@ type StaticDatagridProps = {
   startEditingContent: Function,
   removeContent: Function,
   toggleSelect: Function,
-  selectedRecords: Array<Number>,
   updateGridState: Function,
 };
 
@@ -40,7 +39,6 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       startEditingContent,
       removeContent,
       toggleSelect,
-      selectedRecords,
       updateGridState,
     } = this.props;
     return data.map((item) => {
@@ -60,7 +58,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
           startEditingContent={startEditingContent}
           removeContent={removeContent}
           toggleSelect={toggleSelect}
-          selectedRecords={selectedRecords}
+          isSelected={!!item.reduxFormIsSelected}
           updateGridState={updateGridState}
         />
       );

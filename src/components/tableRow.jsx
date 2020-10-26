@@ -84,7 +84,7 @@ class TableRow extends Component<Object> {
       classes,
       updateGridState,
       toggleSelect,
-      selectedRecords,
+      isSelected,
       columnModel,
     } = this.props;
 
@@ -104,7 +104,7 @@ class TableRow extends Component<Object> {
             <div className={classes.checkboxWrapper}>
               <Checkbox
                 className={classes.checkbox}
-                checked={selectedRecords.includes(data.reduxFormIndex)}
+                checked={isSelected}
                 onChange={() => {
                   toggleSelect(data.reduxFormIndex);
                   updateGridState();

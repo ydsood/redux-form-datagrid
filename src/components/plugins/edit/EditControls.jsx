@@ -1,6 +1,5 @@
 import React, { Fragment } from "react";
 import { Button } from "semantic-ui-react";
-import _ from "lodash";
 
 import EditHandler from "./EditHandler";
 import BulkEditModal from "./BulkEditModal";
@@ -64,15 +63,16 @@ class EditControls extends React.Component<Props, State> {
     } = this.props;
     const { modalOpen } = this.state;
 
+    const selectedIndices = selectableData
+      .filter((record) => record.reduxFormIsSelected)
+      .map((record) => record.reduxFormIndex);
+
     return editIndividualRows ? (
       <Fragment>
         <Button.Group basic compact>
           {bulkEdit && (
             <Fragment>
-              {!_.isEqual(
-                _.sortBy(editHandler.selectedRecords),
-                _.sortBy(selectableData.map((record) => record.reduxFormIndex)),
-              ) && (
+              {(selectedIndices.length !== selectableData.length) && (
                 <Button
                   icon="check square outline"
                   content={isFiltered ? selectAllFilteredButtonLabel : selectAllButtonLabel}
@@ -82,7 +82,7 @@ class EditControls extends React.Component<Props, State> {
                   }}
                 />
               )}
-              {(editHandler.selectedRecords.length > 0) && (
+              {(selectedIndices.length > 0) && (
                 <Fragment>
                   <Button
                     icon="square outline"
@@ -94,13 +94,13 @@ class EditControls extends React.Component<Props, State> {
                   />
                   <Button
                     icon="edit"
-                    content={`${bulkEditButtonLabel} (${editHandler.selectedRecords.length})`}
+                    content={`${bulkEditButtonLabel} (${selectedIndices.length})`}
                     onClick={() => this.setState({ modalOpen: true })}
                   />
                   <Button
                     icon="trash"
-                    content={`${bulkDeleteButtonLabel} (${editHandler.selectedRecords.length})`}
-                    onClick={() => removeMultiple(...editHandler.selectedRecords)}
+                    content={`${bulkDeleteButtonLabel} (${selectedIndices.length})`}
+                    onClick={() => removeMultiple(...selectedIndices)}
                   />
                 </Fragment>
               )}
@@ -108,7 +108,7 @@ class EditControls extends React.Component<Props, State> {
                 open={modalOpen}
                 onClose={() => this.setState({ modalOpen: false })}
                 columnModel={columnModel}
-                selectedRecords={editHandler.selectedRecords}
+                selectedRecords={selectedIndices}
                 formName={formName}
                 fieldName={fieldName}
               />

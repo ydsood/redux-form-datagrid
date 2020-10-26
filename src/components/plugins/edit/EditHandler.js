@@ -1,5 +1,4 @@
 // @flow
-import _ from "lodash";
 
 export default class EditHandler {
   selectedRecords: Array<Number>;
@@ -13,7 +12,7 @@ export default class EditHandler {
   clearAllSelected: Function;
 
   constructor() {
-    this.selectedRecords = [];
+    this.selectedRecords = {};
 
     this.toggleSelect = this.toggleSelect.bind(this);
     this.select = this.select.bind(this);
@@ -22,22 +21,29 @@ export default class EditHandler {
   }
 
   toggleSelect(index) {
-    if (this.selectedRecords.includes(index)) {
-      this.selectedRecords = this.selectedRecords.filter((record) => record !== index);
-    } else {
-      this.selectedRecords.push(index);
-    }
+    this.selectedRecords[index] = !this.selectedRecords[index];
   }
 
   select(...indices) {
-    this.selectedRecords = _.union(this.selectedRecords, indices);
+    indices.forEach((index) => {
+      this.selectedRecords[index] = true;
+    });
   }
 
   unselect(...indices) {
-    this.selectedRecords = _.difference(this.selectedRecords, indices);
+    indices.forEach((index) => {
+      this.selectedRecords[index] = false;
+    });
   }
 
   clearAllSelected() {
-    this.selectedRecords = [];
+    this.selectedRecords = {};
+  }
+
+  applySelected(data: Array<Object>) {
+    return data.map((record) => ({
+      ...record,
+      reduxFormIsSelected: this.selectedRecords[record.reduxFormIndex],
+    }));
   }
 }

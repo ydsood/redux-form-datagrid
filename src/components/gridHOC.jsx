@@ -143,7 +143,9 @@ export default (Grid: StaticDatagrid) => {
         renderedData: this.paginationHandler.getCurrentPage(
           this.sortingHandler.sortData(
             this.searchHandler.filterData(
-              prevState.store.getData(),
+              this.editHandler.applySelected(
+                prevState.store.getData(),
+              ),
             ),
           ),
         ),
@@ -244,7 +246,6 @@ export default (Grid: StaticDatagrid) => {
               {editable && (
                 <div className={classes.footerButtons}>
                   <EditControls
-                    data={data}
                     editIndividualRows={editIndividualRows}
                     bulkEdit={bulkEdit}
                     startEditingContent={startEditingContent}
@@ -301,7 +302,6 @@ export default (Grid: StaticDatagrid) => {
           buildTableFooter={this.buildTableFooter}
           data={this.state.renderedData}
           toggleSelect={this.editHandler.toggleSelect}
-          selectedRecords={this.editHandler.selectedRecords}
           updateGridState={this.updateGridState}
         />
       );

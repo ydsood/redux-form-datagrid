@@ -6,6 +6,28 @@ import { RequiredFieldValidator } from "./datagridField/DefaultFormField";
 import TableCell from "./tableCell";
 
 class TableRow extends Component<Object> {
+  isErrorOnColumn = (column) => {
+    const { data } = this.props;
+
+    let isError = false;
+
+    const { dataIndex } = column;
+    if (column.meta) {
+      const currentValidators = column.meta.validators || [];
+      if (column.meta.required) {
+        currentValidators.push(RequiredFieldValidator);
+      }
+
+      currentValidators.forEach((validate) => {
+        if (validate(data[dataIndex])) {
+          isError = true;
+        }
+      });
+    }
+
+    return isError;
+  };
+
   buildRowCells() {
     const {
       input, editable, data, name,
@@ -17,22 +39,8 @@ class TableRow extends Component<Object> {
       const value = renderData[dataIndex];
       const key = `${cellNamePrefix}.${column.dataIndex}`;
 
-      let isError = false;
-      if (column.meta) {
-        const currentValidators = column.meta.validators || [];
-        if (column.meta.required) {
-          currentValidators.push(RequiredFieldValidator);
-        }
-
-        currentValidators.forEach((validate) => {
-          if (validate(data[dataIndex])) {
-            isError = true;
-          }
-        });
-      }
-
       return (
-        <Table.Cell key={key} negative={isError}>
+        <Table.Cell key={key} negative={this.isErrorOnColumn(column)}>
           <TableCell
             name={cellNamePrefix}
             column={column}
@@ -83,17 +91,8 @@ class TableRow extends Component<Object> {
     let isError = false;
     if (cellComponent) {
       columnModel.get().forEach((column) => {
-        if (column.meta) {
-          const currentValidators = column.meta.validators || [];
-          if (column.meta.required) {
-            currentValidators.push(RequiredFieldValidator);
-          }
-
-          currentValidators.forEach((validate) => {
-            if (validate(data[column.dataIndex])) {
-              isError = true;
-            }
-          });
+        if (this.isErrorOnColumn(column)) {
+          isError = true;
         }
       });
     }

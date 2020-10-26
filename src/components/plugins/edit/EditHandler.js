@@ -21,14 +21,12 @@ export default class EditHandler {
     this.clearAllSelected = this.clearAllSelected.bind(this);
   }
 
-  toggleSelect(...indices) {
-    indices.forEach((index) => {
-      if (this.selectedRecords.includes(index)) {
-        this.selectedRecords = this.selectedRecords.filter((record) => record !== index);
-      } else {
-        this.selectedRecords.push(index);
-      }
-    });
+  toggleSelect(index) {
+    if (this.selectedRecords.includes(index)) {
+      this.selectedRecords = this.selectedRecords.filter((record) => record !== index);
+    } else {
+      this.selectedRecords.push(index);
+    }
   }
 
   select(...indices) {

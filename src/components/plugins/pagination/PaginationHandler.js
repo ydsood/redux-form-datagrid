@@ -105,10 +105,12 @@ export default class PaginationHandler {
   getCurrentPage(data: Array<Object>): Array<Object> {
     const { cursor, pageSize } = this;
 
+    const previousData = this.data;
+
     this.data = data;
 
-    if (cursor >= data.length) {
-      return this.moveToLastPage(data);
+    if ((cursor >= data.length) || (data.length === (previousData.length + 1))) {
+      this.moveToLastPage();
     }
 
     return data.slice(this.cursor, this.cursor + pageSize);

@@ -59,13 +59,15 @@ class FormFieldModal extends React.Component<Props> {
         meta = { ...meta, label };
         columnProps = { ...columnProps, props: meta };
 
+        const required = item.meta && item.meta.required;
+        const validate = (item.meta && item.meta.validators) || [];
+        if (required) {
+          validate.push(RequiredFieldValidator);
+        }
+
         if (!item.editor) {
-          const required = item.meta && item.meta.required;
           const width = (item.meta && item.meta.width) || 16;
-          let validate = [];
-          if (required) {
-            validate = [RequiredFieldValidator];
-          }
+
           field = (
             <Field
               {...columnProps}
@@ -83,6 +85,7 @@ class FormFieldModal extends React.Component<Props> {
               {...columnProps}
               meta={columnProps.props}
               name={`${fieldName}.${item.dataIndex}`}
+              validators={validate}
               key={item.dataIndex}
             />
           );
@@ -112,20 +115,21 @@ class FormFieldModal extends React.Component<Props> {
       removeContent,
     } = this.props;
 
-    const formFields = editIndividualRows && (currentFieldIndex > -1) ? (
-      this.buildFormFields(
-        fields.map((field) => field)[currentFieldIndex],
-        currentFieldIndex,
-        fields,
-      )
-    ) : (
-      fields.map((fieldName, index) => (
+    let formFields = null;
+    if (!editIndividualRows) {
+      formFields = fields.map((fieldName, index) => (
         <Segment key={fieldName} color="black">
           <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
           {this.buildFormFields(fieldName, index, fields)}
         </Segment>
-      ))
-    );
+      ));
+    } else if (currentFieldIndex > -1 && currentFieldIndex < fields.length) {
+      formFields = this.buildFormFields(
+        fields.map((field) => field)[currentFieldIndex],
+        currentFieldIndex,
+        fields,
+      );
+    }
 
     return (
       <Fragment>

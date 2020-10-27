@@ -5,13 +5,14 @@ import {
 } from "semantic-ui-react";
 import _ from "lodash";
 
+import { createUseStyles } from "react-jss";
 import type { StaticDatagrid } from "./datagrid";
 import ColumnModel from "./columnModel";
 import type { ColumnModelType } from "./columnModel";
 import { PaginationControls, PaginationHandler } from "./plugins/pagination";
 import { SortingControlHeader, SortingHandler } from "./plugins/sorting";
 import { SearchBar, SearchHandler } from "./plugins/search";
-import { EditControls } from "./plugins/edit";
+import { EditControls, EditHandler } from "./plugins/edit";
 import { ExportControls } from "./plugins/export";
 import { LocalStore } from "./store";
 import type {
@@ -21,22 +22,32 @@ import type {
 
 type Props = {
   data: Array<Object>,
+  formName: String,
+  fieldName: String,
   editable: boolean,
   editIndividualRows: boolean,
+  bulkEdit: boolean,
   title: String,
   searchable: boolean,
   searchPlaceholder: String,
   startEditingContent: Function,
   addContent: Function,
   removeContent: Function,
+  removeMultiple: Function,
   columnModel: Array<Object>,
   pageSize?: number,
   cellComponent: Component<*>,
   editButtonLabel: string,
+  bulkEditButtonLabel: string,
+  bulkDeleteButtonLabel: string,
+  selectAllButtonLabel: string,
+  selectAllFilteredButtonLabel: string,
+  unselectAllButtonLabel: string,
   addButtonLabel: string,
   exportable: boolean,
   exportButtonLabel: String,
   exportFileName: string,
+  classes: Object,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -64,6 +75,8 @@ export default (Grid: StaticDatagrid) => {
 
     searchHandler: SearchHandler;
 
+    editHandler: EditHandler;
+
     buildTitleBar: Function;
 
     buildTableHeaders: Function;
@@ -79,6 +92,7 @@ export default (Grid: StaticDatagrid) => {
       this.paginationHandler = new PaginationHandler(props.pageSize);
       this.sortingHandler = new SortingHandler(props.columnModel);
       this.searchHandler = new SearchHandler(props.searchable, props.columnModel);
+      this.editHandler = new EditHandler();
 
       this.buildTitleBar = this.buildTitleBar.bind(this);
       this.buildTableHeaders = this.buildTableHeaders.bind(this);
@@ -102,17 +116,16 @@ export default (Grid: StaticDatagrid) => {
 
           const newData = includeReduxFormIndex(this.props.data);
 
+          if (this.props.bulkEdit) {
+            this.editHandler.clearAllSelected();
+          }
+
           // eslint-disable-next-line
           this.setState({
             store: new LocalStore(newData),
-            renderedData: this.paginationHandler.getCurrentPage(
-              this.sortingHandler.sortData(
-                this.searchHandler.filterData(
-                  newData,
-                ),
-              ),
-            ),
           });
+
+          this.updateGridState();
         }
       }
 
@@ -130,7 +143,9 @@ export default (Grid: StaticDatagrid) => {
         renderedData: this.paginationHandler.getCurrentPage(
           this.sortingHandler.sortData(
             this.searchHandler.filterData(
-              prevState.store.getData(),
+              this.editHandler.applySelected(
+                prevState.store.getData(),
+              ),
             ),
           ),
         ),
@@ -167,7 +182,7 @@ export default (Grid: StaticDatagrid) => {
       return !this.props.cellComponent && (
         <Table.Header>
           <Table.Row>
-            {this.props.editIndividualRows && (
+            {this.props.editable && this.props.bulkEdit && (
               <Table.HeaderCell />
             )}
             {this.colModel.get().map((column) => (column.sortable ? (
@@ -182,6 +197,9 @@ export default (Grid: StaticDatagrid) => {
                 {column.name}
               </Table.HeaderCell>
             )))}
+            {this.props.editable && this.props.editIndividualRows && (
+              <Table.HeaderCell />
+            )}
           </Table.Row>
         </Table.Header>
       );
@@ -189,37 +207,71 @@ export default (Grid: StaticDatagrid) => {
 
     buildTableFooter() {
       const {
+        formName,
+        fieldName,
         editable,
         editIndividualRows,
+        bulkEdit,
         startEditingContent,
         addContent,
+        removeMultiple,
         editButtonLabel,
+        bulkEditButtonLabel,
+        bulkDeleteButtonLabel,
+        selectAllButtonLabel,
+        selectAllFilteredButtonLabel,
+        unselectAllButtonLabel,
         addButtonLabel,
         exportable,
         exportButtonLabel,
         exportFileName,
         columnModel,
+        classes,
       } = this.props;
 
       const data = this.state.store.getData();
 
+      let columnSpan = this.colModel.get().length;
+      if (editable && editIndividualRows) {
+        columnSpan += 1;
+      }
+      if (editable && bulkEdit) {
+        columnSpan += 1;
+      }
+
       return (
         <Table.Footer fullWidth>
           <Table.Row>
-            <Table.HeaderCell colSpan={this.colModel.get().length + (editIndividualRows ? 1 : 0)}>
+            <Table.HeaderCell colSpan={columnSpan}>
               {editable && (
-                <div style={{ float: "left" }}>
+                <div className={classes.footerButtons}>
                   <EditControls
                     editIndividualRows={editIndividualRows}
+                    bulkEdit={bulkEdit}
                     startEditingContent={startEditingContent}
                     editButtonLabel={editButtonLabel}
+                    bulkEditButtonLabel={bulkEditButtonLabel}
+                    bulkDeleteButtonLabel={bulkDeleteButtonLabel}
+                    selectAllButtonLabel={selectAllButtonLabel}
+                    selectAllFilteredButtonLabel={selectAllFilteredButtonLabel}
+                    unselectAllButtonLabel={unselectAllButtonLabel}
                     addContent={addContent}
+                    removeMultiple={removeMultiple}
                     addButtonLabel={addButtonLabel}
+                    editHandler={this.editHandler}
+                    selectableData={this.paginationHandler.data}
+                    isFiltered={(
+                      !!this.searchHandler.tagsList.length || !!this.searchHandler.inputValue
+                    )}
+                    updateGridState={this.updateGridState}
+                    columnModel={this.colModel.get()}
+                    formName={formName}
+                    fieldName={fieldName}
                   />
                 </div>
               )}
               {exportable && (
-                <div style={{ float: "left" }}>
+                <div className={classes.footerButtons}>
                   <ExportControls
                     data={data}
                     exportFileName={exportFileName}
@@ -228,7 +280,7 @@ export default (Grid: StaticDatagrid) => {
                   />
                 </div>
               )}
-              <div style={{ float: "right" }}>
+              <div className={classes.footerPagination}>
                 <PaginationControls
                   paginationHandler={this.paginationHandler}
                   updateGridState={this.updateGridState}
@@ -249,6 +301,8 @@ export default (Grid: StaticDatagrid) => {
           buildTableHeaders={this.buildTableHeaders}
           buildTableFooter={this.buildTableFooter}
           data={this.state.renderedData}
+          toggleSelect={this.editHandler.toggleSelect}
+          updateGridState={this.updateGridState}
         />
       );
     }
@@ -258,5 +312,18 @@ export default (Grid: StaticDatagrid) => {
     pageSize: 5,
   };
 
-  return GridHOC;
+  const styles = {
+    footerButtons: {
+      float: "left !important",
+      marginRight: "0.25em !important",
+    },
+    footerPagination: {
+      float: "right !important",
+      margin: "0.5em 0 !important",
+    },
+  };
+
+  return (props) => (
+    <GridHOC {...props} classes={createUseStyles(styles)()} />
+  );
 };

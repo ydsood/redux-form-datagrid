@@ -1,10 +1,33 @@
 import React, { Component } from "react";
 import { createUseStyles } from "react-jss";
-import { Icon, Table } from "semantic-ui-react";
+import { Button, Checkbox, Table } from "semantic-ui-react";
+import { RequiredFieldValidator } from "./datagridField/DefaultFormField";
 
 import TableCell from "./tableCell";
 
 class TableRow extends Component<Object> {
+  isErrorOnColumn = (column) => {
+    const { data } = this.props;
+
+    let isError = false;
+
+    const { dataIndex } = column;
+    if (column.meta) {
+      const currentValidators = column.meta.validators || [];
+      if (column.meta.required) {
+        currentValidators.push(RequiredFieldValidator);
+      }
+
+      currentValidators.forEach((validate) => {
+        if (validate(data[dataIndex])) {
+          isError = true;
+        }
+      });
+    }
+
+    return isError;
+  };
+
   buildRowCells() {
     const {
       input, editable, data, name,
@@ -15,8 +38,9 @@ class TableRow extends Component<Object> {
       const { dataIndex } = column;
       const value = renderData[dataIndex];
       const key = `${cellNamePrefix}.${column.dataIndex}`;
+
       return (
-        <Table.Cell key={key}>
+        <Table.Cell key={key} negative={this.isErrorOnColumn(column)}>
           <TableCell
             name={cellNamePrefix}
             column={column}
@@ -34,12 +58,15 @@ class TableRow extends Component<Object> {
       input, data, cellComponent: CellComponent, columnModel, titleFormatter,
     } = this.props;
     const renderData = input ? input.value : data;
+
+    const colModel = columnModel.get();
+
     return (
-      <Table.Cell colSpan={columnModel.get().length}>
+      <Table.Cell colSpan={colModel.length}>
         <CellComponent
           titleFormatter={titleFormatter}
           {...renderData}
-          columnModel={columnModel.get()}
+          columnModel={colModel}
         />
       </Table.Cell>
     );
@@ -49,35 +76,63 @@ class TableRow extends Component<Object> {
     const {
       data,
       cellComponent,
+      editable,
       editIndividualRows,
+      bulkEdit,
       startEditingContent,
       removeContent,
       classes,
+      updateGridState,
+      toggleSelect,
+      isSelected,
+      columnModel,
     } = this.props;
+
+    let isError = false;
+    if (cellComponent) {
+      columnModel.get().forEach((column) => {
+        if (this.isErrorOnColumn(column)) {
+          isError = true;
+        }
+      });
+    }
+
     return (
-      <Table.Row>
-        {editIndividualRows && (
+      <Table.Row negative={isError}>
+        {editable && bulkEdit && (
           <Table.Cell collapsing verticalAlign="top">
-            <div className={classes.buttonWrapper}>
-              <Icon className={classes.button} link name="pencil" onClick={() => startEditingContent(data.reduxFormIndex)} />
-              <Icon className={classes.button} link name="trash" onClick={() => removeContent(data.reduxFormIndex)} />
+            <div className={classes.checkboxWrapper}>
+              <Checkbox
+                className={classes.checkbox}
+                checked={isSelected}
+                onChange={() => {
+                  toggleSelect(data.reduxFormIndex);
+                  updateGridState();
+                }}
+              />
             </div>
           </Table.Cell>
         )}
         {!cellComponent
           ? this.buildRowCells()
           : this.buildCustomizedCell()}
+        {editable && editIndividualRows && (
+          <Table.Cell collapsing verticalAlign="top">
+            <Button basic circular icon="pencil" onClick={() => startEditingContent(data.reduxFormIndex)} />
+            <Button basic circular icon="trash" onClick={() => removeContent(data.reduxFormIndex)} />
+          </Table.Cell>
+        )}
       </Table.Row>
     );
   }
 }
 
 const styles = {
-  buttonWrapper: {
+  checkboxWrapper: {
     padding: "0.5em 0 !important",
   },
-  button: {
-    margin: "0 0.25em !important",
+  checkbox: {
+    verticalAlign: "middle !important",
   },
 };
 

@@ -8,6 +8,7 @@ import FormFieldModal from "./FormFieldModal";
 
 type DatagridProps = {
   columnModel: Array<column>,
+  subsections: Array<Object>,
   editIndividualRows?: boolean,
   bulkEdit?: boolean,
   disabled?: boolean,
@@ -115,6 +116,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
     const {
       fields,
       columnModel,
+      subsections,
       disabled,
       editIndividualRows,
       bulkEdit,
@@ -145,6 +147,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
           addButtonLabel={addButtonLabel}
           doneButtonLabel={doneButtonLabel}
           columnModel={columnModel}
+          subsections={subsections}
           fields={fields}
           editIndividualRows={editIndividualRows}
           open={addingContent}

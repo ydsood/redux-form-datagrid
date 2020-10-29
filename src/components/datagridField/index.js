@@ -69,10 +69,15 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
     const { fields } = this.props;
     const data = fields.getAll();
     let currentFieldIndex = index;
-    if (!data || data.length < 1) {
-      this.addContent();
-      currentFieldIndex = 0;
+    if (index == null) {
+      if (!data || data.length < 1) {
+        this.addContent();
+        currentFieldIndex = 0;
+      } else {
+        currentFieldIndex = -1;
+      }
     }
+
     this.setState({ addingContent: true, currentFieldIndex });
   }
 

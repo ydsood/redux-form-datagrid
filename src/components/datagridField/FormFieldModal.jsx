@@ -23,6 +23,11 @@ type Props = {
 }
 
 class FormFieldModal extends React.Component<Props> {
+  
+  constructor(props) {
+    super(props);
+    this.myRef = React.createRef();
+  }
   // eslint-disable-next-line class-methods-use-this
   applyFieldResolvers(columnModel, rowData) {
     return columnModel.map((column) => {
@@ -72,6 +77,19 @@ class FormFieldModal extends React.Component<Props> {
     return groupedItems;
   }
 
+  componentDidUpdate(prevProps){
+    const { open } = this.props;
+    if(open && open !== prevProps.open){
+      const node = this.myRef.ref.current;
+      // find out all interactive fields
+      const focusableModalElements = node.querySelectorAll(
+        'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
+      );
+      const firstElement = focusableModalElements[0];
+      firstElement.focus();
+    }
+  }
+
   render() {
     const {
       fields,
@@ -110,6 +128,9 @@ class FormFieldModal extends React.Component<Props> {
           closeOnDimmerClick
           onClose={doneEditingContent}
           className={classes.editModal}
+          ref={(domRef) => {
+            this.myRef=domRef;
+          }}
         >
           <Modal.Content open={open}>
             <Form>

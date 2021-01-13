@@ -14,7 +14,7 @@ class TableRow extends Component<Object> {
     const { dataIndex } = column;
     if (column.meta) {
       const currentValidators = column.meta.validators || [];
-      if (column.meta.required) {
+      if (column.meta.required && !currentValidators.includes(RequiredFieldValidator)) {
         currentValidators.push(RequiredFieldValidator);
       }
 

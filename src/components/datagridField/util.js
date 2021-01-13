@@ -40,7 +40,7 @@ function buildVariableSizeFieldSection(columns) {
   let currentRowWidth = 0;
 
   filteredColumns.forEach((column) => {
-    const fieldWidth = column.meta.width;
+    const fieldWidth = column.meta.width || 16;
 
     if (column.type === "linebreak") {
       currentRowWidth = Number.MAX_SAFE_INTEGER;

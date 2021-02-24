@@ -60,6 +60,7 @@ class EditControls extends React.Component<Props, State> {
       columnModel,
       formName,
       fieldName,
+      editButtonAriaLabel,
     } = this.props;
     const { modalOpen } = this.state;
 
@@ -123,7 +124,13 @@ class EditControls extends React.Component<Props, State> {
         </Button.Group>
       </Fragment>
     ) : (
-      <Button basic icon="pencil" content={editButtonLabel} onClick={() => startEditingContent()} />
+      <Button
+        basic
+        icon="pencil"
+        aria-label={editButtonAriaLabel || editButtonLabel}
+        content={editButtonLabel}
+        onClick={() => startEditingContent()} 
+      />
     );
   }
 }

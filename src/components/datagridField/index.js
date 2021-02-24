@@ -129,8 +129,8 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
       addButtonLabel,
       doneButtonLabel,
     } = this.props;
-    const errorBlock = ((error && <Message role="alert" error content={error} />)
-      || (warning && <Message role="alert" warning content={warning} />));
+    const errorBlock = ((error && <Message role="alert" aria-live="polite" error content={error} />)
+      || (warning && <Message role="alert" aria-live="polite" warning content={warning} />));
 
     return (
       <Fragment>

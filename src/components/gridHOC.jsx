@@ -38,6 +38,7 @@ type Props = {
   pageSize?: number,
   cellComponent: Component<*>,
   editButtonLabel: string,
+  editButtonAriaLabel: String,
   bulkEditButtonLabel: string,
   bulkDeleteButtonLabel: string,
   selectAllButtonLabel: string,
@@ -216,6 +217,7 @@ export default (Grid: StaticDatagrid) => {
         addContent,
         removeMultiple,
         editButtonLabel,
+        editButtonAriaLabel,
         bulkEditButtonLabel,
         bulkDeleteButtonLabel,
         selectAllButtonLabel,
@@ -250,6 +252,7 @@ export default (Grid: StaticDatagrid) => {
                     bulkEdit={bulkEdit}
                     startEditingContent={startEditingContent}
                     editButtonLabel={editButtonLabel}
+                    editButtonAriaLabel={editButtonAriaLabel}
                     bulkEditButtonLabel={bulkEditButtonLabel}
                     bulkDeleteButtonLabel={bulkDeleteButtonLabel}
                     selectAllButtonLabel={selectAllButtonLabel}

@@ -19,6 +19,7 @@ type Props = {
   doneButtonLabel?: string,
   currentFieldIndex: number,
   editIndividualRows: boolean,
+  closeOnEscape: boolean,
   classes: Object,
 }
 
@@ -101,6 +102,7 @@ class FormFieldModal extends React.Component<Props> {
       editIndividualRows,
       currentFieldIndex,
       removeContent,
+      closeOnEscape,
       classes,
     } = this.props;
 
@@ -124,8 +126,8 @@ class FormFieldModal extends React.Component<Props> {
       <Fragment>
         <Modal
           open={open}
-          closeOnEscape
           closeOnDimmerClick
+          closeOnEscape={closeOnEscape}
           onClose={doneEditingContent}
           className={classes.editModal}
           ref={(domRef) => {

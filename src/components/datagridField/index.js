@@ -128,6 +128,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
       meta: { error, warning },
       addButtonLabel,
       doneButtonLabel,
+      closeOnEscape,
     } = this.props;
     const errorBlock = ((error && <Message role="alert" aria-live="polite" error content={error} />)
       || (warning && <Message role="alert" aria-live="polite" warning content={warning} />));
@@ -160,6 +161,7 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
           doneEditingContent={this.doneEditingContent}
           addContent={this.addContent}
           removeContent={this.removeContent}
+          closeOnEscape={closeOnEscape}
         />
       </Fragment>
     );

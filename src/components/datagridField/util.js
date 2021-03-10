@@ -59,6 +59,8 @@ function buildVariableSizeFieldSection(columns) {
 function createFieldGroups(
   columns,
   fieldName: string,
+  index: Number,
+  totalDataRows: Number,
 ) {
   const chunkedColumns = buildVariableSizeFieldSection(columns);
 
@@ -69,10 +71,11 @@ function createFieldGroups(
         {chunk.map((column) => {
           let field = <div />;
           const label = (column.meta && column.meta.label) || column.name;
+          const ariaLabel = `${label} ${index + 1} of ${totalDataRows}`;
           let columnProps = _.cloneDeep(column);
           let meta = columnProps.meta || {};
           delete columnProps.meta;
-          meta = { ...meta, label };
+          meta = { ...meta, label, "aria-label":ariaLabel };
           columnProps = { ...columnProps, props: meta };
 
           const required = column.meta && column.meta.required;
@@ -116,6 +119,8 @@ function createFieldGroups(
 export function renderFieldsAndSubsections(
   fieldsAndSubsections,
   fieldName: string,
+  index: Number,
+  totalDataRows: Number,
 ) {
   const fieldChunks = chunkConditional(fieldsAndSubsections, (x) => !!x.fields);
 
@@ -150,6 +155,8 @@ export function renderFieldsAndSubsections(
                 content: createFieldGroups(
                   subsection.fields,
                   fieldName,
+                  index,
+                  totalDataRows,
                 ),
               },
             },
@@ -161,6 +168,8 @@ export function renderFieldsAndSubsections(
     return createFieldGroups(
       chunk,
       fieldName,
+      index,
+      totalDataRows,
     );
   });
 }

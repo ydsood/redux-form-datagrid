@@ -51,7 +51,7 @@ class FormFieldModal extends React.Component<Props> {
     });
   }
 
-  buildFormFields(fieldName: string, index: number, fields: *) {
+  buildFormFields(fieldName: string, index: number, fields: *, totalDataRows: number) {
     const {
       columnModel,
       subsections = [],
@@ -73,13 +73,15 @@ class FormFieldModal extends React.Component<Props> {
     const groupedItems = renderFieldsAndSubsections(
       fieldsAndSubsections.sort((a, b) => a.order - b.order),
       fieldName,
+      index,
+      totalDataRows,
     );
 
     return groupedItems;
   }
 
   componentDidUpdate(prevProps){
-    const { open } = this.props;
+    const { open, fields } = this.props;
     if(open && open !== prevProps.open){
       const node = this.myRef.ref.current;
       // find out all interactive fields
@@ -88,6 +90,22 @@ class FormFieldModal extends React.Component<Props> {
       );
       const firstElement = focusableModalElements[0];
       firstElement.focus();
+    }
+    else if(fields && prevProps.fields && fields.length !== prevProps.fields.length){
+      const node = this.myRef.ref.current;
+      if(node){
+        // find the interactive elements on the latest segment
+        const segments = node.querySelectorAll(".segment");
+        if(segments && fields.length > 0){
+          const elements = segments[fields.length - 1]
+          .querySelectorAll('a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select');
+          const firstElement = elements[0];
+          firstElement.scrollIntoView(true);
+          firstElement.focus();
+        }
+        
+      }
+      
     }
   }
 
@@ -107,11 +125,12 @@ class FormFieldModal extends React.Component<Props> {
     } = this.props;
 
     let formFields = null;
+    const totalDataRows = fields.length;
     if (!editIndividualRows) {
       formFields = fields.map((fieldName, index) => (
         <Segment key={fieldName} color="black">
           <Label as="a" icon="trash" color="red" ribbon="right" index={index} onClick={(event, data) => removeContent(data.index)} />
-          {this.buildFormFields(fieldName, index, fields)}
+          {this.buildFormFields(fieldName, index, fields, totalDataRows)}
         </Segment>
       ));
     } else if (currentFieldIndex > -1 && currentFieldIndex < fields.length) {
@@ -119,6 +138,7 @@ class FormFieldModal extends React.Component<Props> {
         fields.map((field) => field)[currentFieldIndex],
         currentFieldIndex,
         fields,
+        totalDataRows,
       );
     }
 

@@ -36,7 +36,7 @@ class TableRow extends Component<Object> {
 
   buildRowCells() {
     const {
-      input, editable, data, name, columnModel,
+      input, editable, data, name, columnModel, basic, classes,
     } = this.props;
     const renderData = input ? input.value : data;
     const colModel = this.gerResolvedColumns(columnModel, renderData);
@@ -47,7 +47,7 @@ class TableRow extends Component<Object> {
       const key = `${cellNamePrefix}.${column.dataIndex}`;
 
       return (
-        <Table.Cell key={key} negative={this.isErrorOnColumn(column)}>
+        <Table.Cell key={key} negative={this.isErrorOnColumn(column)} className={basic === "very" ? classes.veryBasicGrid : ""}>
           <TableCell
             name={cellNamePrefix}
             column={column}
@@ -62,13 +62,13 @@ class TableRow extends Component<Object> {
 
   buildCustomizedCell() {
     const {
-      input, data, cellComponent: CellComponent, columnModel, subsections, titleFormatter,
+      input, data, cellComponent: CellComponent, columnModel, subsections, titleFormatter, classes, basic,
     } = this.props;
     const renderData = input ? input.value : data;
     const colModel = this.gerResolvedColumns(columnModel, renderData);
 
     return (
-      <Table.Cell colSpan={colModel.length}>
+      <Table.Cell colSpan={colModel.length} className={basic === "very" ? classes.veryBasicGrid : ""}>
         <CellComponent
           titleFormatter={titleFormatter}
           {...renderData}
@@ -94,6 +94,7 @@ class TableRow extends Component<Object> {
       isSelected,
       columnModel,
       input,
+      basic,
     } = this.props;
 
     const renderData = input ? input.value : data;
@@ -110,9 +111,9 @@ class TableRow extends Component<Object> {
     }
 
     return (
-      <Table.Row negative={isError}>
+      <Table.Row negative={isError} className={basic === "very" ? classes.veryBasicGrid : ""}>
         {editable && bulkEdit && (
-          <Table.Cell collapsing verticalAlign="top">
+          <Table.Cell collapsing verticalAlign="top" className={basic === "very" ? classes.veryBasicGrid : ""}>
             <div className={classes.checkboxWrapper}>
               <Checkbox
                 className={classes.checkbox}
@@ -129,7 +130,7 @@ class TableRow extends Component<Object> {
           ? this.buildRowCells()
           : this.buildCustomizedCell()}
         {editable && editIndividualRows && (
-          <Table.Cell collapsing verticalAlign="top">
+          <Table.Cell collapsing verticalAlign="top" className={basic === "very" ? classes.veryBasicGrid : ""}>
             <Button basic circular icon="pencil" onClick={() => startEditingContent(data.reduxFormIndex)} />
             <Button basic circular icon="trash" onClick={() => removeContent(data.reduxFormIndex)} />
           </Table.Cell>
@@ -145,6 +146,10 @@ const styles = {
   },
   checkbox: {
     verticalAlign: "middle !important",
+  },
+  veryBasicGrid: {
+    borderLeft: "none !important",
+    background: "#fff !important",
   },
 };
 

@@ -48,6 +48,7 @@ type Props = {
   exportable: boolean,
   exportButtonLabel: String,
   exportFileName: string,
+  basic: string,
   classes: Object,
 };
 
@@ -162,9 +163,11 @@ export default (Grid: StaticDatagrid) => {
 
       return (
         <SemanticGrid columns="equal">
-          <SemanticGrid.Column verticalAlign="middle">
-            {title && <Header as="h4" floated="left">{`${title}`}</Header>}
-          </SemanticGrid.Column>
+          {title && (
+            <SemanticGrid.Column verticalAlign="middle">
+              <Header as="h4" floated="left">{`${title}`}</Header>
+            </SemanticGrid.Column>
+          )}
           {searchable && (
             <SemanticGrid.Column verticalAlign="middle">
               <SearchBar
@@ -180,6 +183,10 @@ export default (Grid: StaticDatagrid) => {
     }
 
     buildTableHeaders() {
+      const {
+        classes,
+        basic,
+      } = this.props;
       return !this.props.cellComponent && (
         <Table.Header>
           <Table.Row>
@@ -192,9 +199,11 @@ export default (Grid: StaticDatagrid) => {
                 sortingHandler={this.sortingHandler}
                 updateGridState={this.updateGridState}
                 column={column}
+                basic={basic}
+                classes={classes}
               />
             ) : (
-              <Table.HeaderCell key={column.dataIndex}>
+              <Table.HeaderCell key={column.dataIndex} className={basic === "very" ? classes.veryBasicGrid : ""}>
                 {column.name}
               </Table.HeaderCell>
             )))}
@@ -229,6 +238,7 @@ export default (Grid: StaticDatagrid) => {
         exportFileName,
         columnModel,
         classes,
+        basic,
       } = this.props;
 
       const data = this.state.store.getData();
@@ -241,10 +251,12 @@ export default (Grid: StaticDatagrid) => {
         columnSpan += 1;
       }
 
+      const style = basic === "very" ? { background: "#fff" } : {};
+
       return (
         <Table.Footer fullWidth>
           <Table.Row>
-            <Table.HeaderCell colSpan={columnSpan}>
+            <Table.HeaderCell colSpan={columnSpan} style={style}>
               {editable && (
                 <div className={classes.footerButtons}>
                   <EditControls
@@ -283,7 +295,7 @@ export default (Grid: StaticDatagrid) => {
                   />
                 </div>
               )}
-              <div className={classes.footerPagination}>
+              <div className={basic === "very" ? classes.centerFooterPagination : classes.footerPagination}>
                 <PaginationControls
                   paginationHandler={this.paginationHandler}
                   updateGridState={this.updateGridState}
@@ -323,6 +335,14 @@ export default (Grid: StaticDatagrid) => {
     footerPagination: {
       float: "right !important",
       margin: "0.5em 0 !important",
+    },
+    centerFooterPagination: {
+      margin: "0.5em 0 !important",
+      textAlign: "center",
+    },
+    veryBasicGrid: {
+      borderLeft: "none !important",
+      background: "#fff !important",
     },
   };
 

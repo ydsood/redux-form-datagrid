@@ -5,7 +5,8 @@ import {
 } from "semantic-ui-react";
 import _ from "lodash";
 import { createUseStyles } from "react-jss";
-import { renderFieldsAndSubsections, applyFieldResolvers } from "./util";
+import { renderFieldsAndSubsections } from "./util";
+import { applyFieldResolvers } from "../util";
 
 type Props = {
   fields: *,

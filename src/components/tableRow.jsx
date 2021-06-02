@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { createUseStyles } from "react-jss";
 import { Button, Checkbox, Table } from "semantic-ui-react";
 import { RequiredFieldValidator } from "./datagridField/DefaultFormField";
-import { applyFieldResolvers } from "./datagridField/util";
+import { applyFieldResolvers } from "./util";
 
 import TableCell from "./tableCell";
 

@@ -5,7 +5,7 @@ import {
 } from "semantic-ui-react";
 import _ from "lodash";
 import { createUseStyles } from "react-jss";
-import { renderFieldsAndSubsections } from "./util";
+import { renderFieldsAndSubsections, applyFieldResolvers } from "./util";
 
 type Props = {
   fields: *,
@@ -29,27 +29,6 @@ class FormFieldModal extends React.Component<Props> {
     super(props);
     this.myRef = React.createRef();
   }
-  // eslint-disable-next-line class-methods-use-this
-  applyFieldResolvers(columnModel, rowData) {
-    return columnModel.map((column) => {
-      const colModelCopy = _.cloneDeep(columnModel);
-      const { fieldMetaResolver = [] } = column;
-      let meta = column.meta || {};
-
-      for (let i = 0; i < fieldMetaResolver.length; i += 1) {
-        const fieldResolver = fieldMetaResolver[i];
-
-        if (typeof fieldResolver === "function") {
-          meta = fieldResolver(colModelCopy, rowData, column.dataIndex) || meta;
-        }
-      }
-
-      return {
-        ...column,
-        meta,
-      };
-    });
-  }
 
   buildFormFields(fieldName: string, index: number, fields: *, totalDataRows: number) {
     const {
@@ -57,7 +36,7 @@ class FormFieldModal extends React.Component<Props> {
       subsections = [],
     } = this.props;
 
-    const resolvedColumnModel = this.applyFieldResolvers(columnModel, fields.get(index));
+    const resolvedColumnModel = applyFieldResolvers(columnModel, fields.get(index));
 
     const subsectionGroupedFields = _.groupBy(resolvedColumnModel, (field) => field.subsection || "none");
 

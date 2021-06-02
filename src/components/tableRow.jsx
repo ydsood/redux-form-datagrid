@@ -2,10 +2,16 @@ import React, { Component } from "react";
 import { createUseStyles } from "react-jss";
 import { Button, Checkbox, Table } from "semantic-ui-react";
 import { RequiredFieldValidator } from "./datagridField/DefaultFormField";
+import { applyFieldResolvers } from "./util";
 
 import TableCell from "./tableCell";
 
 class TableRow extends Component<Object> {
+
+  gerResolvedColumns = (columnModel, renderData) => {
+    return applyFieldResolvers(columnModel.get(), renderData);
+  }
+
   isErrorOnColumn = (column) => {
     const { data } = this.props;
 
@@ -30,10 +36,11 @@ class TableRow extends Component<Object> {
 
   buildRowCells() {
     const {
-      input, editable, data, name,
+      input, editable, data, name, columnModel,
     } = this.props;
     const renderData = input ? input.value : data;
-    const cells = this.props.columnModel.get().map((column) => {
+    const colModel = this.gerResolvedColumns(columnModel, renderData);
+    const cells = colModel.map((column) => {
       const cellNamePrefix = input ? input.name : name;
       const { dataIndex } = column;
       const value = renderData[dataIndex];
@@ -58,8 +65,7 @@ class TableRow extends Component<Object> {
       input, data, cellComponent: CellComponent, columnModel, subsections, titleFormatter,
     } = this.props;
     const renderData = input ? input.value : data;
-
-    const colModel = columnModel.get();
+    const colModel = this.gerResolvedColumns(columnModel, renderData);
 
     return (
       <Table.Cell colSpan={colModel.length}>
@@ -87,11 +93,16 @@ class TableRow extends Component<Object> {
       toggleSelect,
       isSelected,
       columnModel,
+      input,
     } = this.props;
+
+    const renderData = input ? input.value : data;
+
+    const colModel = this.gerResolvedColumns(columnModel, renderData);
 
     let isError = false;
     if (cellComponent) {
-      columnModel.get().forEach((column) => {
+      colModel.forEach((column) => {
         if (this.isErrorOnColumn(column)) {
           isError = true;
         }

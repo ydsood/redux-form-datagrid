@@ -156,14 +156,14 @@ export default (Grid: StaticDatagrid) => {
 
     buildTitleBar() {
       const {
-        title, searchable, searchPlaceholder,
+        title, searchable, searchPlaceholder, basic
       } = this.props;
 
       const data = this.state.store.getData();
 
       return (
         <SemanticGrid columns="equal">
-          {title && (
+          {basic !== "very" && title && (
             <SemanticGrid.Column verticalAlign="middle">
               <Header as="h4" floated="left">{`${title}`}</Header>
             </SemanticGrid.Column>

@@ -23,7 +23,6 @@ type StaticDatagridProps = {
   removeContent: Function,
   toggleSelect: Function,
   updateGridState: Function,
-  hideTitleBar: boolean,
   basic: string,
 };
 
@@ -104,7 +103,6 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       error,
       editable,
       bulkEdit,
-      hideTitleBar,
       basic,
     } = this.props;
     const style = hidden ? { display: "none" } : {};

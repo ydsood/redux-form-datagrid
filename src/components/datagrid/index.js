@@ -109,7 +109,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
     const renderComponent = (
       <Segment basic>
         <div className="grid" style={style}>
-          {!hideTitleBar && this.props.buildTitleBar()}
+          {this.props.buildTitleBar()}
           { error }
           <Table celled={basic !== "very"} basic={basic} sortable definition={editable && bulkEdit}>
             {this.props.buildTableHeaders()}

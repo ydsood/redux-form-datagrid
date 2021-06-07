@@ -55,7 +55,8 @@ class TableRow extends Component<Object> {
 
   buildCustomizedCell() {
     const {
-      input, data, cellComponent: CellComponent, columnModel, subsections, titleFormatter, classes, basic,
+      input, data, cellComponent: CellComponent, columnModel,
+      subsections, titleFormatter, classes, basic,
     } = this.props;
     const renderData = input ? input.value : data;
 

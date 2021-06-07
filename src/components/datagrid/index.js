@@ -23,7 +23,6 @@ type StaticDatagridProps = {
   removeContent: Function,
   toggleSelect: Function,
   updateGridState: Function,
-  hideTitleBar: boolean,
   basic: string,
 };
 
@@ -104,14 +103,13 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       error,
       editable,
       bulkEdit,
-      hideTitleBar,
       basic,
     } = this.props;
     const style = hidden ? { display: "none" } : {};
     const renderComponent = (
       <Segment basic>
         <div className="grid" style={style}>
-          {!hideTitleBar && this.props.buildTitleBar()}
+          {this.props.buildTitleBar()}
           { error }
           <Table celled={basic !== "very"} basic={basic} sortable definition={editable && bulkEdit}>
             {this.props.buildTableHeaders()}

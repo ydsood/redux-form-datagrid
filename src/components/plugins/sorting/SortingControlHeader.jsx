@@ -6,11 +6,15 @@ type Props = {
   sortingHandler: SortingHandler,
   updateGridState: Function,
   column: Object,
+  classes: Object,
+  basic:string
 };
 
 const SortingControlHeader = ({
   sortingHandler,
   updateGridState,
+  basic,
+  classes,
   column,
 }: Props) => {
   let sorted;
@@ -26,6 +30,7 @@ const SortingControlHeader = ({
         updateGridState();
       }}
       sorted={sorted}
+      className={basic === "very" ? classes.veryBasicGrid : ""}
     >
       {column.name}
     </Table.HeaderCell>

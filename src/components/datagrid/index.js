@@ -23,6 +23,7 @@ type StaticDatagridProps = {
   removeContent: Function,
   toggleSelect: Function,
   updateGridState: Function,
+  basic: string,
 };
 
 class StaticDatagrid extends Component<StaticDatagridProps> {
@@ -40,6 +41,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       removeContent,
       toggleSelect,
       updateGridState,
+      basic,
     } = this.props;
     return data.map((item) => {
       const name = `${this.props.name}[${item.reduxFormIndex}]`;
@@ -60,6 +62,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
           toggleSelect={toggleSelect}
           isSelected={!!item.reduxFormIsSelected}
           updateGridState={updateGridState}
+          basic={basic}
         />
       );
     });
@@ -100,6 +103,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       error,
       editable,
       bulkEdit,
+      basic,
     } = this.props;
     const style = hidden ? { display: "none" } : {};
     const renderComponent = (
@@ -107,7 +111,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
         <div className="grid" style={style}>
           {this.props.buildTitleBar()}
           { error }
-          <Table celled sortable definition={editable && bulkEdit}>
+          <Table celled={basic !== "very"} basic={basic} sortable definition={editable && bulkEdit}>
             {this.props.buildTableHeaders()}
             {this.buildTableBody()}
             {this.props.buildTableFooter()}

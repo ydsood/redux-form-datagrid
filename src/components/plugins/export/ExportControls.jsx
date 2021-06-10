@@ -20,7 +20,9 @@ class ExportControls extends Component<Props> {
     let header = "";
 
     columnModel.forEach((element) => {
-      header += `${element.name},`;
+      if (element.export) {
+        header += `${element.name},`;
+      }
     });
 
     header = header.slice(0, -1);
@@ -29,10 +31,12 @@ class ExportControls extends Component<Props> {
     for (let i = 0; i < data.length; i += 1) {
       let rowData = "";
       for (let j = 0; j < columnModel.length; j += 1) {
-        const value = columnModel[j].formatter
-          ? columnModel[j].formatter(data[i][columnModel[j].dataIndex])
-          : data[i][columnModel[j].dataIndex];
-        rowData += `${value},`;
+        if (columnModel[j].export) {
+          const value = columnModel[j].formatter
+            ? columnModel[j].formatter(data[i][columnModel[j].dataIndex])
+            : data[i][columnModel[j].dataIndex];
+          rowData += `${value},`;
+        }
       }
       rowData.slice(0, rowData.length - 1);
       CSV += `${rowData}\r\n`;

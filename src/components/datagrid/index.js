@@ -24,7 +24,6 @@ type StaticDatagridProps = {
   toggleSelect: Function,
   updateGridState: Function,
   basic: string,
-  onRowClick: Function,
 };
 
 class StaticDatagrid extends Component<StaticDatagridProps> {
@@ -43,7 +42,6 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       toggleSelect,
       updateGridState,
       basic,
-      onRowClick
     } = this.props;
     return data.map((item) => {
       const name = `${this.props.name}[${item.reduxFormIndex}]`;
@@ -54,7 +52,6 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
           columnModel={columnModel}
           subsections={subsections}
           editable={editable}
-          onRowClick={onRowClick}
           editIndividualRows={editIndividualRows}
           bulkEdit={bulkEdit}
           titleFormatter={titleFormatter}

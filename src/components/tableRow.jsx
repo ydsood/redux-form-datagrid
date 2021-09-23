@@ -96,6 +96,7 @@ class TableRow extends Component<Object> {
       columnModel,
       input,
       basic,
+      onRowClick,
     } = this.props;
 
     const renderData = input ? input.value : data;
@@ -112,7 +113,11 @@ class TableRow extends Component<Object> {
     }
 
     return (
-      <Table.Row negative={isError} className={basic === "very" ? classes.veryBasicGrid : ""}>
+      <Table.Row
+        negative={isError}
+        onClick={() => onRowClick(data)}
+        className={`${basic === "very" ? classes.veryBasicGrid : ""} ${onRowClick ? classes.dataGridRow : ""}`}
+      >
         {editable && bulkEdit && (
           <Table.Cell collapsing verticalAlign="top" className={basic === "very" ? classes.veryBasicGrid : ""}>
             <div className={classes.checkboxWrapper}>
@@ -151,6 +156,15 @@ const styles = {
   veryBasicGrid: {
     borderLeft: "none !important",
     background: "#fff !important",
+  },
+  dataGridRow: {
+    background: "#fff !important",
+    "&:hover": {
+      transform: "scale(1, 1.1)",
+      boxShadow: "2px 0px 4px #d4d4d5",
+      zIndex: 2,
+      cursor: "pointer",
+    },
   },
 };
 

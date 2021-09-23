@@ -10,7 +10,6 @@ export type column = {
   order: number,
   formatter?: (val: any) => any,
   sortable: boolean,
-  export: boolean,
   sortingType: String,
   meta?: {
     required: boolean,

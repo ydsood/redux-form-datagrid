@@ -34,7 +34,8 @@ export type DataGridProps = {
   cellComponent?: Component<*>,
   localStore?: boolean,
   pageSize?: number,
-  meta?: metaData
+  meta?: metaData,
+  onRowClick: Function,
 };
 
 function DataGrid(props: DataGridProps) {

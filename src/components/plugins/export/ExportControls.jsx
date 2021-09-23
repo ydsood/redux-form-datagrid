@@ -20,7 +20,7 @@ class ExportControls extends Component<Props> {
     let header = "";
 
     columnModel.forEach((element) => {
-      if (element.export) {
+      if (element.export !== false) {
         header += `${element.name},`;
       }
     });
@@ -31,9 +31,9 @@ class ExportControls extends Component<Props> {
     for (let i = 0; i < data.length; i += 1) {
       let rowData = "";
       for (let j = 0; j < columnModel.length; j += 1) {
-        if (columnModel[j].export) {
-          const value = columnModel[j].formatter
-            ? columnModel[j].formatter(data[i][columnModel[j].dataIndex])
+        if (columnModel[j].export !== false) {
+          const value = columnModel[j].getValue
+            ? columnModel[j].getValue(data[i][columnModel[j].dataIndex])
             : data[i][columnModel[j].dataIndex];
           rowData += `${value},`;
         }

@@ -34,6 +34,13 @@ class TableRow extends Component<Object> {
     return isError;
   };
 
+  handleRowClick = (data) => {
+    const { onRowClick } = this.props;
+    if (onRowClick) {
+      onRowClick(data);
+    }
+  }
+
   buildRowCells() {
     const {
       input, editable, data, name, columnModel, basic, classes,
@@ -115,7 +122,7 @@ class TableRow extends Component<Object> {
     return (
       <Table.Row
         negative={isError}
-        onClick={() => onRowClick(data)}
+        onClick={() => this.handleRowClick(data)}
         className={`${basic === "very" ? classes.veryBasicGrid : ""} ${onRowClick ? classes.dataGridRow : ""}`}
       >
         {editable && bulkEdit && (

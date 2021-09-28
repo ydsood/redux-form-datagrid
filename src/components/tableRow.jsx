@@ -128,7 +128,7 @@ class TableRow extends Component<Object> {
     return (
       <Table.Row
         negative={isError}
-        onClick={() => this.handleRowClick()}
+        onClick={this.handleRowClick}
         className={`${basic === "very" ? classes.veryBasicGrid : ""} ${onRowClick ? classes.dataGridRow : ""}`}
       >
         {editable && bulkEdit && (

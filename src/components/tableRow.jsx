@@ -8,6 +8,12 @@ import TableCell from "./tableCell";
 
 class TableRow extends Component<Object> {
 
+  constructor(props: Props) {
+    super(props);
+
+    this.handleRowClick = new handleRowClick();
+  }
+
   gerResolvedColumns = (columnModel, renderData) => {
     return applyFieldResolvers(columnModel.get(), renderData);
   }
@@ -34,8 +40,8 @@ class TableRow extends Component<Object> {
     return isError;
   };
 
-  handleRowClick = (data) => {
-    const { onRowClick } = this.props;
+  handleRowClick = () => {
+    const { onRowClick, data } = this.props;
     if (onRowClick) {
       onRowClick(data);
     }
@@ -122,7 +128,7 @@ class TableRow extends Component<Object> {
     return (
       <Table.Row
         negative={isError}
-        onClick={() => this.handleRowClick(data)}
+        onClick={() => this.handleRowClick()}
         className={`${basic === "very" ? classes.veryBasicGrid : ""} ${onRowClick ? classes.dataGridRow : ""}`}
       >
         {editable && bulkEdit && (

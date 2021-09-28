@@ -11,7 +11,7 @@ class TableRow extends Component<Object> {
   constructor(props: Props) {
     super(props);
 
-    this.handleRowClick = new handleRowClick();
+    this.handleRowClick = this.handleRowClick.bind(this);
   }
 
   gerResolvedColumns = (columnModel, renderData) => {

@@ -25,10 +25,35 @@ type Props = {
 }
 
 class FormFieldModal extends React.Component<Props> {
-  
   constructor(props) {
     super(props);
     this.myRef = React.createRef();
+  }
+
+  componentDidUpdate(prevProps) {
+    const { open, fields } = this.props;
+    if (open && open !== prevProps.open) {
+      const node = this.myRef.ref.current;
+      // find out all interactive fields
+      const focusableModalElements = node.querySelectorAll(
+        "a[href], button, textarea, input[type=\"text\"], input[type=\"radio\"], input[type=\"checkbox\"], select",
+      );
+      const firstElement = focusableModalElements[0];
+      firstElement.focus();
+    } else if (fields && prevProps.fields && fields.length !== prevProps.fields.length) {
+      const node = this.myRef.ref.current;
+      if (node) {
+        // find the interactive elements on the latest segment
+        const segments = node.querySelectorAll(".segment");
+        if (segments && fields.length > 0) {
+          const elements = segments[fields.length - 1]
+            .querySelectorAll("a[href], button, textarea, input[type=\"text\"], input[type=\"radio\"], input[type=\"checkbox\"], select");
+          const firstElement = elements[0];
+          firstElement.scrollIntoView(true);
+          firstElement.focus();
+        }
+      }
+    }
   }
 
   buildFormFields(fieldName: string, index: number, fields: *, totalDataRows: number) {
@@ -58,35 +83,6 @@ class FormFieldModal extends React.Component<Props> {
     );
 
     return groupedItems;
-  }
-
-  componentDidUpdate(prevProps){
-    const { open, fields } = this.props;
-    if(open && open !== prevProps.open){
-      const node = this.myRef.ref.current;
-      // find out all interactive fields
-      const focusableModalElements = node.querySelectorAll(
-        'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select'
-      );
-      const firstElement = focusableModalElements[0];
-      firstElement.focus();
-    }
-    else if(fields && prevProps.fields && fields.length !== prevProps.fields.length){
-      const node = this.myRef.ref.current;
-      if(node){
-        // find the interactive elements on the latest segment
-        const segments = node.querySelectorAll(".segment");
-        if(segments && fields.length > 0){
-          const elements = segments[fields.length - 1]
-          .querySelectorAll('a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select');
-          const firstElement = elements[0];
-          firstElement.scrollIntoView(true);
-          firstElement.focus();
-        }
-        
-      }
-      
-    }
   }
 
   render() {
@@ -131,7 +127,7 @@ class FormFieldModal extends React.Component<Props> {
           onClose={doneEditingContent}
           className={classes.editModal}
           ref={(domRef) => {
-            this.myRef=domRef;
+            this.myRef = domRef;
           }}
         >
           <Modal.Content open={open}>

@@ -38,6 +38,6 @@ export default class ColumnModel {
   }
 
   get() {
-    return this[columnModelData].filter((item) => !item?.meta?.hidden);
+    return this[columnModelData];
   }
 }

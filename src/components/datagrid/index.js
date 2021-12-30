@@ -43,7 +43,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       toggleSelect,
       updateGridState,
       basic,
-      onRowClick
+      onRowClick,
     } = this.props;
     return data.map((item) => {
       const name = `${this.props.name}[${item.reduxFormIndex}]`;

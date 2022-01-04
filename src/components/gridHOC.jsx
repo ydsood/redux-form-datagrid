@@ -156,7 +156,7 @@ export default (Grid: StaticDatagrid) => {
 
     buildTitleBar() {
       const {
-        title, searchable, searchPlaceholder, basic
+        title, searchable, searchPlaceholder, basic,
       } = this.props;
 
       const data = this.state.store.getData();
@@ -193,7 +193,7 @@ export default (Grid: StaticDatagrid) => {
             {this.props.editable && this.props.bulkEdit && (
               <Table.HeaderCell />
             )}
-            {this.colModel.get().map((column) => (column.sortable ? (
+            {this.colModel.get().filter((item) => !item.meta?.hidden).map((column) => (column.sortable ? (
               <SortingControlHeader
                 key={column.dataIndex}
                 sortingHandler={this.sortingHandler}

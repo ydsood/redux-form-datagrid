@@ -7,16 +7,14 @@ import { applyFieldResolvers } from "./util";
 import TableCell from "./tableCell";
 
 class TableRow extends Component<Object> {
-
   constructor(props: Props) {
     super(props);
 
     this.handleRowClick = this.handleRowClick.bind(this);
   }
 
-  gerResolvedColumns = (columnModel, renderData) => {
-    return applyFieldResolvers(columnModel.get(), renderData);
-  }
+  gerResolvedColumns
+  = (columnModel, renderData) => applyFieldResolvers(columnModel.get(), renderData)
 
   isErrorOnColumn = (column) => {
     const { data } = this.props;
@@ -26,7 +24,8 @@ class TableRow extends Component<Object> {
     const { dataIndex } = column;
     if (column.meta) {
       const currentValidators = column.meta.validators || [];
-      if (!column.meta.hidden && column.meta.required && !currentValidators.includes(RequiredFieldValidator)) {
+      if (!column.meta.hidden && column.meta.required
+        && !currentValidators.includes(RequiredFieldValidator)) {
         currentValidators.push(RequiredFieldValidator);
       }
 
@@ -53,7 +52,7 @@ class TableRow extends Component<Object> {
     } = this.props;
     const renderData = input ? input.value : data;
     const colModel = this.gerResolvedColumns(columnModel, renderData);
-    const cells = colModel.map((column) => {
+    const cells = colModel.filter((item) => !item.meta?.hidden).map((column) => {
       const cellNamePrefix = input ? input.name : name;
       const { dataIndex } = column;
       const value = renderData[dataIndex];

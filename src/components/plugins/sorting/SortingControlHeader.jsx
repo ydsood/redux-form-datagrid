@@ -7,7 +7,7 @@ type Props = {
   updateGridState: Function,
   column: Object,
   classes: Object,
-  basic: string
+  basic:string
 };
 
 const SortingControlHeader = ({
@@ -30,10 +30,9 @@ const SortingControlHeader = ({
         updateGridState();
       }}
       sorted={sorted}
-      className={`sorting-header ${basic === "very" ? classes.veryBasicGrid : ""}`}
+      className={basic === "very" ? classes.veryBasicGrid : ""}
     >
       {column.name}
-      <span className="sorting-header-icon"></span>
     </Table.HeaderCell>
   );
 };

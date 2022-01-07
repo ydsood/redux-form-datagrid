@@ -20,6 +20,7 @@ const PaginationControls = ({
         aria-label="Navigate to first page"
         link
         name="angle double left"
+        className="pagination-double-left"
         onClick={() => {
           paginationHandler.moveToFirstPage();
           updateGridState();
@@ -33,18 +34,19 @@ const PaginationControls = ({
         aria-label="Navigate to previous page"
         link
         name="angle left"
+        className="pagination-left"
         onClick={() => {
           paginationHandler.moveToPreviousPage();
           updateGridState();
         }}
       />
     )}
-    <span aria-live="polite">
-    <span>
-      {`${paginationHandler.getFirstRecordPosition()} - ${paginationHandler.getLastRecordPosition()}`}
-    </span>
-    <span> of </span>
-    <span>{paginationHandler.data.length}</span>
+    <span aria-live="polite" className="pagination-count">
+      <span>
+        {`${paginationHandler.getFirstRecordPosition()} - ${paginationHandler.getLastRecordPosition()}`}
+      </span>
+      <span> of </span>
+      <span>{paginationHandler.data.length}</span>
     </span>
     {!paginationHandler.isOnLastPage() && (
       <Icon
@@ -53,6 +55,7 @@ const PaginationControls = ({
         aria-label="Navigate to next page"
         link
         name="angle right"
+        className="pagination-right"
         onClick={() => {
           paginationHandler.moveToNextPage();
           updateGridState();
@@ -66,6 +69,7 @@ const PaginationControls = ({
         aria-label="Navigate to last page"
         link
         name="angle double right"
+        className="pagination-double-right"
         onClick={() => {
           paginationHandler.moveToLastPage();
           updateGridState();

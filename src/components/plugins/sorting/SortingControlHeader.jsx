@@ -30,9 +30,10 @@ const SortingControlHeader = ({
         updateGridState();
       }}
       sorted={sorted}
-      className={basic === "very" ? classes.veryBasicGrid : ""}
+      className={`sorting-header ${basic === "very" ? classes.veryBasicGrid : ""}`}
     >
       {column.name}
+      <span className="sorting-header-icon"></span>
     </Table.HeaderCell>
   );
 };

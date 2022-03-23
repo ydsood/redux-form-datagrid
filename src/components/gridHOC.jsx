@@ -50,7 +50,7 @@ type Props = {
   exportFileName: string,
   basic: string,
   classes: Object,
-  accordionGrid: boolean,
+  hideTableHeader: boolean,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -187,9 +187,9 @@ export default (Grid: StaticDatagrid) => {
       const {
         classes,
         basic,
-        accordionGrid,
+        hideTableHeader,
       } = this.props;
-      return (!this.props.cellComponent || accordionGrid) && (
+      return !hideTableHeader && (
         <Table.Header>
           <Table.Row>
             {this.props.editable && this.props.bulkEdit && (

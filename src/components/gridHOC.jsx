@@ -50,6 +50,7 @@ type Props = {
   exportFileName: string,
   basic: string,
   classes: Object,
+  hideTableHeader: boolean,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -186,8 +187,9 @@ export default (Grid: StaticDatagrid) => {
       const {
         classes,
         basic,
+        hideTableHeader,
       } = this.props;
-      return !this.props.cellComponent && (
+      return !hideTableHeader && (
         <Table.Header>
           <Table.Row>
             {this.props.editable && this.props.bulkEdit && (
@@ -203,7 +205,7 @@ export default (Grid: StaticDatagrid) => {
                 classes={classes}
               />
             ) : (
-              <Table.HeaderCell key={column.dataIndex} className={basic === "very" ? classes.veryBasicGrid : ""}>
+              <Table.HeaderCell key={column.dataIndex} style={{ width: column.width }} className={basic === "very" ? classes.veryBasicGrid : ""}>
                 {column.name}
               </Table.HeaderCell>
             )))}

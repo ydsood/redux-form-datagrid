@@ -1,6 +1,6 @@
 {
   "name": "redux-form-datagrid",
-  "version": "0.2.0-alpha.4.17",
+  "version": "0.2.0-alpha.5.0",
   "description": "React data grid component that complies with redux and redux-form. Also exposes a non form version that can be exposed to just render a data grid.",
   "author": "Yadvaindera Sood <ydsood@gmail.com> (https://github.com/ydsood)",
   "license": "ISC",

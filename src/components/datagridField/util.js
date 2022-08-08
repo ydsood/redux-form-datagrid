@@ -34,10 +34,12 @@ function chunkConditional(array, predicate) {
 }
 
 function buildVariableSizeFieldSection(columns) {
+  const filteredColumns = columns.filter((column) => !column.meta);
+
   const groupedItems = [];
   let currentRowWidth = 0;
 
-  columns.forEach((column) => {
+  filteredColumns.forEach((column) => {
     const fieldWidth = column.meta.width;
 
     if (column.meta.hidden && groupedItems.length === 0) {

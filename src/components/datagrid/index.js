@@ -25,6 +25,7 @@ type StaticDatagridProps = {
   updateGridState: Function,
   basic: string,
   onRowClick: Function,
+  classes: Object,
 };
 
 class StaticDatagrid extends Component<StaticDatagridProps> {
@@ -107,19 +108,27 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       editable,
       bulkEdit,
       basic,
+      classes,
     } = this.props;
     const style = hidden ? { display: "none" } : {};
     const renderComponent = (
-      <Segment basic>
-        <div className="grid" style={style}>
-          {this.props.buildTitleBar()}
-          { error }
-          <Table celled={basic !== "very"} basic={basic} sortable definition={editable && bulkEdit}>
+      <Segment basic className="data-grid-container">
+        {this.props.buildTitleBar()}
+        {error}
+        <div className={`${classes?.dataGrid} "data-grid"`} style={style}>
+          <Table
+            celled={basic !== "very"}
+            basic={basic}
+            sortable
+            definition={editable && bulkEdit}
+          >
             {this.props.buildTableHeaders()}
             {this.buildTableBody()}
-            {this.props.buildTableFooter()}
           </Table>
         </div>
+        <Table className={classes?.footerTable}>
+          {this.props.buildTableFooter()}
+        </Table>
       </Segment>
     );
     return renderComponent;

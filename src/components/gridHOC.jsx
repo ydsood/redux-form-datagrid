@@ -333,6 +333,7 @@ export default (Grid: StaticDatagrid) => {
     footerButtons: {
       float: "left !important",
       marginRight: "0.25em !important",
+      marginTop: "12px !important",
     },
     footerPagination: {
       float: "right !important",
@@ -345,6 +346,15 @@ export default (Grid: StaticDatagrid) => {
     veryBasicGrid: {
       borderLeft: "none !important",
       background: "#fff !important",
+    },
+    dataGrid: {
+      overflowX: "overlay",
+      overflowY: "hidden",
+      paddingBottom: "20px",
+    },
+    footerTable: {
+      border: "none !important",
+      marginTop: "0 !important",
     },
   };
 

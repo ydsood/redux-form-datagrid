@@ -34,15 +34,19 @@ function chunkConditional(array, predicate) {
 }
 
 function buildVariableSizeFieldSection(columns) {
-  const filteredColumns = columns.filter((column) => (!column.meta || !column.meta.hidden));
+  const filteredColumns = columns.filter((column) => column.meta);
 
   const groupedItems = [];
   let currentRowWidth = 0;
 
   filteredColumns.forEach((column) => {
-    const fieldWidth = column.meta.width || 16;
+    const fieldWidth = column.meta.width;
 
-    if (column.type === "linebreak") {
+    if (column.meta.hidden && groupedItems.length === 0) {
+      groupedItems.push([column]);
+    } else if (column.meta.hidden) {
+      groupedItems[groupedItems.length - 1].push(column);
+    } else if (column.type === "linebreak") {
       currentRowWidth = Number.MAX_SAFE_INTEGER;
     } else if (currentRowWidth === 0 || currentRowWidth + fieldWidth > 16) {
       currentRowWidth = fieldWidth;
@@ -75,7 +79,7 @@ function createFieldGroups(
           let columnProps = _.cloneDeep(column);
           let meta = columnProps.meta || {};
           delete columnProps.meta;
-          meta = { ...meta, label, "aria-label":ariaLabel };
+          meta = { ...meta, label, "aria-label": ariaLabel };
           columnProps = { ...columnProps, props: meta };
 
           const required = column.meta && column.meta.required;

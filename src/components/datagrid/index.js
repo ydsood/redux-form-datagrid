@@ -112,10 +112,10 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
     } = this.props;
     const style = hidden ? { display: "none" } : {};
     const renderComponent = (
-      <Segment basic className="data-grid-container">
+      <Segment basic className="data-grid-container" style={style}>
         {this.props.buildTitleBar()}
         {error}
-        <div className={`${classes?.dataGrid} "data-grid"`} style={style}>
+        <div className={`${classes?.dataGrid} "data-grid"`}>
           <Table
             celled={basic !== "very"}
             basic={basic}

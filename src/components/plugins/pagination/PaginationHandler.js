@@ -25,6 +25,8 @@ export default class PaginationHandler {
 
   getCurrentPage: Function;
 
+  getTotalNumberOfRecords: Function;
+
   constructor(pageSize: number) {
     this.cursor = 0;
     this.data = [];
@@ -40,6 +42,11 @@ export default class PaginationHandler {
     this.isOnFirstPage = this.isOnFirstPage.bind(this);
     this.isOnLastPage = this.isOnLastPage.bind(this);
     this.getCurrentPage = this.getCurrentPage.bind(this);
+    this.getTotalNumberOfRecords = this.getTotalNumberOfRecords.bind(this);
+  }
+
+  getTotalNumberOfRecords() {
+    return this.data.length;
   }
 
   moveToNextPage() {

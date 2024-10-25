@@ -1,17 +1,15 @@
-//@flow
-import React, { Component } from 'react';
-import Datagrid, { PaginationHandler } from 'redux-form-datagrid';
-import logo from './logo.svg';
-import './App.css';
-import columnModel from './__mocks__/columnDef';
-import data from './__mocks__/columnData';
-import NoDataComponent from './NoDataComponent';
-import CellComponent from './component/CellComponent';
-import BeneForm from './component/BeneForm';
-
+// @flow
+import React, { Component } from "react";
+import Datagrid from "redux-form-datagrid";
+import logo from "./logo.svg";
+import "./App.css";
+import columnModel from "./__mocks__/columnDef";
+import data from "./__mocks__/columnData";
+import NoDataComponent from "./NoDataComponent";
+import CellComponent from "./component/CellComponent";
+import BeneForm from "./component/BeneForm";
 
 type Props = any;
-
 
 class App extends Component<Props> {
   render() {
@@ -23,7 +21,7 @@ class App extends Component<Props> {
         </header>
         <p className="App-intro">
           To get started, edit <code>src/App.js</code> and save to reload.
-         </p>
+        </p>
         <Datagrid columnModel={columnModel} data={data} name="sample" localStore pageSize={5} title="Sample Grid with pagination" />
         <br />
         <br />

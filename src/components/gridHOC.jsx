@@ -9,12 +9,12 @@ import { createUseStyles } from "react-jss";
 import type { StaticDatagrid } from "./datagrid";
 import ColumnModel from "./columnModel";
 import type { ColumnModelType } from "./columnModel";
-import { PaginationControls, PaginationHandler } from "./plugins/pagination";
-import { SortingControlHeader, SortingHandler } from "./plugins/sorting";
+import { PaginationControls, GetPaginationHandler } from "./plugins/pagination";
+import { SortingControlHeader, GetSortingHandler } from "./plugins/sorting";
 import { SearchBar, SearchHandler } from "./plugins/search";
 import { EditControls, EditHandler } from "./plugins/edit";
-import { ExportControls } from "./plugins/export";
-import { LocalStore } from "./store";
+import GetExportControls from "./plugins/export";
+import { LocalStore, RemoteStore } from "./store";
 import type {
   LocalStore as LocalStoreType,
   RemoteStore as RemoteStoreType,
@@ -51,6 +51,9 @@ type Props = {
   basic: string,
   classes: Object,
   hideTableHeader: boolean,
+  mode?: "local" | "remote",
+  fetchData: Function,
+  query: Object,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -61,6 +64,7 @@ type State = {
   sortedData: Array<Object>,
   renderedData: Array<Object>,
   activeColumn: String,
+  loading: boolean,
 };
 
 const includeReduxFormIndex = (arr: Array<Object>) => arr.map((item, index) => ({
@@ -90,26 +94,30 @@ export default (Grid: StaticDatagrid) => {
 
     constructor(props: Props) {
       super(props);
-
+      this.mode = props.mode;
       this.colModel = new ColumnModel(props.columnModel);
-      this.paginationHandler = new PaginationHandler(props.pageSize);
-      this.sortingHandler = new SortingHandler(props.columnModel);
+      this.paginationHandler = GetPaginationHandler(this.mode, props.pageSize);
+      this.sortingHandler = GetSortingHandler(this.mode, props.columnModel);
       this.searchHandler = new SearchHandler(props.searchable, props.columnModel);
       this.editHandler = new EditHandler();
-
       this.buildTitleBar = this.buildTitleBar.bind(this);
       this.buildTableHeaders = this.buildTableHeaders.bind(this);
       this.buildTableFooter = this.buildTableFooter.bind(this);
       this.updateGridState = this.updateGridState.bind(this);
-
-      this.state = {
-        store: new LocalStore(includeReduxFormIndex(this.props.data)),
-        renderedData: includeReduxFormIndex(this.props.data),
-      };
+      if (!this.isLocalMode()) {
+        this.state = {
+          store: new RemoteStore(this.props.fetchData, props.pageSize),
+        };
+      } else {
+        this.state = {
+          store: new LocalStore(includeReduxFormIndex(this.props.data)),
+          renderedData: includeReduxFormIndex(this.props.data),
+        };
+      }
     }
 
     componentDidMount() {
-      this.setState({ store: new LocalStore(includeReduxFormIndex(this.props.data)) });
+      this.updateGridState();
     }
 
     componentDidUpdate(prevProps: Props) {
@@ -132,6 +140,10 @@ export default (Grid: StaticDatagrid) => {
         }
       }
 
+      if (!_.isEqual(prevProps.query, this.props.query)) {
+        this.updateGridState();
+      }
+
       if (!_.isEqual(prevProps.columnModel, this.props.columnModel)) {
         this.colModel = new ColumnModel(this.props.columnModel);
       }
@@ -141,26 +153,43 @@ export default (Grid: StaticDatagrid) => {
       this.state.store.clear();
     }
 
+    isLocalMode() {
+      return this.mode === "local";
+    }
+
     updateGridState() {
-      this.setState((prevState) => ({
-        renderedData: this.paginationHandler.getCurrentPage(
-          this.sortingHandler.sortData(
-            this.searchHandler.filterData(
-              this.editHandler.applySelected(
-                prevState.store.getData(),
+      if (!this.isLocalMode()) {
+        const params = this.paginationHandler.getCurrentPage(
+          this.sortingHandler.sortData(),
+        );
+        this.setState({ loading: true });
+        this.state.store.getData({ ...params, ...this.props.query }).then((response) => {
+          const { data, totalRecords } = response;
+          this.paginationHandler.totalRecords = totalRecords;
+          this.setState({
+            renderedData: includeReduxFormIndex(data),
+            loading: false,
+          });
+        });
+      } else {
+        this.setState((prevState) => ({
+          renderedData: this.paginationHandler.getCurrentPage(
+            this.sortingHandler.sortData(
+              this.searchHandler.filterData(
+                this.editHandler.applySelected(
+                  prevState.store.getData(),
+                ),
               ),
             ),
           ),
-        ),
-      }));
+        }));
+      }
     }
 
     buildTitleBar() {
       const {
         title, searchable, searchPlaceholder, basic,
       } = this.props;
-
-      const data = this.state.store.getData();
 
       return (
         <SemanticGrid columns="equal">
@@ -169,10 +198,16 @@ export default (Grid: StaticDatagrid) => {
               <Header as="h4" floated="left">{`${title}`}</Header>
             </SemanticGrid.Column>
           )}
-          {searchable && (
+          {
+            /*
+              TODO: Merge SearchBar from Portal to here? the current implementation is not
+              working, and UI looks like a mess, and this feature never be used
+            */
+          }
+          {searchable && this.isLocalMode() && (
             <SemanticGrid.Column verticalAlign="middle">
               <SearchBar
-                data={data}
+                data={this.state.store.getData()}
                 placeholder={searchPlaceholder}
                 updateGridState={this.updateGridState}
                 searchHandler={this.searchHandler}
@@ -243,9 +278,8 @@ export default (Grid: StaticDatagrid) => {
         columnModel,
         classes,
         basic,
+        mode,
       } = this.props;
-
-      const data = this.state.store.getData();
 
       let columnSpan = this.colModel.get().length;
       if (editable && editIndividualRows) {
@@ -256,12 +290,12 @@ export default (Grid: StaticDatagrid) => {
       }
 
       const style = basic === "very" ? { background: "#fff" } : {};
-
+      const ExportControls = GetExportControls(mode);
       return (
         <Table.Footer fullWidth>
           <Table.Row>
             <Table.HeaderCell colSpan={columnSpan} style={style}>
-              {editable && (
+              {editable && this.isLocalMode() && (
                 <div className={classes.footerButtons}>
                   <EditControls
                     editIndividualRows={editIndividualRows}
@@ -292,7 +326,8 @@ export default (Grid: StaticDatagrid) => {
               {exportable && (
                 <div className={classes.footerButtons}>
                   <ExportControls
-                    data={data}
+                    store={this.state.store}
+                    query={this.props.query}
                     exportFileName={exportFileName}
                     exportButtonLabel={exportButtonLabel}
                     columnModel={columnModel}
@@ -315,6 +350,7 @@ export default (Grid: StaticDatagrid) => {
       return (
         <Grid
           {...this.props}
+          loading={this.state.loading}
           columnModel={this.colModel}
           buildTitleBar={this.buildTitleBar}
           buildTableHeaders={this.buildTableHeaders}
@@ -329,6 +365,7 @@ export default (Grid: StaticDatagrid) => {
 
   GridHOC.defaultProps = {
     pageSize: 5,
+    mode: "local",
   };
 
   const styles = {

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
-import { Table, Segment } from "semantic-ui-react";
+import {
+  Table, Segment, Dimmer, Loader,
+} from "semantic-ui-react";
 import buildGrid from "../gridHOC";
 import TableRow from "../tableRow";
 
@@ -28,6 +30,7 @@ type StaticDatagridProps = {
   classes: Object,
   noDataImage: string,
   noDataMessage: string,
+  loading: boolean,
 };
 
 class StaticDatagrid extends Component<StaticDatagridProps> {
@@ -84,6 +87,7 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       noDataImage,
       noDataMessage,
       noDataComponent: NoDataComponent,
+      loading,
     } = this.props;
 
     let columnSpan = columnModel.get().length;
@@ -102,7 +106,12 @@ class StaticDatagrid extends Component<StaticDatagridProps> {
       </Table.Row>
     );
     const tableBody = !data || data.length === 0 ? emptyBody : this.buildTableRows();
-    return <Table.Body>{tableBody}</Table.Body>;
+    return (
+      <Table.Body>
+        <Dimmer active={loading} inverted><Loader /></Dimmer>
+        {tableBody}
+      </Table.Body>
+    );
   }
 
   render() {

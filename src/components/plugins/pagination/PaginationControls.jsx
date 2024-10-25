@@ -11,7 +11,7 @@ type Props = {
 const PaginationControls = ({
   paginationHandler,
   updateGridState,
-}: Props) => ((paginationHandler.data.length > 0) && (
+}: Props) => ((paginationHandler.getTotalNumberOfRecords() > 0) && (
   <Fragment>
     {!paginationHandler.isOnFirstPage() && (
       <Icon
@@ -46,7 +46,7 @@ const PaginationControls = ({
         {`${paginationHandler.getFirstRecordPosition()} - ${paginationHandler.getLastRecordPosition()}`}
       </span>
       <span> of </span>
-      <span>{paginationHandler.data.length}</span>
+      <span>{paginationHandler.getTotalNumberOfRecords()}</span>
     </span>
     {!paginationHandler.isOnLastPage() && (
       <Icon

@@ -28,7 +28,7 @@ export default class RemotePaginationHandler {
   getTotalNumberOfRecords: Function;
 
   constructor(pageSize: number, totalRecords: number) {
-    this.page = 0;
+    this.page = 1;
     this.pageSize = pageSize;
     this.totalRecords = totalRecords;
     this.moveToNextPage = this.moveToNextPage.bind(this);
@@ -57,7 +57,7 @@ export default class RemotePaginationHandler {
     const { page } = this;
 
     const nextPage = page + 1;
-    if (nextPage >= 0 && nextPage < this.getTotalPages()) {
+    if (nextPage > 0 && nextPage <= this.getTotalPages()) {
       this.page = nextPage;
     }
   }
@@ -66,27 +66,27 @@ export default class RemotePaginationHandler {
     const { page } = this;
 
     const previousPage = page - 1;
-    if (previousPage >= 0) {
+    if (previousPage >= 1) {
       this.page = previousPage;
-    } else if (previousPage < 0) {
-      this.page = 0;
+    } else if (previousPage < 1) {
+      this.page = 1;
     }
   }
 
   moveToFirstPage() {
-    this.page = 0;
+    this.page = 1;
   }
 
   moveToLastPage() {
-    return this.getTotalPages() - 1;
+    this.page = this.getTotalPages();
   }
 
   getFirstRecordPosition(): number {
-    return this.page * this.pageSize + 1;
+    return (this.page - 1) * this.pageSize + 1;
   }
 
   getLastRecordPosition(): number {
-    const currentCursor = (this.page + 1) * this.pageSize;
+    const currentCursor = this.page * this.pageSize;
 
     if (currentCursor >= this.totalRecords) {
       return this.totalRecords;
@@ -96,11 +96,11 @@ export default class RemotePaginationHandler {
   }
 
   isOnFirstPage(): boolean {
-    return this.page === 0;
+    return this.page === 1;
   }
 
   isOnLastPage(): number {
-    return this.page === this.getTotalPages() - 1;
+    return this.page === this.getTotalPages();
   }
 
   getCurrentPage(params: Object = {}): Object {

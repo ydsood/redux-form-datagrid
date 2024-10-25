@@ -160,7 +160,7 @@ export default (Grid: StaticDatagrid) => {
     updateGridState() {
       if (!this.isLocalMode()) {
         const params = this.paginationHandler.getCurrentPage(
-          this.sortingHandler.sortData(),
+          this.sortingHandler.getSortingInfo(),
         );
         this.setState({ loading: true });
         this.state.store.getData({ ...params, ...this.props.query }).then((response) => {

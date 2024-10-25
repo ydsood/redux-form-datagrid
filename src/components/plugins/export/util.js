@@ -1,3 +1,6 @@
+// TODO: this util method is pulled from previous ExportControls component
+// so it can be used for both LocalExportControl and RemoteExportControl
+// looking for some other library to handle export special characters and prevent CSV injection
 const exportData = (exportFileName, data, columnModel) => {
   let CSV = "";
   let header = "";

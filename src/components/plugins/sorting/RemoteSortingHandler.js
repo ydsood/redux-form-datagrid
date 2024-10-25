@@ -7,7 +7,7 @@ export default class RemoteSortingHandler {
 
   columnModel: Array<Object>;
 
-  sortData: Function;
+  getSortingInfo: Function;
 
   updateActiveColumn: Function;
 
@@ -17,7 +17,7 @@ export default class RemoteSortingHandler {
 
     this.columnModel = columnModel || [];
 
-    this.sortData = this.sortData.bind(this);
+    this.getSortingInfo = this.getSortingInfo.bind(this);
     this.updateActiveColumn = this.updateActiveColumn.bind(this);
   }
 
@@ -32,7 +32,7 @@ export default class RemoteSortingHandler {
     }
   }
 
-  sortData(): Object {
+  getSortingInfo(): Object {
     const { activeColumn, isAscending } = this;
 
     if (!activeColumn) {

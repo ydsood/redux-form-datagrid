@@ -13,7 +13,10 @@ type Props = {
   exportFileName?: string,
 }
 
-const ExportControls = (props: Props) => {
+// Remote Store Export export all data in the grid, not just the rendering page
+// it ignores pagination information, sorting information.
+// only thing takes effect for the data is the filtering query
+const RemoteStoreExportControls = (props: Props) => {
   const {
     exportFileName, columnModel, store, exportButtonLabel, query,
   } = props;
@@ -33,9 +36,9 @@ const ExportControls = (props: Props) => {
   );
 };
 
-ExportControls.defaultProps = {
+RemoteStoreExportControls.defaultProps = {
   exportButtonLabel: "Export",
   exportFileName: "GridData",
 };
 
-export default ExportControls;
+export default RemoteStoreExportControls;

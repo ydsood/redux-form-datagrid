@@ -13,8 +13,6 @@ class RemoteStore {
 
   async getData(params: Object = {}): Promise<Array<Object>> {
     const fetcherParams = {
-      page: 0,
-      pageSize: this.pageSize,
       ...params,
     };
 

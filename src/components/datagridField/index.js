@@ -2,6 +2,7 @@
 import React, { Fragment } from "react";
 import type { FieldArrayProps } from "redux-form";
 import { Message } from "semantic-ui-react";
+import _ from "lodash";
 import type { column } from "../columnModel";
 import DataGrid from "../datagrid";
 import FormFieldModal from "./FormFieldModal";
@@ -40,9 +41,10 @@ class DatagridField extends React.Component<FieldArrayProps & DatagridProps, *> 
 
   componentDidUpdate(prevProps: FieldArrayProps & DatagridProps) {
     const { onChange, fields } = this.props;
-
-    if (fields !== prevProps.fields) {
-      onChange(fields.getAll());
+    const currentValue = fields?.getAll();
+    const previousValue = prevProps.fields?.getAll();
+    if (!_.isEqual(currentValue, previousValue)) {
+      onChange(null, currentValue, previousValue, fields.name);
     }
   }
 

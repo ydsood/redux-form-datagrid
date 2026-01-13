@@ -54,6 +54,9 @@ type Props = {
   mode?: "local" | "remote",
   fetchData: Function,
   query: Object,
+  defaultSortColumn?: String,
+  defaultSortDirection?: "ASC" | "DESC",
+  onSortChange?: Function,
 };
 
 type StoreType = LocalStoreType | RemoteStoreType;
@@ -97,7 +100,11 @@ export default (Grid: StaticDatagrid) => {
       this.mode = props.mode;
       this.colModel = new ColumnModel(props.columnModel);
       this.paginationHandler = GetPaginationHandler(this.mode, props.pageSize);
-      this.sortingHandler = GetSortingHandler(this.mode, props.columnModel);
+      this.sortingHandler = GetSortingHandler(this.mode, props.columnModel, {
+        defaultSortColumn: props.defaultSortColumn,
+        defaultSortDirection: props.defaultSortDirection,
+        onSortChange: props.onSortChange,
+      });
       this.searchHandler = new SearchHandler(props.searchable, props.columnModel);
       this.editHandler = new EditHandler();
       this.buildTitleBar = this.buildTitleBar.bind(this);
